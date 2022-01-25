@@ -12,6 +12,7 @@ from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStor
 from sqlalchemy.orm.exc import NoResultFound
 
 import json
+import hashlib
 from flask_cors import CORS, cross_origin
 
 
@@ -20,23 +21,28 @@ cors = CORS(app)
 # app.config['CORS_HEADERS'] = 'Content-Type'
 
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "scrfanfaklfetkey")
+
 app.config["FB_CLIENT_ID"] = os.environ.get("FB_CLIENT_ID")
 app.config["FB_CLIENT_SECRET"] = os.environ.get("FB_CLIENT_SECRET")
+FB_CLIENT_ID=os.environ.get("FB_CLIENT_ID")
+FB_CLIENT_SECRET=os.environ.get("GOOGLE_CLIENT_SECRET")
 
 app.config["GOOGLE_CLIENT_ID"] = os.environ.get("GOOGLE_CLIENT_ID")
 app.config["GOOGLE_CLIENT_SECRET"] = os.environ.get("GOOGLE_CLIENT_SECRET")
+GOOGLE_CLIENT_ID=os.environ.get("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET=os.environ.get("GOOGLE_CLIENT_SECRET")
 
 
 # set to 1 while still in development or else "insecure http message"
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("SQLALCHEMY_DATABASE_URI")
 
 # for Facebook
-facebook_blueprint = make_facebook_blueprint(client_id="1647653595405093", client_secret="7bad27c3dc273670e94b219ebd5acc")
+facebook_blueprint = make_facebook_blueprint(client_id=FB_CLIENT_ID, client_secret=FB_CLIENT_SECRET)
 app.register_blueprint(facebook_blueprint, url_prefix="/auth")
 # for Google
-google_blueprint = make_google_blueprint(client_id="829398755356-9fsjod7oisuf8sn0rihoj30fk76mcfko.apps.googleusercontent.com", client_secret="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", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
+google_blueprint = make_google_blueprint(client_id=GOOGLE_CLIENT_ID, client_secret=GOOGLE_CLIENT_SECRET, scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
 app.register_blueprint(google_blueprint,url_prefix="/auth")
 
 db = SQLAlchemy(app)
