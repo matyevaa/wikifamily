@@ -1,3 +1,4 @@
+from re import template
 from flask import Flask, render_template, url_for, redirect, flash, make_response
 import os
 from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
@@ -29,15 +30,14 @@ app.config["GOOGLE_CLIENT_SECRET"] = os.environ.get("GOOGLE_CLIENT_SECRET")
 # set to 1 while still in development or else "insecure http message"
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/daisy/wikiFam/backend/login.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
 
 # for Facebook
-facebook_blueprint = make_facebook_blueprint(client_id="", client_secret="")
-app.register_blueprint(facebook_blueprint, url_prefix="/auth/facebook/wikifam")
-
+facebook_blueprint = make_facebook_blueprint(client_id="1647653595405093", client_secret="7bad27c3dc273670e94b219ebd5acc")
+app.register_blueprint(facebook_blueprint, url_prefix="/auth")
 # for Google
-google_blueprint = make_google_blueprint(client_id="", client_secret="", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
-app.register_blueprint(google_blueprint, url_prefix="/auth")
+google_blueprint = make_google_blueprint(client_id="829398755356-9fsjod7oisuf8sn0rihoj30fk76mcfko.apps.googleusercontent.com", client_secret="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", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
+app.register_blueprint(google_blueprint,url_prefix="/auth")
 
 db = SQLAlchemy(app)
 
@@ -47,7 +47,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(250), unique=True)
 
 class OAuth(OAuthConsumerMixin, db.Model):
-    user_id = db.Column(db.String(250), db.ForeignKey(User.id), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     user = db.relationship(User)
 
 login_manager = LoginManager(app)
@@ -59,19 +59,22 @@ def load_user(user_id):
 # For Facebook
 facebook_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user)
 
-@app.route('/api2/facebook/login', methods=['GET', 'POST'], strict_slashes=False)
+@app.route('/facebook/login')
+@app.route('/api2/facebook/login')
 # @cross_origin()
 def newLogin():
+    # print((url_for('facebook.login')))
     return redirect(url_for('facebook.login'))
 
 @oauth_authorized.connect_via(facebook_blueprint)
 def facebookLoggedIn(blueprint, token):
+    # print("once you are logged in")
     if not token:
         print("Failed to log in with FB")
         return False
 
     accInfo = blueprint.session.get('/me?fields=id,name,email')
-    print(accInfo.json())
+    # print(accInfo.json())
 
     # authorization went OK, no errors
     if not accInfo.ok:
@@ -102,10 +105,10 @@ def facebookLoggedIn(blueprint, token):
         db.session.commit()
         
         login_user(user)
-        print("success logged in")
+        # print("success logged in")
 
-    print("curr user is ")
-    print(current_user)
+    # print("curr user is ")
+    # print(current_user)
 
     return False
 
@@ -123,8 +126,8 @@ def newLoginGoogle():
 
 @oauth_authorized.connect_via(google_blueprint)
 def googleLoggedIn(blueprint, token):
-    print("google login stuff")
-    print(url_for("google.login"))
+    # print("google login stuff")
+    # print(url_for("google.login"))
 
     if not blueprint.authorized: 
         return redirect(url_for("google.login"))
@@ -134,8 +137,8 @@ def googleLoggedIn(blueprint, token):
 
     accInfo = blueprint.session.get('/oauth2/v1/userinfo')
 
-    print("person info is: ")
-    print(accInfo.json())
+    # print("person info is: ")
+    # print(accInfo.json())
 
     # authorization went OK, no errors
     if not accInfo.ok:
@@ -149,15 +152,19 @@ def googleLoggedIn(blueprint, token):
 
     try:
         oauth = query.one()
+        print("in the try : ")
         print(oauth)
     except NoResultFound:
         oauth = OAuth(provider=blueprint.name, user_id=accInfoJson["id"], token=token)
+        print(oauth)
 
     if oauth.user:
+        print("User existed in the database")
         login_user(oauth.user)
 
     else:
         # create local user
+        print("created account for user")
         user = User(name = accInfoJson["name"], id=accInfoJson["id"], email=accInfoJson["email"])
         
         oauth.user = user
@@ -166,7 +173,7 @@ def googleLoggedIn(blueprint, token):
         db.session.commit()
         
         login_user(user)
-        print("success logged in")
+        # print("success logged in")
 
     print("curr user is ")
     print(current_user)
@@ -179,18 +186,22 @@ def google_error(blueprint, message, response):
     print("error oauth")
 
 # @login_required
-@app.route("/api2/", methods=['GET','POST'])
-@app.route("/", methods=['GET','POST'])
+@app.route("/api2", methods=['GET','POST'])
+def help():
+    return redirect('http://localhost:3000/auth/facebook')
+
+@app.route("/")
 def idk():
-    return redirect('http://localhost:3005')
+    # return redirect('http://localhost:3005')
+    return render_template('temp.html')
 
 @app.route("/api2/isLoggedIn", methods=['GET','POST'])
 def IsLoggedIn():
     if current_user.is_authenticated:
-        print("true")
+        # print("true")
         return 'true'
     else:
-        print("false")
+        # print("false")
         return 'false'
 
 @app.route("/api2/info", methods=['GET','POST'])
@@ -203,18 +214,18 @@ def idx():
     else:
         userInfo = [{"name": "NotLoggedIn", "id": "NotLoggedIn", "email": "NotLoggedIn"}]
     
-    print(userInfo)    
+    # print(userInfo)    
     return json.dumps(userInfo)
 
 @app.route("/api2/logout")
 @login_required
 def logout():
     logout_user()
-    print("logged out")
+    # print("logged out")
 
     return 'loggedOut'
 
 if __name__ == '__main__':
     db.create_all()
     db.session.commit()
-    app.run(debug=True, port=3000)
+    app.run(debug=True, host="localhost", port=3000)
