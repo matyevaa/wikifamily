@@ -100,6 +100,18 @@ li a:hover {
   color: black;
 }
 
+/* Login container */
+.loginContainer {
+  width: 30%;
+  position: fixed;
+  top: 20%;
+  left: 30%;
+}
+
+/* login button spacing */
+.loginButton {
+  padding: 15px;
+}
 
 /* CRUD person button */
 .add_btn{
