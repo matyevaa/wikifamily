@@ -2,6 +2,7 @@ import React, {useState, useEffect, Component} from 'react'
 import { Link } from "react-router-dom";
 import axios from "axios";
 // import { render } from '@testing-library/react';
+import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons";
 
 const Login = () => {
 
@@ -27,24 +28,27 @@ const Login = () => {
     console.log(result);
   };
 
-  // const facebookLogin = async() => {
-  //   console.log("inside trying to log in");
-  //   const result = await axios ('/api2/facebook/login', {
-  //     mode: "no-cors",
-  //     headers: { 'Content-Type': 'application/json'}
-  //   })
-  //   .catch(err => console.log(err));
-  //   console.log(result);
-  // };
+  // Can use this with the sign up
+  // <FacebookLoginButton onClick={() => alert("Hello")}>
+  // <span>Custom text</span>
+  // </FacebookLoginButton>
 
   return (
-    <div className="content">
-      <button type="button"><a href="http://localhost:3000/api2/facebook/login">Facebook</a></button>
-      <button type="button"><a href="http://localhost:3000/api2/google/login">Google</a></button>
-
-      {/* <button type="button" onClick={facebookLogin}>Facebook</button> */}
-      <button type="button" onClick={facebookLogout}>logout</button>
-      <button type="button" onClick={checkLogin}>see info</button>
+    <div className="content loginContainer">
+      <div className='loginButton'>
+        <FacebookLoginButton onClick={(e) => 
+            {e.preventDefault();
+            window.location.href='http://localhost:3000/api2/facebook/login';
+        }} 
+        align='center'/>
+      </div>
+      <div className='loginButton'>
+        <GoogleLoginButton onClick={(e) => 
+            {e.preventDefault();
+            window.location.href='http://localhost:3000/api2/google/login';
+        }} 
+        align='center'/>
+      </div>
     </div>
   );
 }
