@@ -40,14 +40,20 @@ GOOGLE_CLIENT_SECRET=os.environ.get("GOOGLE_CLIENT_SECRET")
 # set to 1 while still in development or else "insecure http message"
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
 
 # for Facebook
 facebook_blueprint = make_facebook_blueprint(client_id=FB_CLIENT_ID, client_secret=FB_CLIENT_SECRET)
-app.register_blueprint(facebook_blueprint, url_prefix="/auth", login_url="http//localhost:3000/auth/facebook", authorized_url="http://localhost:3000/#", scope=["id","name","email"])
+app.register_blueprint(facebook_blueprint, url_prefix="/auth/facebook/wikifam", scope=["id","name","email"])
 # for Google
 google_blueprint = make_google_blueprint(client_id=GOOGLE_CLIENT_ID, client_secret=GOOGLE_CLIENT_SECRET, scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
 app.register_blueprint(google_blueprint,url_prefix="/auth")
+
+# for encrypting
+# generate a key
+# key = Fernet.generate_key()
+# print(key)
 
 db = SQLAlchemy(app)
 
@@ -57,7 +63,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(250), unique=True)
 
 class OAuth(OAuthConsumerMixin, db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
+    user_id = db.Column(db.String, db.ForeignKey(User.id), nullable=False)
     user = db.relationship(User)
 
 login_manager = LoginManager(app)
@@ -196,14 +202,15 @@ def google_error(blueprint, message, response):
     print("error oauth")
 
 # @login_required
+@app.route("/")
 @app.route("/api2", methods=['GET','POST'])
 def help():
-    return redirect('http://localhost:3000/auth/facebook')
+    return redirect('http://localhost:3005/')
 
-@app.route("/")
-def idk():
-    # return redirect('http://localhost:3005')
-    return render_template('temp.html')
+# @app.route("/")
+# def idk():
+#     # return redirect('http://localhost:3005')
+#     return render_template('temp.html')
 
 @app.route("/api2/isLoggedIn", methods=['GET','POST'])
 def IsLoggedIn():
