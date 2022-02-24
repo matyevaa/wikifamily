@@ -4,7 +4,9 @@ import Homepage from './pages/Homepage.js';
 import Create from './pages/Create.js';
 import Help from './pages/Help.js';
 import Login from './pages/Login.js';
+import PrivacyP from './pages/PrivacyP.js';
 import About from './pages/About.js';
+import Works from './pages/Works.js';
 import Navbar from './components/NavBar.js';
 import AddPerson from './components/AddPerson.js';
 import EditPerson from './components/EditPerson.js';
@@ -36,7 +38,9 @@ function App() {
           <Route path="/create" component={Create} />
           <Route path="/help" component={Help} />
           <Route path="/about" component={About} />
+          <Route path="/privacy" component={PrivacyP} />
           <Route path="/add" component={AddPerson} />
+          <Route path="/creator=:id/works" component={Works} render={(userId) => <Works {...userId}/>}/>
           <Route path="/login" component={Login} />
           <Route path="/edit/:id" component={EditPerson} render={(props) => <EditPerson {...props}/>} />
         </Switch>
