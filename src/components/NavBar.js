@@ -17,8 +17,8 @@ function Navbar(props) {
       })
       .catch(err => console.log(err));
 
-      console.log("inside getUserInfo, name: " + userData.data['0']['name'] + " " + userData.data['0']['id'] + " " + userData.data['0']['email']);
-      console.log(userData.data['0']);
+      // console.log("inside getUserInfo, name: " + userData.data['0']['name'] + " " + userData.data['0']['id'] + " " + userData.data['0']['email']);
+      // console.log(userData.data['0']);
       let temp = [userData.data['0']['name'], userData.data['0']['id'], userData.data['0']['email']];
       setUserInfo(temp);
       console.log("in gettingUserData: " + userInfo);
@@ -31,6 +31,8 @@ function Navbar(props) {
       })
       .catch(err => console.log(err));
       console.log(result);
+      localStorage.removeItem("userId")
+      window.location.href='http://localhost:3005/';
     };
 
     const loggedIn = async() => {
@@ -39,16 +41,12 @@ function Navbar(props) {
         headers: { 'Content-Type': 'application/json'}
       })
       .catch(err => console.log(err));
-      console.log("isLoggedIn: " + result.data);
       setData(result.data);
-      console.log(dataDB);
+      console.log("isLoggedIn:" + dataDB);
     };
 
     const renderAuthButton = () => {
       loggedIn();
-      
-      console.log("in renderAuthButton " + dataDB);
-      console.log("should output: " + userInfo)
 
       if (dataDB == false) {
         console.log("Was not logged in");
@@ -66,9 +64,10 @@ function Navbar(props) {
     }
 
     const handleLogout = () => {
-      console.log("before " + dataDB);
+      // console.log("before " + dataDB);
       setData(false);
-      console.log("after " + dataDB);
+      localStorage.removeItem("userId")
+      // console.log("after " + dataDB);
     }
 
     const navBarConditon = () => {
@@ -76,8 +75,16 @@ function Navbar(props) {
 
       if (dataDB != false) {
         console.log("should show create tree");
-        return <li id="nav_item"><a href="/create">CreateTree</a></li>
+        return <div><li id="nav_item"><a href="/create">CreateTree</a></li>
+        <li id="nav_item"> <a href= { gettingUserId() }>Works</a></li></div>
       }
+    }
+
+    const gettingUserId = () => {
+      let saved = JSON.parse(localStorage.getItem("userId"))
+
+      return "http://localhost:3005/creator=" + saved + "/works"
+      
     }
   
   return (
