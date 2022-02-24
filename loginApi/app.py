@@ -15,8 +15,7 @@ import json
 import hashlib
 from flask_cors import CORS, cross_origin
 
-from cryptography.fernet import Fernet
-
+from flask.helpers import send_from_directory
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -44,16 +43,12 @@ URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
 
 # for Facebook
-facebook_blueprint = make_facebook_blueprint(client_id=FB_CLIENT_ID, client_secret=FB_CLIENT_SECRET)
+facebook_blueprint = make_facebook_blueprint(client_id="REMOVED", client_secret="REMOVED")
 app.register_blueprint(facebook_blueprint, url_prefix="/auth/facebook/wikifam", scope=["id","name","email"])
 # for Google
-google_blueprint = make_google_blueprint(client_id=GOOGLE_CLIENT_ID, client_secret=GOOGLE_CLIENT_SECRET, scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
+google_blueprint = make_google_blueprint(client_id="REMOVED",client_secret="REMOVED", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
 app.register_blueprint(google_blueprint,url_prefix="/auth")
 
-# for encrypting
-# generate a key
-# key = Fernet.generate_key()
-# print(key)
 
 db = SQLAlchemy(app)
 
@@ -75,22 +70,21 @@ def load_user(user_id):
 # For Facebook
 facebook_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user)
 
-@app.route('/facebook/login')
 @app.route('/api2/facebook/login')
 # @cross_origin()
 def newLogin():
-    # print((url_for('facebook.login')))
     return redirect(url_for('facebook.login'))
 
 @oauth_authorized.connect_via(facebook_blueprint)
 def facebookLoggedIn(blueprint, token):
-    # print("once you are logged in")
     if not token:
         print("Failed to log in with FB")
         return False
 
     accInfo = blueprint.session.get('/me?fields=id,name,email')
-    # print(accInfo.json())
+
+    print("person info is: ")
+    print(accInfo.json())
 
     # authorization went OK, no errors
     if not accInfo.ok:
@@ -121,10 +115,6 @@ def facebookLoggedIn(blueprint, token):
         db.session.commit()
         
         login_user(user)
-        # print("success logged in")
-
-    # print("curr user is ")
-    # print(current_user)
 
     return False
 
@@ -142,8 +132,6 @@ def newLoginGoogle():
 
 @oauth_authorized.connect_via(google_blueprint)
 def googleLoggedIn(blueprint, token):
-    # print("google login stuff")
-    # print(url_for("google.login"))
 
     if not blueprint.authorized: 
         return redirect(url_for("google.login"))
@@ -153,8 +141,8 @@ def googleLoggedIn(blueprint, token):
 
     accInfo = blueprint.session.get('/oauth2/v1/userinfo')
 
-    # print("person info is: ")
-    # print(accInfo.json())
+    print("person info is: ")
+    print(accInfo.json())
 
     # authorization went OK, no errors
     if not accInfo.ok:
@@ -168,19 +156,14 @@ def googleLoggedIn(blueprint, token):
 
     try:
         oauth = query.one()
-        print("in the try : ")
-        print(oauth)
     except NoResultFound:
         oauth = OAuth(provider=blueprint.name, user_id=accInfoJson["id"], token=token)
-        print(oauth)
 
     if oauth.user:
-        print("User existed in the database")
         login_user(oauth.user)
 
     else:
         # create local user
-        print("created account for user")
         user = User(name = accInfoJson["name"], id=accInfoJson["id"], email=accInfoJson["email"])
         
         oauth.user = user
@@ -189,10 +172,6 @@ def googleLoggedIn(blueprint, token):
         db.session.commit()
         
         login_user(user)
-        # print("success logged in")
-
-    print("curr user is ")
-    print(current_user)
 
     return False
 
@@ -203,9 +182,9 @@ def google_error(blueprint, message, response):
 
 # @login_required
 @app.route("/")
-@app.route("/api2", methods=['GET','POST'])
 def help():
-    return redirect('http://localhost:3005/')
+    stringId = str(current_user.id)
+    return redirect('http://localhost:3005/creator=' + stringId + '/works')
 
 # @app.route("/")
 # def idk():
@@ -215,10 +194,10 @@ def help():
 @app.route("/api2/isLoggedIn", methods=['GET','POST'])
 def IsLoggedIn():
     if current_user.is_authenticated:
-        # print("true")
+        print("true")
         return 'true'
     else:
-        # print("false")
+        print("false")
         return 'false'
 
 @app.route("/api2/info", methods=['GET','POST'])
@@ -227,18 +206,15 @@ def idx():
     if current_user.is_authenticated:
         userInfo = [{"name": current_user.name, "id": current_user.id, "email": current_user.email}]
 
-        
     else:
         userInfo = [{"name": "NotLoggedIn", "id": "NotLoggedIn", "email": "NotLoggedIn"}]
     
-    # print(userInfo)    
     return json.dumps(userInfo)
 
 @app.route("/api2/logout")
 @login_required
 def logout():
     logout_user()
-    # print("logged out")
 
     return 'loggedOut'
 
