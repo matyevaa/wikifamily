@@ -8,11 +8,11 @@ module.exports = (app) => {
             changeOrigin: true,
         }),
     );
-    app.use(
-        createProxyMiddleware('/api2/*', {
-            target: 'http://localhost:3000/',
-            secure: false,
-            changeOrigin: true,
-        }),
-    );
+    app.use('/api2', createProxyMiddleware({
+        target: 'http://localhost:3000/',
+        changeOrigin: true,
+        pathRewrite: {
+            [`^/api2`]: '',
+        },
+    }));
 };
