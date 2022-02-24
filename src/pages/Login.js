@@ -4,8 +4,10 @@ import axios from "axios";
 // import { render } from '@testing-library/react';
 import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons";
 
-const Login = () => {
 
+
+
+const Login = () => {
   useEffect(() => {
     // checkLogin();
   }, []);
@@ -34,16 +36,17 @@ const Login = () => {
   // </FacebookLoginButton>
 
   return (
+    
     <div className="content loginContainer">
       <div className='loginButton'>
-        <FacebookLoginButton onClick={(e) => 
+        <FacebookLoginButton size='32px' onClick={(e) => 
             {e.preventDefault();
             window.location.href='http://localhost:3000/api2/facebook/login';
         }} 
         align='center'/>
       </div>
       <div className='loginButton'>
-        <GoogleLoginButton onClick={(e) => 
+        <GoogleLoginButton size='32px' onClick={(e) => 
             {e.preventDefault();
             window.location.href='http://localhost:3000/api2/google/login';
         }} 
