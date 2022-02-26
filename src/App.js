@@ -7,6 +7,7 @@ import Login from './pages/Login.js';
 import PrivacyP from './pages/PrivacyP.js';
 import About from './pages/About.js';
 import Works from './pages/Works.js';
+import IndivTree from './pages/IndivTree';
 import Navbar from './components/NavBar.js';
 import AddPerson from './components/AddPerson.js';
 import EditPerson from './components/EditPerson.js';
@@ -41,6 +42,7 @@ function App() {
           <Route path="/privacy" component={PrivacyP} />
           <Route path="/add" component={AddPerson} />
           <Route path="/creator=:id/works" component={Works} render={(userId) => <Works {...userId}/>}/>
+          <Route path="/treeId=:treeId/create" component={IndivTree} render={(treeId) => <IndivTree {...treeId}/>}/>
           <Route path="/login" component={Login} />
           <Route path="/edit/:id" component={EditPerson} render={(props) => <EditPerson {...props}/>} />
         </Switch>
