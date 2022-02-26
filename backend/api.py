@@ -95,6 +95,5 @@ def edit_person(individual_id):
     print(msg)
     return redirect(url_for('get_family'))
 
-
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
