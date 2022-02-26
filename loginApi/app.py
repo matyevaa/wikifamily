@@ -43,10 +43,10 @@ URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
 
 # for Facebook
-facebook_blueprint = make_facebook_blueprint(client_id="REMOVED", client_secret="REMOVED")
+facebook_blueprint = make_facebook_blueprint(client_id="1647653595405093", client_secret="7bad27c3dc273670e94b219ebd5accb6")
 app.register_blueprint(facebook_blueprint, url_prefix="/auth/facebook/wikifam", scope=["id","name","email"])
 # for Google
-google_blueprint = make_google_blueprint(client_id="REMOVED",client_secret="REMOVED", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
+google_blueprint = make_google_blueprint(client_id="829398755356-9fsjod7oisuf8sn0rihoj30fk76mcfko.apps.googleusercontent.com",client_secret="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", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
 app.register_blueprint(google_blueprint,url_prefix="/auth")
 
 
@@ -70,7 +70,7 @@ def load_user(user_id):
 # For Facebook
 facebook_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user)
 
-@app.route('/api2/facebook/login')
+@app.route('/facebook/login')
 # @cross_origin()
 def newLogin():
     return redirect(url_for('facebook.login'))
@@ -126,7 +126,7 @@ def facebook_error(blueprint, message, response):
 # For Google
 google_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user)
 
-@app.route('/api2/google/login')
+@app.route('/google/login')
 def newLoginGoogle():
     return redirect(url_for('google.login'))
 
@@ -191,7 +191,7 @@ def help():
 #     # return redirect('http://localhost:3005')
 #     return render_template('temp.html')
 
-@app.route("/api2/isLoggedIn", methods=['GET','POST'])
+@app.route("/isLoggedIn", methods=['GET','POST'])
 def IsLoggedIn():
     if current_user.is_authenticated:
         print("true")
@@ -200,7 +200,7 @@ def IsLoggedIn():
         print("false")
         return 'false'
 
-@app.route("/api2/info", methods=['GET','POST'])
+@app.route("/info", methods=['GET','POST'])
 def idx():
     userInfo = []
     if current_user.is_authenticated:
@@ -211,7 +211,7 @@ def idx():
     
     return json.dumps(userInfo)
 
-@app.route("/api2/logout")
+@app.route("/logout")
 @login_required
 def logout():
     logout_user()
