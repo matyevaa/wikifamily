@@ -191,7 +191,7 @@ def help():
 #     # return redirect('http://localhost:3005')
 #     return render_template('temp.html')
 
-@app.route("/isLoggedIn", methods=['GET','POST'])
+@app.route("/api2/isLoggedIn", methods=['GET','POST'])
 def IsLoggedIn():
     if current_user.is_authenticated:
         print("true")
@@ -200,7 +200,7 @@ def IsLoggedIn():
         print("false")
         return 'false'
 
-@app.route("/info", methods=['GET','POST'])
+@app.route("/api2/info", methods=['GET','POST'])
 def idx():
     userInfo = []
     if current_user.is_authenticated:
@@ -211,7 +211,7 @@ def idx():
     
     return json.dumps(userInfo)
 
-@app.route("/logout")
+@app.route("/api2/logout")
 @login_required
 def logout():
     logout_user()
