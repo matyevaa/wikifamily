@@ -1,16 +1,24 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from "axios";
+import { useUserContext } from "../context/userContext";
 
 /* we may need to make nav bar responsive:
  * depending on the screen size, the nav bar options and login btns turns into
  * hamburger menu (without logo though) */
 
 function Navbar(props) {
-  const [dataDB, setData] = useState();
-  const [userInfo, setUserInfo] = useState([]);
+  const [dataDB, setData] = useState(false);
+  const [userInfo, setUserInfo] = useState([""]);
+  const { user, logoutUser } = useUserContext();
+  // const [userInfo, setUserInfo] = useState([]);
+
+  //need to add the useEffect here
+  useEffect(() => {
+    getUserInfoLocal()
+  }, []);
 
   // returns the user data (full name ID and email)
-    const getUserInfo = async() => {
+    /* const getUserInfo = async() => {
       const userData = await axios ('/api2/info', {
         mode: "no-cors",
         headers: { 'Content-Type': 'application/json'}
@@ -43,22 +51,36 @@ function Navbar(props) {
       .catch(err => console.log(err));
       setData(result.data);
       console.log("isLoggedIn:" + dataDB);
-    };
+    }; */
+
+    const getUserInfoLocal = () => {
+    let tempName = JSON.parse(localStorage.getItem("userId"))
+    let tempEmail = JSON.parse(localStorage.getItem("userEmail"))
+    let temp = [tempName, tempEmail]
+
+      if (tempName != null || tempEmail != null) {
+        setData(true)
+      }
+
+      setUserInfo(temp)
+    }
 
     const renderAuthButton = () => {
-      loggedIn();
+      // loggedIn();
+      // getUserInfoLocal();
 
       if (dataDB == false) {
         console.log("Was not logged in");
         return  <button type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
       } else {
-        console.log("Was logged in: " + userInfo[0]);
+        console.log("user name:" + userInfo[0]);
+        console.log("user name:" + userInfo[1]);
         // getUserInfo(); // workds but makes api go into infinite loop
         return <div>
-          {/* <p>Welcome {userInfo[0]}</p> */}
-          <button className='accountBtns' onClick={getUserInfo}>Welcome {userInfo[0]}!</button>
+          <button className='accountBtns'>Welcome {JSON.parse(localStorage.getItem("userId"))}!</button>
+          {/* <button className='accountBtns'>Welcome {user.displayName}!</button> */}
           <button type="button" className="accountBtns rightButton"  
-          onClick={() => { facebookLogout(); handleLogout(); }}>Logout</button>
+          onClick={() => {handleLogout(); }}>Logout</button>
         </div>
       }
     }
@@ -67,11 +89,16 @@ function Navbar(props) {
       // console.log("before " + dataDB);
       setData(false);
       localStorage.removeItem("userId")
+      localStorage.removeItem("userEmail")
+      localStorage.removeItem("userId2")
+
+      logoutUser()
+      return "http://localhost:3005/"
       // console.log("after " + dataDB);
     }
 
     const navBarConditon = () => {
-      loggedIn();
+      // loggedIn();
 
       if (dataDB != false) {
         console.log("should show create tree");

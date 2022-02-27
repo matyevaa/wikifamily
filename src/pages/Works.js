@@ -35,6 +35,7 @@ const Works = (userId) => {
 
   const handleNewTree = () => {
     // would create a new empty tree for user --> implement after family table set
+    
   }
   
   return(
