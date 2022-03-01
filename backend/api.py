@@ -6,21 +6,28 @@ import json
 import base64
 import mysql.connector
 
+import pymysql
+
 app = Flask(__name__)
 cors = CORS(app)
 
-cnx = mysql.connector.connect(
-    host = 'localhost',
-    user = 'wikiNew',
-    password = 'wikipassword',
-    database = 'newwikifamily_db',
-    auth_plugin = 'mysql_native_password'
+def connect():
+    cnx = mysql.connector.connect(
+        host = 'us-cdbr-east-05.cleardb.net',
+        user = 'b2f8725312304e',
+        password = '0c26bf48',
+        database = 'heroku_688d3d7a3cbb111'
     )
-
-cursor = cnx.cursor()
+    cursor = cnx.cursor()
+    return (cnx, cursor)
 
 @app.route('/api1/create', methods=['GET', 'DELETE', 'PUT'])
 def get_family():
+    print("get family api")
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
     cursor.execute("SELECT * FROM individual")
     row_headers = [x[0] for x in cursor.description]
     data = cursor.fetchall()
@@ -31,6 +38,15 @@ def get_family():
 
 @app.route('/api1/create', methods=['GET','POST'])
 def add_person():
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    cursor.execute('SELECT family_id FROM family')
+    f = cursor.fetchall()
+    print("Family id in post ", f)
+
+    print("/create GET POST")
     msg = ''
     if request.method=='POST':
         theform = request.get_json(force=True)
@@ -38,23 +54,32 @@ def add_person():
         ls = theform['last_name']
         i = theform['info']
         g = theform['gender']
-        fi = theform['family_id_FK']
+        b = theform['birth']
+        d = theform['death']
+        fid = theform['family_id']
         cursor.execute('SELECT * FROM individual WHERE first_name = %s', (fn,))
         result = cursor.fetchone()
         if result:
             msg = 'Such a person already exists in your family!'
         elif result is None:
-            cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, family_id_FK) VALUES (%s,%s,%s,%s,%s)''', (fn, ls, i, g, fi))
+            cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id) VALUES (%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,))
             cnx.commit()
             msg = "Successfully added a person!"
     else:
         msg = "Please fill out the form."
     print("Message: ", msg)
+    cursor.close()
+    cnx.close()
     return redirect(url_for('get_family'))
 
 
 @app.route('/api1/delete/<individual_id>', methods=['DELETE'])
 def delete_person(individual_id):
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    print("/delete/id DELETE")
     msg = ''
     id = individual_id
     cursor.execute('DELETE FROM individual WHERE individual_id = %s', (id,))
@@ -62,21 +87,38 @@ def delete_person(individual_id):
     msg = "Successfully deleted person!"
     print(msg)
     print("Person id is %s ", id)
+    cursor.close()
+    cnx.close()
     return redirect(url_for('get_family'))
+
 
 @app.route('/api1/create/<individual_id>', methods=['GET'])
 def get_individual(individual_id):
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    print("/create/id GET")
     id = individual_id
     cursor.execute("SELECT * FROM individual WHERE individual_id = %s", (id,))
+    print("In app.py, /create/id GET, the ind id is  %s", id)
     row_headers = [x[0] for x in cursor.description]
     data = cursor.fetchall()
     json_data = []
     for result in data:
         json_data.append(dict(zip(row_headers, result)))
+    cursor.close()
+    cnx.close()
     return json.dumps(json_data)
+
 
 @app.route('/api1/edit/<individual_id>', methods=['PUT', 'PATCH'])
 def edit_person(individual_id):
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    print("/edit/id PUT PATCH")
     id = individual_id
     msg = ''
     theform = request.get_json(force=True)
@@ -85,15 +127,18 @@ def edit_person(individual_id):
     ls = theform['last_name']
     i = theform['info']
     g = theform['gender']
-    fi = theform['family_id_FK']
-    query = 'UPDATE individual SET first_name=%s, last_name=%s, info=%s, gender=%s, family_id_FK=%s WHERE individual_id = %s'
-    data = (fn, ls, i, g, fi,id,)
+    b = theform['birth']
+    d = theform['death']
+    query = 'UPDATE individual SET first_name=%s, last_name=%s, info=%s, gender=%s, birth=%s, death=%s WHERE individual_id = %s'
+    data = (fn, ls, i, g, b, d, id,)
     cursor.execute(query, data)
-    print("HEREEE")
     cnx.commit()
     msg = "Successfully updated person!"
     print(msg)
+    cursor.close()
+    cnx.close()
     return redirect(url_for('get_family'))
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
