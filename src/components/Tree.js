@@ -2,17 +2,6 @@ import React from "react";
 import Tree from "react-d3-tree";
 import clone from "clone";
 
-const debugData = {
-  name: "Jane Doe",
-  children: [
-    {
-      name: "Jane Doe Jr."
-    },
-    {
-      name: "Mike Smith"
-    }
-  ]
-};
 
 const containerStyles = {
   width: "100%",
@@ -20,9 +9,20 @@ const containerStyles = {
 };
 
 export default class CenteredTree extends React.PureComponent {
-  state = {
-    data: debugData
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+      db_data: this.props.dataDB,
+      data: {
+        name: this.props.dataDB[1].first_name,
+        children: [
+          {  name: this.props.dataDB[2].first_name },
+          { name: this.props.dataDB[3].first_name }
+        ]
+      }
+    }
+    console.log("db ", this.state.db_data);
+  }
 
   injectedNodesCount = 0;
 
@@ -49,7 +49,7 @@ export default class CenteredTree extends React.PureComponent {
     });
   };
 
-  componentDidMount() {
+  componentDidMount(prevProps) {
     // Get treeContainer's dimensions so we can center the tree
     const dimensions = this.treeContainer.getBoundingClientRect();
     this.setState({
@@ -58,6 +58,8 @@ export default class CenteredTree extends React.PureComponent {
         y: dimensions.height / 2
       }
     });
+    // get props dataDB from Create.js, db data is stored there
+
   }
 
   render() {

@@ -23,10 +23,17 @@ def connect():
 
 @app.route('/api1/create', methods=['GET', 'DELETE', 'PUT'])
 def get_family():
-    print("get family api")
+    print("get family apis")
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
+
+    # gets parents value
+    # cursor.execute('SELECT DISTINCT c.first_name FROM individual i, individual j, individual c WHERE i.parent=c.individual_id AND j.parent=c.individual_id')
+    # get child and parent
+    cursor.execute('SELECT DISTINCT i.first_name, c.first_name FROM individual i, individual c WHERE i.individual_id=84 AND i.parent=c.individual_id')
+    f = cursor.fetchall()
+    print("Selected ", f)
 
     cursor.execute("SELECT * FROM individual")
     row_headers = [x[0] for x in cursor.description]
@@ -42,9 +49,9 @@ def add_person():
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    cursor.execute('SELECT family_id FROM family')
-    f = cursor.fetchall()
-    print("Family id in post ", f)
+    #cursor.execute('SELECT family_id FROM family')
+    #f = cursor.fetchall()
+    #print("Family id in post ", f)
 
     print("/create GET POST")
     msg = ''
@@ -57,12 +64,13 @@ def add_person():
         b = theform['birth']
         d = theform['death']
         fid = theform['family_id']
+        p = theform['parent']
         cursor.execute('SELECT * FROM individual WHERE first_name = %s', (fn,))
         result = cursor.fetchone()
         if result:
             msg = 'Such a person already exists in your family!'
         elif result is None:
-            cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id) VALUES (%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,))
+            cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,))
             cnx.commit()
             msg = "Successfully added a person!"
     else:

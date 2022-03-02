@@ -27,7 +27,7 @@ class YoutubeVideo extends Component {
     const opts = {
       height: '390',
       width: '640',
-      playerVars: { 
+      playerVars: {
         autoplay: 0
       }
     }
@@ -45,5 +45,3 @@ class YoutubeVideo extends Component {
 }
 
 export default YoutubeVideo
-
-

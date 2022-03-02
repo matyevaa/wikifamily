@@ -11,6 +11,7 @@ const EditPerson = (props) => {
   const [info, setInfo] = useState("");
   const [gender, setGender] = useState("");
   const [family_id_FK, setFamily_id] = useState("");
+  const [parent, setParent] = useState("");
   //const { individual_id } = useParams();
 
   const individual_id = props.match.params.id;
@@ -27,7 +28,8 @@ const EditPerson = (props) => {
       last_name: last_name,
       info: info,
       gender: gender,
-      family_id_FK: family_id_FK
+      family_id_FK: family_id_FK,
+      parent: parent
     });
     history.push("/create");
   }
@@ -74,6 +76,11 @@ const EditPerson = (props) => {
         <div>
           <label>Family id</label>
           <input type="text" placeholder="Family id" name="family_id_FK" value={family_id_FK} onChange={(e) => setFamily_id(e.target.value)}/>
+        </div>
+
+        <div>
+          <label>Parent id</label>
+          <input type="text" placeholder="Parent id" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
         </div>
 
           <Link className="link" to="/create">Back to Create Tree</Link>

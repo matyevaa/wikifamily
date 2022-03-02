@@ -57,7 +57,7 @@ const Create = () => {
   return (
     <div className="content">
       <h1 className="subtopic text">Create Tree Page</h1>
-      <Tree/>
+      <Tree dataDB={dataDB}/>
 
 
       <div className="class_btn">
@@ -74,6 +74,7 @@ const Create = () => {
               <td>Birth</td>
               <td>Death</td>
               <td>Family</td>
+              <td>Parent</td>
               <td></td>
            </tr>
         </thead>
@@ -89,7 +90,8 @@ const Create = () => {
             <td>{item.gender}</td>
             <td>{item.birth}</td>
             <td>{item.death}</td>
-            <td>{item.family_id}: {item.family_name}</td>
+            <td>{item.family_id}</td>
+            <td>{item.parent}</td>
             <td>
               <Link to={`edit/${item.individual_id}`} className="edit_btn">Edit</Link>
               <button onClick={ () => delData(item.individual_id) } className="del_btn">Delete</button>
