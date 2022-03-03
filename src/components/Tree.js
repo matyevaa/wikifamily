@@ -5,22 +5,18 @@ import clone from "clone";
 
 const containerStyles = {
   width: "100%",
-  height: "100vh"
+  height: "80vh"
 };
 
 export default class CenteredTree extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      db_data: this.props.dataDB,
-      data: {
-        name: this.props.dataDB[1].first_name,
-        children: [
-          {  name: this.props.dataDB[2].first_name },
-          { name: this.props.dataDB[3].first_name }
-        ]
-      }
+      //db_data: this.props.dataDB,
+      visibility: false,
+      data: []
     }
+    this.showTree = this.showTree.bind(this);
     console.log("db ", this.state.db_data);
   }
 
@@ -49,6 +45,20 @@ export default class CenteredTree extends React.PureComponent {
     });
   };
 
+  showTree = () => {
+    const { visibility } = this.state;
+    this.setState({
+      visibility: !visibility,
+      data: {
+          name: this.props.dataDB[1].first_name,
+          children: [
+            {  name: this.props.dataDB[2].first_name },
+            { name: this.props.dataDB[3].first_name }
+          ]
+        }
+    })
+  }
+
   componentDidMount(prevProps) {
     // Get treeContainer's dimensions so we can center the tree
     const dimensions = this.treeContainer.getBoundingClientRect();
@@ -63,16 +73,27 @@ export default class CenteredTree extends React.PureComponent {
   }
 
   render() {
-    return (
-      <div style={containerStyles} ref={tc => (this.treeContainer = tc)}>
-        <button onClick={this.addChildNode}>Add Node</button>
-        <button onClick={this.removeChildNode}>Remove Node</button>
-        <Tree
-          data={this.state.data}
-          translate={this.state.translate}
-          orientation={"vertical"}
-        />
-      </div>
-    );
+    const { visibility } = this.state;
+
+    if(this.state.data === '') {
+      return <div>Loading</div>
+    }
+    else {
+      return (
+        <div style={containerStyles} ref={tc => (this.treeContainer = tc)}>
+          <button onClick={this.addChildNode}>Add Node</button>
+          <button onClick={this.removeChildNode}>Remove Node</button>
+          <button onClick={this.showTree}> {this.state.visibility ? "Close Tree" : "Show Tree"}</button>
+
+          {visibility ?
+            <Tree
+              data={this.state.data}
+              translate={this.state.translate}
+              orientation={"vertical"}
+            />
+            : null }
+        </div>
+      );
+    }
   }
 }
