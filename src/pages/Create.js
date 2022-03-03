@@ -61,6 +61,7 @@ const Create = () => {
 
 
       <div className="class_btn">
+        <h3>Database Data</h3>
         <Link to="/add" className="add_btn">Add Person</Link>
       </div>
       <table className="result_table">

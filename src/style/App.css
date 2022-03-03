@@ -45,6 +45,10 @@ body {
   display: inline;
 }
 
+.tree {
+  margin-top: -10rem;
+}
+
 li a {
   color: #3366cc; /* blue color */
   font-weight: 500;
@@ -126,6 +130,14 @@ li a:hover {
 
 .class_btn {
   margin: 2rem;
+}
+
+.del_btn {
+  font-size: 16px;
+  font-family: "Georgia";
+  padding: 40px;
+  border-radius: 0px;
+  width: auto;
 }
 
 .edit_btn, .del_btn {
