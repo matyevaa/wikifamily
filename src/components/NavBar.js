@@ -15,6 +15,7 @@ function Navbar(props) {
   //need to add the useEffect here
   useEffect(() => {
     getUserInfoLocal()
+    // getInfo()
   }, []);
 
   // returns the user data (full name ID and email)
@@ -54,16 +55,49 @@ function Navbar(props) {
     }; */
 
     const getUserInfoLocal = () => {
-    let tempName = JSON.parse(localStorage.getItem("userId"))
-    let tempEmail = JSON.parse(localStorage.getItem("userEmail"))
-    let temp = [tempName, tempEmail]
+    let tempId = JSON.parse(localStorage.getItem("userId"))
+    let loginVersion = JSON.parse(localStorage.getItem("loginVersion"))
 
-      if (tempName != null || tempEmail != null) {
+    console.log("current loginversion; " + loginVersion)
+    
+    let tempName
+    let tempEmail
+
+      if (tempId != null) {
         setData(true)
       }
 
+      if (loginVersion == "thirdParty" && userInfo == "") {
+        //api call /api2/getInfo/<id>
+        // funct call getInfo
+        console.log("was third pary login,,,, ")
+        getInfo()
+
+        tempName = JSON.parse(localStorage.getItem("userName"))
+        tempEmail = JSON.parse(localStorage.getItem("userEmail"))
+        tempId = JSON.parse(localStorage.getItem("userId"))
+
+
+      }
+      else {
+        tempName = JSON.parse(localStorage.getItem("userId"))
+        tempId = JSON.parse(localStorage.getItem("userId"))
+        tempEmail = JSON.parse(localStorage.getItem("userEmail"))
+      }
+      
+      let temp = [tempName, tempEmail, tempId]
       setUserInfo(temp)
     }
+
+    const getInfo = async() => {
+      const result = await axios (`http://localhost:3000/api2/getInfo/${JSON.parse(localStorage.getItem("userId"))}`, {
+        headers: { 'Content-Type': 'application/json'}
+      })
+      .catch(err => console.log(err));
+      console.log("navbar: " + result.data);
+      localStorage.setItem("userName", JSON.stringify(result.data[0]))
+      localStorage.setItem("userEmail", JSON.stringify(result.data[2]))
+    };
 
     const renderAuthButton = () => {
       // loggedIn();
@@ -73,12 +107,8 @@ function Navbar(props) {
         console.log("Was not logged in");
         return  <button type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
       } else {
-        console.log("user name:" + userInfo[0]);
-        console.log("user name:" + userInfo[1]);
-        // getUserInfo(); // workds but makes api go into infinite loop
         return <div>
-          <button className='accountBtns'>Welcome {JSON.parse(localStorage.getItem("userId"))}!</button>
-          {/* <button className='accountBtns'>Welcome {user.displayName}!</button> */}
+          <button className='accountBtns'>Welcome {JSON.parse(localStorage.getItem("userName"))}!</button>
           <button type="button" className="accountBtns rightButton"  
           onClick={() => {handleLogout(); }}>Logout</button>
         </div>
@@ -88,18 +118,20 @@ function Navbar(props) {
     const handleLogout = () => {
       // console.log("before " + dataDB);
       setData(false);
+
+      if (JSON.parse(localStorage.getItem("loginVersion")) == "firebase") {
+        logoutUser()
+      }
+
       localStorage.removeItem("userId")
       localStorage.removeItem("userEmail")
-      localStorage.removeItem("userId2")
+      localStorage.removeItem("userName")
+      localStorage.removeItem("loginVersion")
 
-      logoutUser()
-      return "http://localhost:3005/"
-      // console.log("after " + dataDB);
+      window.location.href ='http://localhost:3005/'
     }
 
     const navBarConditon = () => {
-      // loggedIn();
-
       if (dataDB != false) {
         console.log("should show create tree");
         return <div><li id="nav_item"><a href="/create">CreateTree</a></li>
@@ -109,7 +141,6 @@ function Navbar(props) {
 
     const gettingUserId = () => {
       let saved = JSON.parse(localStorage.getItem("userId"))
-
       return "http://localhost:3005/creator=" + saved + "/works"
       
     }
@@ -130,7 +161,6 @@ function Navbar(props) {
             </div>
     
             <div className="accountContainer">
-            {/* <button type="button" onClick={getUserInfo}>see info</button> */}
               {renderAuthButton()}
             </div>
          </div>
