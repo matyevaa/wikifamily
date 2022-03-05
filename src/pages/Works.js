@@ -18,11 +18,24 @@ const Works = (userId) => {
     if (temp.toString() != null) { // user id passed in
       console.log("What gonna put in localstorage " + temp)
       localStorage.setItem("userId", JSON.stringify(temp))
+      
     }
     else { // user id not passed in
       let saved = JSON.parse(localStorage.getItem("userId"))
       window.location.href="http://localhost:3005/creator=" + saved + "/works"
     }
+
+    // if used the api to llogin 
+    if (JSON.parse(localStorage.getItem("loginVersion") != '"firebase"')) {
+      localStorage.setItem("loginVersion", JSON.stringify("thirdParty"))
+      if(JSON.parse(localStorage.getItem("userName")) == null) {
+        window.location.reload(false);
+        window.location.reload(false);
+      }
+    }
+
+    
+    
   }
 
   const createIndivTreeLinks = (treeId) => {
