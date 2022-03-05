@@ -43,10 +43,10 @@ URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
 
 # for Facebook
-facebook_blueprint = make_facebook_blueprint(client_id="1647653595405093", client_secret="7bad27c3dc273670e94b219ebd5accb6")
+facebook_blueprint = make_facebook_blueprint(client_id="REMOVED", client_secret="REMOVED")
 app.register_blueprint(facebook_blueprint, url_prefix="/auth/facebook/wikifam", scope=["id","name","email"])
 # for Google
-google_blueprint = make_google_blueprint(client_id="829398755356-9fsjod7oisuf8sn0rihoj30fk76mcfko.apps.googleusercontent.com",client_secret="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", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
+google_blueprint = make_google_blueprint(client_id="REMOVED",client_secret="REMOVED", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
 app.register_blueprint(google_blueprint,url_prefix="/auth")
 
 
@@ -217,6 +217,17 @@ def logout():
     logout_user()
 
     return 'loggedOut'
+
+@app.route("/api2/getInfo/<id>")
+def getName(id):
+    user = User.query.get((id))
+
+    userInfo = []
+    userInfo.append(user.name)
+    userInfo.append(user.id)
+    userInfo.append(user.email)
+
+    return json.dumps(userInfo)
 
 if __name__ == '__main__':
     db.create_all()
