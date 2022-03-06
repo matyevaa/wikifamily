@@ -52,6 +52,12 @@ const Login = () => {
         }} 
         align='center'/>
       </div>
+
+      <h2 className='loginTxt'>Or</h2>
+
+      <div className='loginButton emailContainer'>
+        <Link className="email_btn" to="/emailLogin">Sign in with Email</Link>
+      </div>
     </div>
   );
 }
