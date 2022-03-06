@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from 'react';
-
+import axios from 'axios';
 
 const Works = (userId) => {
   const [userIdT, setUserIdT] = useState("");
   const [id, setid] = useState("");
+  const [dataDB, setData] = useState([]);
 
   useEffect(() => {
     findingUserId();
+    getFamilyTrees();
   }, []);
 
   const findingUserId = () => {
@@ -33,9 +35,6 @@ const Works = (userId) => {
         window.location.reload(false);
       }
     }
-
-    
-    
   }
 
   const createIndivTreeLinks = (treeId) => {
@@ -46,19 +45,39 @@ const Works = (userId) => {
     
   }
 
-  const handleNewTree = () => {
-    // would create a new empty tree for user --> implement after family table set
+  const getFamilyTrees = async() => {
+    const result = await axios (`/api1/listTrees`, {
+      headers: { 'Content-Type': 'application/json'}
+    })
+    .then(result => setData(result.data))
+    .catch(err => console.log(err));
+    console.log("getFamilyTrees: ")
+    console.log(dataDB);
+  };
+
+  const treesOutput = () => {
+    if (dataDB == "" || dataDB == null) {
+      return <p className="description text">No Trees</p>
+    }
+    else{
+      return <div>
+      {dataDB.map((item, idx) => (
+        <tr key={idx}>
+          <td className="description text"><a href= { createIndivTreeLinks(item.family_id) }>{item.family_name}</a></td>
+        </tr>
+      ))}</div>
+    }
     
   }
+
   
   return(
     <div className="content">
       <h1 className="subtopic text">Here are your works!</h1>
-      <button className="add_tree_btn">Create New Tree</button>
-      <p className="description text"><a href= { createIndivTreeLinks(5) }>indiv family tree</a></p>
-      <p className="description text"><a href= { createIndivTreeLinks(10) }>indiv family tree</a></p>
-      <p className="description text"><a href= { createIndivTreeLinks(15) }>indiv family tree</a></p>
-      <p className="description text"><a href= { createIndivTreeLinks(20) }>indiv family tree</a></p>
+      <button className="add_tree_btn">Create New Tree (does nothing rn)</button>
+      {/* <p className="description text"><a href= { createIndivTreeLinks(10) }>indiv family tree</a></p> */}
+
+      {treesOutput()}
     </div>
   );
 }
