@@ -147,6 +147,48 @@ def edit_person(individual_id):
     cnx.close()
     return redirect(url_for('get_family'))
 
+# FUNCTS GET TREE INFO
+# get list of tree ids, need add <userId> later
+@app.route('/api1/listTrees', methods=['GET'])
+def getFamilies():
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    cursor.execute("SELECT * FROM family")
+
+    row_headers = [x[0] for x in cursor.description]
+    data = cursor.fetchall()
+    json_data = []
+    for result in data:
+        json_data.append(dict(zip(row_headers, result)))
+
+    print(json_data)
+
+    cursor.close()
+    cnx.close()
+    return json.dumps(json_data)
+
+# get name of tree from specific tree id, need to add userId later
+@app.route('/api1/getTreeName/<id>', methods=['GET'])
+def getFamilyName(id):
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    cursor.execute("SELECT family_name FROM family WHERE family_id = %s", (id,))
+
+    row_headers = [x[0] for x in cursor.description]
+    data = cursor.fetchall()
+    json_data = []
+    for result in data:
+        json_data.append(dict(zip(row_headers, result)))
+
+    print(json_data)
+
+    # cursor.close()
+    # cnx.close()
+    return json.dumps(json_data)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
