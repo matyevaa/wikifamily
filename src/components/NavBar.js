@@ -58,7 +58,7 @@ function Navbar(props) {
     let tempId = JSON.parse(localStorage.getItem("userId"))
     let loginVersion = JSON.parse(localStorage.getItem("loginVersion"))
 
-    console.log("current loginversion; " + loginVersion)
+    // console.log("current loginversion; " + loginVersion)
     
     let tempName
     let tempEmail
@@ -70,7 +70,7 @@ function Navbar(props) {
       if (loginVersion == "thirdParty" && userInfo == "") {
         //api call /api2/getInfo/<id>
         // funct call getInfo
-        console.log("was third pary login,,,, ")
+        // console.log("was third pary login,,,, ")
         getInfo()
 
         tempName = JSON.parse(localStorage.getItem("userName"))
@@ -94,7 +94,7 @@ function Navbar(props) {
         headers: { 'Content-Type': 'application/json'}
       })
       .catch(err => console.log(err));
-      console.log("navbar: " + result.data);
+      // console.log("navbar: " + result.data);
       localStorage.setItem("userName", JSON.stringify(result.data[0]))
       localStorage.setItem("userEmail", JSON.stringify(result.data[2]))
     };
@@ -104,7 +104,7 @@ function Navbar(props) {
       // getUserInfoLocal();
 
       if (dataDB == false) {
-        console.log("Was not logged in");
+        // console.log("Was not logged in");
         return  <button type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
       } else {
         return <div>
@@ -133,7 +133,7 @@ function Navbar(props) {
 
     const navBarConditon = () => {
       if (dataDB != false) {
-        console.log("should show create tree");
+        // console.log("should show create tree");
         return <div><li id="nav_item"><a href="/create">CreateTree</a></li>
         <li id="nav_item"> <a href= { gettingUserId() }>Works</a></li></div>
       }
