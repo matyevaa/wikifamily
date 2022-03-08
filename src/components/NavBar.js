@@ -10,16 +10,15 @@ import LogoutButton from './LogoutButton';
  * depending on the screen size, the nav bar options and login btns turns into
  * hamburger menu (without logo though) */
 
-
-
 function Navbar(props) {
   const [dataDB, setData] = useState(false);
   const [userInfo, setUserInfo] = useState([""]);
-  const { user, logoutUser } = useUserContext();
 
-  const { nav , isAuthenticated } = useAuth0();
+  const {
+    isAuthenticated,
+    user
+  } = useAuth0();
 
-  // const [userInfo, setUserInfo] = useState([]);
 
   //need to add the useEffect here
   useEffect(() => {
@@ -27,71 +26,32 @@ function Navbar(props) {
     // getInfo()
   }, []);
 
-  // returns the user data (full name ID and email)
-    /* const getUserInfo = async() => {
-      const userData = await axios ('/api2/info', {
-        mode: "no-cors",
-        headers: { 'Content-Type': 'application/json'}
-      })
-      .catch(err => console.log(err));
-
-      // console.log("inside getUserInfo, name: " + userData.data['0']['name'] + " " + userData.data['0']['id'] + " " + userData.data['0']['email']);
-      // console.log(userData.data['0']);
-      let temp = [userData.data['0']['name'], userData.data['0']['id'], userData.data['0']['email']];
-      setUserInfo(temp);
-      console.log("in gettingUserData: " + userInfo);
-    };
-
-    const facebookLogout = async() => {
-      const result = await axios ('/api2/logout', {
-        // mode: "cors",
-        headers: { 'Content-Type': 'application/json'}
-      })
-      .catch(err => console.log(err));
-      console.log(result);
-      localStorage.removeItem("userId")
-      window.location.href='http://localhost:3005/';
-    };
-
-    const loggedIn = async() => {
-      const result = await axios ('/api2/isLoggedIn', {
-        mode: "cors",
-        headers: { 'Content-Type': 'application/json'}
-      })
-      .catch(err => console.log(err));
-      setData(result.data);
-      console.log("isLoggedIn:" + dataDB);
-    }; */
-
     const getUserInfoLocal = () => {
     let tempId = JSON.parse(localStorage.getItem("userId"))
     let loginVersion = JSON.parse(localStorage.getItem("loginVersion"))
-
-    // console.log("current loginversion; " + loginVersion)
     
     let tempName
     let tempEmail
 
-      if (tempId != null) {
+      if (tempId != null && loginVersion == "thirdParty") {
         setData(true)
       }
 
       if (loginVersion == "thirdParty" && userInfo == "") {
-        //api call /api2/getInfo/<id>
-        // funct call getInfo
-        // console.log("was third pary login,,,, ")
         getInfo()
 
         tempName = JSON.parse(localStorage.getItem("userName"))
         tempEmail = JSON.parse(localStorage.getItem("userEmail"))
         tempId = JSON.parse(localStorage.getItem("userId"))
-
-
       }
-      else {
-        tempName = JSON.parse(localStorage.getItem("userId"))
-        tempId = JSON.parse(localStorage.getItem("userId"))
-        tempEmail = JSON.parse(localStorage.getItem("userEmail"))
+      else if (loginVersion == "oauth" && isAuthenticated == true) {
+        console.log("was oauth login")
+            tempName = user.name
+            tempId = user.nickname
+            tempEmail = user.email
+
+            localStorage.setItem("userId", JSON.stringify(user.nickname))
+            localStorage.setItem("userName", JSON.stringify(user.nickname))
       }
       
       let temp = [tempName, tempEmail, tempId]
@@ -109,34 +69,20 @@ function Navbar(props) {
     };
 
     const renderAuthButton = () => {
-      // loggedIn();
-      // getUserInfoLocal();
-
-      if (dataDB == false || isAuthenticated == false) {
+      if (dataDB == false && isAuthenticated == false) {
         console.log("Was not logged in");
-        //return  <button type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
-        return <LoginButton/>
+        return  <button type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
       } else {
         return <div>
-          <button className='accountBtns'>Welcome {JSON.parse(localStorage.getItem("user.name"))}!</button>
-          <button type="button" className="accountBtns rightButton"  
-          onClick={() => {handleLogout(); }}>Logout</button>
-          
-          
+          {console.log(userInfo)}
+          <button className='accountBtns'>Welcome {userInfo[0]}!</button>
+          {whichLogout()}          
         </div>
       }
     }
-    //<button className='accountBtns'>Welcome {JSON.parse(localStorage.getItem("userName"))}!</button>
-    //<button type="button" className="accountBtns rightButton"  
-    //onClick={() => {handleLogout(); }}>Logout</button>
 
     const handleLogout = () => {
-      // console.log("before " + dataDB);
       setData(false);
-
-      if (JSON.parse(localStorage.getItem("loginVersion")) == "firebase") {
-        logoutUser()
-      }
 
       localStorage.removeItem("userId")
       localStorage.removeItem("userEmail")
@@ -146,19 +92,28 @@ function Navbar(props) {
       window.location.href ='http://localhost:3005/'
     }
 
+    const whichLogout = () => {
+      if (JSON.parse(localStorage.getItem("loginVersion")) == "thirdParty") {
+        return <button type="button" className="accountBtns rightButton"  
+          onClick={() => {handleLogout(); }}>Logout</button>
+      }
+      else {
+        return <div id= "LogoutButton"><LogoutButton/></div>
+      }
+    }
+
     const navBarConditon = () => {
-      if (dataDB != false || isAuthenticated == true) {
+      if ((dataDB == false && isAuthenticated == true || (dataDB == true && isAuthenticated == false))) {
         // console.log("should show create tree");
         return <div><li id="nav_item"><a href="/create">CreateTree</a></li>
         <li id="nav_item"> <a href= { gettingUserId() }>Works</a></li>
-        <li id= "LogoutButton"><LogoutButton/></li>
         </div>
       }
     }
 
     const gettingUserId = () => {
       let saved = JSON.parse(localStorage.getItem("userId"))
-      return "http://localhost:3005/creator=" + saved + "/works"
+      return "http://localhost:3005/creator=" + userInfo[2] + "/works"
       
     }
   

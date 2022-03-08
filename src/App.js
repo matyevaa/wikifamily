@@ -42,8 +42,9 @@ function App() {
           <Route path="/add" component={AddPerson} />
           <Route path="/creator=:id/works" component={Works} render={(userId) => <Works {...userId}/>}/>
           <Route path="/treeId=:treeId/create" component={IndivTree} render={(treeId) => <IndivTree {...treeId}/>}/>
-          <Route path="/login" component={LoginButton} />
-          <Route path="/emailLogin" component={FirebaseLogin} />
+          <Route path="/login" component={Login} />
+          {/* <Route path="/emailLogin" component={FirebaseLogin} /> */}
+          <Route path="/emailLogin" component={LoginButton} />
           <Route path="/edit/:id" component={EditPerson} render={(props) => <EditPerson {...props}/>} />
         </Switch>
       </Router>

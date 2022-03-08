@@ -7,7 +7,7 @@ const Dashboard = () => {
     localStorage.setItem("userEmail", JSON.stringify(user.email))
     localStorage.setItem("userName", JSON.stringify(user.displayName))
     localStorage.setItem("userId", JSON.stringify(user.displayName))
-    localStorage.setItem("loginVersion", JSON.stringify("firebase"))
+    localStorage.setItem("loginVersion", JSON.stringify("oauth"))
 
     window.location.href="http://localhost:3005/creator=" + user.displayName + "/works"
 }

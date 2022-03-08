@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Works = (userId) => {
   const [userIdT, setUserIdT] = useState("");
@@ -12,6 +13,11 @@ const Works = (userId) => {
   }, []);
 
   const findingUserId = () => {
+    // if (isAuthenticated == true) {
+    //   localStorage.setItem("userId", JSON.stringify(user.nickname))
+    // }
+
+
     console.log("pathname: " + userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6))
 
     let temp = userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6)
@@ -20,7 +26,6 @@ const Works = (userId) => {
     if (temp.toString() != null) { // user id passed in
       console.log("What gonna put in localstorage " + temp)
       localStorage.setItem("userId", JSON.stringify(temp))
-      
     }
     else { // user id not passed in
       let saved = JSON.parse(localStorage.getItem("userId"))
@@ -28,7 +33,7 @@ const Works = (userId) => {
     }
 
     // if used the api to llogin 
-    if (JSON.parse(localStorage.getItem("loginVersion") != '"firebase"')) {
+    if (JSON.parse(localStorage.getItem("loginVersion") != '"oauth"')) {
       localStorage.setItem("loginVersion", JSON.stringify("thirdParty"))
       if(JSON.parse(localStorage.getItem("userName")) == null) {
         window.location.reload(false);

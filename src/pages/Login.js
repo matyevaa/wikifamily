@@ -3,11 +3,16 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 // import { render } from '@testing-library/react';
 import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons";
+import { useAuth0 } from '@auth0/auth0-react';
+import LoginButton from '../components/LoginButton';
+
 
 
 
 
 const Login = () => {
+  const { loginWithRedirect , isAuthenticated } = useAuth0();
+
   useEffect(() => {
     // checkLogin();
   }, []);
@@ -56,7 +61,10 @@ const Login = () => {
       <h2 className='loginTxt'>Or</h2>
 
       <div className='loginButton emailContainer'>
-        <Link className="email_btn" to="/emailLogin">Sign in with Email</Link>
+      {/* <button onClick={() => {loginWithRedirect()}}>
+        Log in with Email
+      </button> */}
+        <LoginButton/>
       </div>
     </div>
   );
