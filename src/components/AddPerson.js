@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
-//import FamilyTree from './FamilyTree'; 
+//import FamilyTree from './FamilyTree';
 
 
 const AddPerson = () => {
@@ -10,9 +10,12 @@ const AddPerson = () => {
   const [last_name, setLast_name] = useState("");
   const [info, setInfo] = useState("");
   const [gender, setGender] = useState("");
-  const [family_id_FK, setFamily_id] = useState("");
+  const [birth, setBirth] = useState("");
+  const [death, setDeath] = useState("");
+  const [family_id, setFamily_id] = useState("");
+  const [parent, setParent] = useState("");
 
-  const [treeElements, updateTree] = useState([]) 
+  const [treeElements, updateTree] = useState([])
 
   const history = useHistory();
 
@@ -25,42 +28,49 @@ const AddPerson = () => {
       last_name: last_name,
       info: info,
       gender: gender,
-      family_id_FK: family_id_FK
+      birth: birth,
+      death: death,
+      family_id: family_id,
+      parent: parent
     });
     history.push("/create");
   }
 
- 
   const firstNameRef = useRef()
   const lastNameRef = useRef()
   const descRef = useRef()
   const genderRef = useRef()
+  const birthRef = useRef()
+  const deathRef = useRef()
+  const parentRef = useRef()
   const familyIDRef = useRef()
 
   function handleAddPerson(e){
-    const firstName = firstNameRef.current.value  
+    const firstName = firstNameRef.current.value
     const lastName = lastNameRef.current.value
     const desc = descRef.current.value
     const gender = genderRef.current.value
+    const birth = birthRef.current.value
+    const death = deathRef.current.value
+    const parent = parentRef.current.value
     const familyID = familyIDRef.current.value
 
-    if (firstName === '' || lastName === '' || desc === '' || gender === '' || familyID === '' ) return
-    
+    if (firstName === '' || lastName === '' || desc === '' || gender === '' || parent === "" || familyID === '' ) return
+
     updateTree(prevTreeElements => {
-      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, familyID: familyID}]
+      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, birth: birth, death: death, parent: parent, familyID: familyID}]
     })
+
     console.log(firstName)
     firstNameRef.current.value = null
     lastNameRef.current.value = null
     descRef.current.value = null
     genderRef.current.value = null
+    birthRef.current.value = null
+    deathRef.current.value = null
+    parentRef.current.value = null
     familyIDRef.current.value = null
-    
   }
-    
-
-
-
 
 
   return (
@@ -88,8 +98,23 @@ const AddPerson = () => {
         </div>
 
         <div>
+          <label>Birth</label>
+          <input ref={birthRef} type="text" placeholder="Date of Birth" name="birth" value={birth} onChange={(e) => setBirth(e.target.value)}/>
+        </div>
+
+        <div>
+          <label>Death</label>
+          <input ref={deathRef} type="text" placeholder="Date of Death" name="death" value={death} onChange={(e) => setDeath(e.target.value)}/>
+        </div>
+
+        <div>
+          <label>Parent</label>
+          <input ref={parentRef} type="text" placeholder="Parent ID" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
+        </div>
+
+        <div>
           <label>Family id</label>
-          <input ref={familyIDRef} type="text" placeholder="Family id" name="family_id_FK" value={family_id_FK} onChange={(e) => setFamily_id(e.target.value)}/>
+          <input ref={familyIDRef} type="text" placeholder="Family id" name="family_id" value={family_id} onChange={(e) => setFamily_id(e.target.value)}/>
         </div>
 
           <button className="add_btn" type="submit"  onClick={handleAddPerson}>Add Person</button>
