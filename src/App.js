@@ -11,9 +11,9 @@ import FirebaseLogin from './pages/FirebaseLogin'
 import Navbar from './components/NavBar.js';
 import AddPerson from './components/AddPerson.js';
 import EditPerson from './components/EditPerson.js';
-import FamilyTree from './components/FamilyTree.js';
-import TreeElement from './components/TreeElement.js'
+import LoginButton from './components/LoginButton';
 import React, { useState } from 'react';
+
 
 /* special library and its components to perform redirection easily */
 import {
@@ -42,7 +42,7 @@ function App() {
           <Route path="/add" component={AddPerson} />
           <Route path="/creator=:id/works" component={Works} render={(userId) => <Works {...userId}/>}/>
           <Route path="/treeId=:treeId/create" component={IndivTree} render={(treeId) => <IndivTree {...treeId}/>}/>
-          <Route path="/login" component={Login} />
+          <Route path="/login" component={LoginButton} />
           <Route path="/emailLogin" component={FirebaseLogin} />
           <Route path="/edit/:id" component={EditPerson} render={(props) => <EditPerson {...props}/>} />
         </Switch>

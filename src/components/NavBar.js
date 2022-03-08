@@ -1,15 +1,24 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 import axios from "axios";
 import { useUserContext } from "../context/userContext";
+import LoginButton from "./LoginButton"
+import { Auth0Provider } from '@auth0/auth0-react';
+import { useAuth0 } from '@auth0/auth0-react';
+import LogoutButton from './LogoutButton';
 
 /* we may need to make nav bar responsive:
  * depending on the screen size, the nav bar options and login btns turns into
  * hamburger menu (without logo though) */
 
+
+
 function Navbar(props) {
   const [dataDB, setData] = useState(false);
   const [userInfo, setUserInfo] = useState([""]);
   const { user, logoutUser } = useUserContext();
+
+  const { nav , isAuthenticated } = useAuth0();
+
   // const [userInfo, setUserInfo] = useState([]);
 
   //need to add the useEffect here
@@ -103,17 +112,23 @@ function Navbar(props) {
       // loggedIn();
       // getUserInfoLocal();
 
-      if (dataDB == false) {
-        // console.log("Was not logged in");
-        return  <button type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
+      if (dataDB == false || isAuthenticated == false) {
+        console.log("Was not logged in");
+        //return  <button type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
+        return <LoginButton/>
       } else {
         return <div>
-          <button className='accountBtns'>Welcome {JSON.parse(localStorage.getItem("userName"))}!</button>
+          <button className='accountBtns'>Welcome {JSON.parse(localStorage.getItem("user.name"))}!</button>
           <button type="button" className="accountBtns rightButton"  
           onClick={() => {handleLogout(); }}>Logout</button>
+          
+          
         </div>
       }
     }
+    //<button className='accountBtns'>Welcome {JSON.parse(localStorage.getItem("userName"))}!</button>
+    //<button type="button" className="accountBtns rightButton"  
+    //onClick={() => {handleLogout(); }}>Logout</button>
 
     const handleLogout = () => {
       // console.log("before " + dataDB);
@@ -132,10 +147,12 @@ function Navbar(props) {
     }
 
     const navBarConditon = () => {
-      if (dataDB != false) {
+      if (dataDB != false || isAuthenticated == true) {
         // console.log("should show create tree");
         return <div><li id="nav_item"><a href="/create">CreateTree</a></li>
-        <li id="nav_item"> <a href= { gettingUserId() }>Works</a></li></div>
+        <li id="nav_item"> <a href= { gettingUserId() }>Works</a></li>
+        <li id= "LogoutButton"><LogoutButton/></li>
+        </div>
       }
     }
 
