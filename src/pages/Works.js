@@ -9,7 +9,8 @@ const Works = (userId) => {
 
   useEffect(() => {
     findingUserId();
-    getFamilyTrees();
+    let saved = JSON.parse(localStorage.getItem("userId"))
+    getFamilyTrees(saved);
   }, []);
 
   const findingUserId = () => {
@@ -50,8 +51,8 @@ const Works = (userId) => {
     
   }
 
-  const getFamilyTrees = async() => {
-    const result = await axios (`/api1/listTrees`, {
+  const getFamilyTrees = async(user_id) => {
+    const result = await axios ('http://localhost:5000/api1/listTrees/' + user_id, {
       headers: { 'Content-Type': 'application/json'}
     })
     .then(result => setData(result.data))
@@ -81,6 +82,7 @@ const Works = (userId) => {
       <h1 className="subtopic text">Here are your works!</h1>
       <button className="add_tree_btn">Create New Tree (does nothing rn)</button>
       {/* <p className="description text"><a href= { createIndivTreeLinks(10) }>indiv family tree</a></p> */}
+      
 
       {treesOutput()}
     </div>

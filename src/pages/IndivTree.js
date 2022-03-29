@@ -12,6 +12,7 @@ const IndivTree = (treeId) => {
 
   // adding from /create
   const [dataDB, setData] = useState([]);
+  let addLink = "/add/" + treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
   // end add from /create
 
   useEffect(() => {
@@ -72,7 +73,7 @@ const IndivTree = (treeId) => {
 
       <div className="class_btn">
         <h3>Database Data</h3>
-        <Link to="/add" className="add_btn">Add Person</Link>
+        <Link to={addLink} className="add_btn">Add Person</Link>
       </div>
       <table className="result_table">
         <thead>
