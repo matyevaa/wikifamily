@@ -39,13 +39,13 @@ function App() {
           <Route path="/create" component={Create} />
           <Route path="/help" component={Help} />
           <Route path="/about" component={About} />
-          <Route path="/add" component={AddPerson} />
+          <Route path="/add/:id" component={AddPerson} render={(id) => <AddPerson {...id}/>}/>
           <Route path="/creator=:id/works" component={Works} render={(userId) => <Works {...userId}/>}/>
           <Route path="/treeId=:treeId/create" component={IndivTree} render={(treeId) => <IndivTree {...treeId}/>}/>
           <Route path="/login" component={Login} />
           {/* <Route path="/emailLogin" component={FirebaseLogin} /> */}
           <Route path="/emailLogin" component={LoginButton} />
-          <Route path="/edit/:id" component={EditPerson} render={(props) => <EditPerson {...props}/>} />
+          <Route path="/treeID=:treeId/edit/:id" component={EditPerson} render={(props) => <EditPerson {...props}/>} />
         </Switch>
       </Router>
     </div>
