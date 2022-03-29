@@ -4,8 +4,7 @@ import axios from 'axios';
 //import FamilyTree from './FamilyTree';
 
 
-const AddPerson = () => {
-
+const AddPerson = (tree_id) => {
   const [first_name, setFirst_name] = useState("");
   const [last_name, setLast_name] = useState("");
   const [info, setInfo] = useState("");
@@ -19,9 +18,14 @@ const AddPerson = () => {
 
   const history = useHistory();
 
+  // get current tree id
+  console.log("pathname: " + tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length))
+  let treeID = tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length)
+  let link = "/treeID="+ treeID +"/create"
+
   const savePerson = async(e) => {
     e.preventDefault();
-    await axios.post('/api1/create', {
+    await axios.post('http://localhost:5000/api1/createjj/' + treeID, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
       first_name: first_name,
@@ -33,7 +37,9 @@ const AddPerson = () => {
       family_id: family_id,
       parent: parent
     });
-    history.push("/create");
+    
+    // history.push("/create");
+    history.push(link);
   }
 
   const firstNameRef = useRef()
@@ -58,7 +64,7 @@ const AddPerson = () => {
     if (firstName === '' || lastName === '' || desc === '' || gender === '' || parent === "" || familyID === '' ) return
 
     updateTree(prevTreeElements => {
-      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, birth: birth, death: death, parent: parent, familyID: familyID}]
+      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, birth: birth, death: death, parent: parent, familyID: treeID}]
     })
 
     console.log(firstName)
@@ -75,7 +81,7 @@ const AddPerson = () => {
 
   return (
     <div>
-      <form id="target" method="POST" action="{{url_for('create')}}" encType="multipart/form-data" onSubmit={savePerson}>
+      <form id="target" method="POST" action={link} encType="multipart/form-data" onSubmit={savePerson}>
 
         <div>
           <label>First Name</label>

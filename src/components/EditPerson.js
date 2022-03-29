@@ -5,7 +5,7 @@ import { useParams, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 
-const EditPerson = (props) => {
+const EditPerson = (props, treeId) => {
   const [dataDB, setData] = useState([]);
   const [first_name, setFirst_name] = useState("");
   const [last_name, setLast_name] = useState("");
@@ -17,8 +17,15 @@ const EditPerson = (props) => {
   const [parent, setParent] = useState("");
 
   const individual_id = props.match.params.id;
+  const tree_id = props.match.params.treeId;
+
+  console.log("the tree is " + tree_id)
 
   const history = useHistory();
+
+  // console.log("pathname: " + treeId.location)
+  // let treeID = treeId.location['pathname'].slice(5,(treeId.location['pathname']).length)
+  let link = "/treeID="+ tree_id +"/create"
 
   const handleFormSubmit = async(e) => {
     e.preventDefault();
@@ -34,7 +41,8 @@ const EditPerson = (props) => {
       family_id: family_id,
       parent: parent
     });
-    history.push("/create");
+    // history.push("/create");
+    history.push(link);
   }
 
   const preloadedValues = {
@@ -69,7 +77,7 @@ const EditPerson = (props) => {
 
   return (
     <div>
-      <form id="target" onSubmit={handleFormSubmit} method="PUT" action="{{url_for('create')}}" encType="multipart/form-data">
+      <form id="target" onSubmit={handleFormSubmit} method="PUT" action={link} encType="multipart/form-data">
 
         <div>
           <label>First Name</label>
