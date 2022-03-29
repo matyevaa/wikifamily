@@ -4,6 +4,7 @@ Authlib==0.15.5
 Babel==2.9.1
 beautifulsoup4==4.9.3
 blinker==1.4
+cachelib==0.6.0
 certifi==2021.5.30
 cffi==1.15.0
 charset-normalizer==2.0.4
@@ -11,12 +12,15 @@ click==8.0.1
 colorama==0.4.4
 coverage==5.5
 cryptography==35.0.0
+Deprecated==1.2.13
 docopt==0.6.2
+facepy==1.0.12
 flake8==3.9.2
 Flask==2.0.2
 Flask-BabelEx==0.9.4
 Flask-Cors==3.0.10
 Flask-Dance==5.1.0
+Flask-Helper==1.2.7
 Flask-Login==0.5.0
 Flask-Mail==0.9.1
 Flask-MySQL==1.5.2
@@ -24,6 +28,7 @@ Flask-MySQLdb==0.2.0
 Flask-OAuth==0.12
 Flask-Principal==0.4.0
 Flask-Security==3.0.0
+Flask-Session==0.4.0
 Flask-Social==1.6.2
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.15.1
@@ -37,6 +42,9 @@ itsdangerous==2.0.1
 Jinja2==3.0.1
 MarkupSafe==2.0.1
 mccabe==0.6.1
+mysql==0.0.3
+mysql-connector==2.2.9
+mysql-connector-python==8.0.27
 mysqlclient==2.0.3
 numpy==1.21.1
 oauth2==1.9.0.post1
@@ -46,6 +54,8 @@ pandas==1.3.1
 passlib==1.7.4
 pipreqs==0.4.10
 pluggy==0.13.1
+protobuf==3.19.3
+psycopg2==2.9.3
 py==1.10.0
 pycodestyle==2.7.0
 pycparser==2.21
@@ -57,6 +67,7 @@ pytest-cov==2.12.0
 python-dateutil==2.8.2
 python-dotenv==0.19.2
 pytz==2021.1
+redis==4.1.2
 requests==2.26.0
 requests-oauthlib==1.3.0
 six==1.16.0
@@ -69,5 +80,6 @@ urllib3==1.26.6
 URLObject==2.4.3
 webencodings==0.5.1
 Werkzeug==2.0.1
+wrapt==1.13.3
 WTForms==2.3.3
 yarg==0.1.9
