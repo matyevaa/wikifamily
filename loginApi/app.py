@@ -1,5 +1,6 @@
 from re import template
-from flask import Flask, render_template, url_for, redirect, flash, make_response
+from flask import Flask, render_template, url_for, redirect, flash, make_response, request
+from facepy import SignedRequest
 import os
 from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 from flask_dance.contrib.google import make_google_blueprint
@@ -46,7 +47,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/
 facebook_blueprint = make_facebook_blueprint(client_id="REMOVED", client_secret="REMOVED")
 app.register_blueprint(facebook_blueprint, url_prefix="/auth/facebook/wikifam", scope=["id","name","email"])
 # for Google
-google_blueprint = make_google_blueprint(client_id="REMOVED",client_secret="REMOVED", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
+google_blueprint = make_google_blueprint(client_id="REMOCED",client_secret="REMOVED", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
 app.register_blueprint(google_blueprint,url_prefix="/auth")
 
 
@@ -228,6 +229,48 @@ def getName(id):
     userInfo.append(user.email)
 
     return json.dumps(userInfo)
+
+
+# def parseSignedReq(signedReq):
+#     signedData = SignedRequest.parse(signedReq, "7bad27c3dc273670e94b219ebd5accb6")
+#     return signedData
+
+@app.route("/api2/deleteCallback", methods=['POST'])
+def dataDelete(request, data):
+    # will be called when the user wants to remove FB login info from our DB
+    # necessary for facebook login to be made live
+
+    try:
+        # parse the response from FB for the user id
+        signedReq = request.POST['signed_request']
+        signedData = SignedRequest.parse(signedReq, "7bad27c3dc273670e94b219ebd5accb6")
+
+        print("id to be deleted: {id}", id=signedData["user_id"])
+
+        
+        # # find it in the DB and remove it
+        user = User.query.filter_by(id = signedData["user_id"])
+        oauth = OAuth.query.filter_by(user_id=signedData["user_id"])
+        user.delete()
+        oauth.delete()
+        responseCode = 200
+
+    except Exception as e:
+        responseCode = 403
+
+    # response for FB should be --V
+        # { url: '<url>', confirmation_code: '<code>' }
+
+    # treat it like an account deletion -- would need to delete the DB info too
+    return {
+        'url': "http://localhost:3000/deletionStat/{confirmation_code}", 'confirmation_code': responseCode}
+
+@app.route("/deletionStat/<response>")
+def deleteStat(response):
+    if (response == 200):
+        return "sucessfully deleted user data"
+    else:
+        return "was unable to delete user data"
 
 if __name__ == '__main__':
     db.create_all()
