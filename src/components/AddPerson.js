@@ -25,7 +25,8 @@ const AddPerson = (tree_id) => {
 
   const savePerson = async(e) => {
     e.preventDefault();
-    await axios.post('http://localhost:5000/api1/createjj/' + treeID, {
+    let getLink = "http://localhost:5000/api1/createjj/" + treeID
+    await axios.post(getLink, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
       first_name: first_name,

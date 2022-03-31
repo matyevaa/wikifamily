@@ -192,6 +192,7 @@ def getFamilyName(id):
 
     # testing for getting data w treeId
 @app.route('/api1/createjj/<treeId>', methods=['GET', 'DELETE', 'PUT'])
+@cross_origin(supports_credentials=True)
 def get_family_w_treeID(treeId):
     print("get family apis, /<treeId>")
     dbInfo = connect()
@@ -214,6 +215,7 @@ def get_family_w_treeID(treeId):
     return json.dumps(json_data)
 
 @app.route('/api1/createjj/<treeId>', methods=['GET','POST'])
+@cross_origin(supports_credentials=True)
 def add_person_w_treeID(treeId):
     dbInfo = connect()
     cursor = dbInfo[1]
@@ -249,44 +251,6 @@ def add_person_w_treeID(treeId):
     cursor.close()
     cnx.close()
     return redirect(url_for('get_family_w_treeID', treeId=treeId))
-
-# @app.route('/api1/createjj/<treeId>', methods=['GET','POST'])
-# def add_person_w_treeID(treeId):
-#     dbInfo = connect()
-#     cursor = dbInfo[1]
-#     cnx = dbInfo[0]
-
-#     #cursor.execute('SELECT family_id FROM family')
-#     #f = cursor.fetchall()
-#     #print("Family id in post ", f)
-
-#     print("/createjj/<treeId> GET POST")
-#     msg = ''
-#     if request.method=='POST':
-#         theform = request.get_json(force=True)
-#         fn = theform['first_name']
-#         ls = theform['last_name']
-#         i = theform['info']
-#         g = theform['gender']
-#         b = theform['birth']
-#         d = theform['death']
-#         fid = theform['family_id']
-#         p = theform['parent']
-#         cursor.execute('SELECT * FROM individual WHERE first_name = %s', (fn,))
-#         result = cursor.fetchone()
-#         if result:
-#             msg = 'Such a person already exists in your family!'
-#         elif result is None:
-#             cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,))
-#             cnx.commit()
-#             msg = "Successfully added a person!"
-#     else:
-#         msg = "Please fill out the form."
-#     print("Message: ", msg)
-#     cursor.close()
-#     cnx.close()
-#     return redirect(url_for('get_family_w_treeID', treeId=treeId))
-
 
 @app.route('/api1/deletejj/<individual_id>/<treeId>', methods=['DELETE'])
 def delete_person_w_treeID(individual_id, treeId):
