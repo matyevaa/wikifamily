@@ -3,11 +3,23 @@ import { Link } from "react-router-dom";
 import { render } from "react-dom";
 import Tree from "../components/Tree";
 import axios from 'axios';
+import TreeList from "../components/TreeView";
 
 const styles = {
   fontFamily: "sans-serif",
   textAlign: "center"
 };
+
+
+const tree = [{
+  "name":"Root Node","collapsed":true,"nodes":
+    [{"name":"Node 1","collapsed":true,"nodes":
+      [{"name":"Sub node"}]},
+    {"name":"Node 2","collapsed":true,"nodes":
+      [{"name":"Sub node "}]},
+    {"name":"Node 3","collapsed":true,"nodes":
+      [{"name":"Sub node"}]}]}];
+
 
 const Create = () => {
 
@@ -63,6 +75,10 @@ const Create = () => {
       <div className="class_btn">
         <h3>Database Data</h3>
         <Link to="/add" className="add_btn">Add Person</Link>
+
+        <TreeList list={tree}/>
+
+
       </div>
       <table className="result_table">
         <thead>
@@ -76,6 +92,7 @@ const Create = () => {
               <td>Death</td>
               <td>Family</td>
               <td>Parent</td>
+              <td>Children</td>
               <td></td>
            </tr>
         </thead>
@@ -93,6 +110,7 @@ const Create = () => {
             <td>{item.death}</td>
             <td>{item.family_id}</td>
             <td>{item.parent}</td>
+            <td>{item.children}</td>
             <td>
               <Link to={`edit/${item.individual_id}`} className="edit_btn">Edit</Link>
               <button onClick={ () => delData(item.individual_id) } className="del_btn">Delete</button>

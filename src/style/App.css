@@ -4,6 +4,13 @@ body {
   padding: 40px;
 }
 
+.tree_item {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
 .link {
   margin-right: 20px;
 }
