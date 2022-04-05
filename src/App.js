@@ -12,7 +12,9 @@ import Navbar from './components/NavBar.js';
 import AddPerson from './components/AddPerson.js';
 import EditPerson from './components/EditPerson.js';
 import LoginButton from './components/LoginButton';
+import NewEmpty from './components/NewTreeForm';
 import React, { useState } from 'react';
+
 
 
 /* special library and its components to perform redirection easily */
@@ -43,9 +45,10 @@ function App() {
           <Route path="/creator=:id/works" component={Works} render={(userId) => <Works {...userId}/>}/>
           <Route path="/treeId=:treeId/create" component={IndivTree} render={(treeId) => <IndivTree {...treeId}/>}/>
           <Route path="/login" component={Login} />
+          <Route path="/new" component={NewEmpty} />
           {/* <Route path="/emailLogin" component={FirebaseLogin} /> */}
           <Route path="/emailLogin" component={LoginButton} />
-          <Route path="/treeID=:treeId/edit/:id" component={EditPerson} render={(props) => <EditPerson {...props}/>} />
+          <Route path="/treeID=:treeId/edit/:id" component={EditPerson} render={(treeID, props) => <EditPerson {...props}/>} />
         </Switch>
       </Router>
     </div>

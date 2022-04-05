@@ -318,5 +318,34 @@ def edit_person_w_treeID(individual_id, treeId):
     cnx.close()
     return redirect(url_for('get_family_w_treeID', treeId=treeId))
 
+@app.route('/api1/createTree', methods=['POST'])
+def create_empty_tree():
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    msg = ''
+    if request.method=='POST':
+        theform = request.get_json(force=True)
+        
+        uid = theform['user_id']
+        fn = theform['parent']
+        
+        cursor.execute('SELECT * FROM family WHERE family_name = %s', (fid,))
+        result = cursor.fetchone()
+        if result:
+            msg = 'A family tree with that name already exists'
+        elif result is None:
+            cursor.execute('''INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s)''', (fn,uid))
+
+            cnx.commit()
+            msg = "Successfully added a person!"
+    else:
+        msg = "Please fill out the form."
+    print("Message: ", msg)
+    cursor.close()
+    cnx.close()
+    return json.dumps("thx")
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

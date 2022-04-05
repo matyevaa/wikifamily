@@ -16,12 +16,15 @@ const AddPerson = (tree_id) => {
 
   const [treeElements, updateTree] = useState([])
 
+  // const tree_id = props.match.params.id;
+
   const history = useHistory();
 
   // get current tree id
   console.log("pathname: " + tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length))
   let treeID = tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length)
   let link = "/treeID="+ treeID +"/create"
+  // let link = "/treeID="+ tree_id +"/create"
 
   const savePerson = async(e) => {
     e.preventDefault();
@@ -35,8 +38,9 @@ const AddPerson = (tree_id) => {
       gender: gender,
       birth: birth,
       death: death,
-      family_id: family_id,
-      parent: parent
+      // family_id: family_id,
+      family_id: treeID,
+      parent: parent,
     });
     
     // history.push("/create");
@@ -50,7 +54,7 @@ const AddPerson = (tree_id) => {
   const birthRef = useRef()
   const deathRef = useRef()
   const parentRef = useRef()
-  const familyIDRef = useRef()
+  // const familyIDRef = useRef()
 
   function handleAddPerson(e){
     const firstName = firstNameRef.current.value
@@ -60,12 +64,12 @@ const AddPerson = (tree_id) => {
     const birth = birthRef.current.value
     const death = deathRef.current.value
     const parent = parentRef.current.value
-    const familyID = familyIDRef.current.value
+    // const familyID = familyIDRef.current.value
 
-    if (firstName === '' || lastName === '' || desc === '' || gender === '' || parent === "" || familyID === '' ) return
+    if (firstName === '' || lastName === '' || desc === '' || gender === '' || parent === "" /* || familyID === ''  */) return
 
     updateTree(prevTreeElements => {
-      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, birth: birth, death: death, parent: parent, familyID: treeID}]
+      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, birth: birth, death: death, parent: parent/* , familyID: treeID */}]
     })
 
     console.log(firstName)
@@ -76,7 +80,7 @@ const AddPerson = (tree_id) => {
     birthRef.current.value = null
     deathRef.current.value = null
     parentRef.current.value = null
-    familyIDRef.current.value = null
+    // familyIDRef.current.value = null
   }
 
 
@@ -119,15 +123,23 @@ const AddPerson = (tree_id) => {
           <input ref={parentRef} type="text" placeholder="Parent ID" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
         </div>
 
-        <div>
-          <label>Family id</label>
-          <input ref={familyIDRef} type="text" placeholder="Family id" name="family_id" value={family_id} onChange={(e) => setFamily_id(e.target.value)}/>
-        </div>
+        {/* added code to line 135 */}
 
           <button className="add_btn" type="submit"  onClick={handleAddPerson}>Add Person</button>
       </form>
     </div>
   );
 }
+
+{/* <div>
+          <label>Family id</label>
+          {/* <input ref={familyIDRef} type="text" placeholder="Family id" name="family_id" value={family_id} onChange={(e) => setFamily_id(e.target.value)}/>
+          <input type="text" value={treeID}/>
+        </div>
+
+        <div>
+          <label>User ID</label>
+          <input type="text" value={JSON.parse(localStorage.getItem("userId"))}/>
+        </div> */}
 
 export default AddPerson;
