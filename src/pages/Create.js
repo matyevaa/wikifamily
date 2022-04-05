@@ -24,6 +24,7 @@ const tree = [{
 const Create = () => {
 
   const [dataDB, setData] = useState([]);
+  const [shareSE, setShareSE] = useState([]);
 
   useEffect(() => {
     getData();
@@ -65,6 +66,22 @@ const Create = () => {
     .catch(err => console.log(err));
   };
 
+  const shareEdit = async(id) => {
+    console.log("individual id chosen is: ", id);
+    // await axios.put (`http://localhost:5000/api1/put/${individual_id}`, {
+    //   headers: { 'Content-Type': 'application/json'}
+    // })
+    // .then(response => setData(response.data))
+    // .catch(err => console.log(err));
+  };
+
+  const sharingStartEnd = (id) => {
+    console.log("individual id chosen is: ", id);
+
+    setShareSE(shareSE, id)
+    console.log(shareSE)
+  }
+
 
   return (
     <div className="content">
@@ -101,7 +118,8 @@ const Create = () => {
 
        {dataDB.map((item, idx) => (
           <tr key={idx}>
-            <td>{item.individual_id}</td>
+            {/* <td>{item.individual_id}</td> */}
+            <div onClick={() => sharingStartEnd(item.individual_id)}><td>{item.individual_id}</td></div>
             <td>{item.first_name}</td>
             <td>{item.last_name}</td>
             <td>{item.info}</td>
