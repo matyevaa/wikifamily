@@ -7,11 +7,11 @@ import Login from './pages/Login.js';
 import About from './pages/About.js';
 import Works from './pages/Works.js';
 import IndivTree from './pages/IndivTree';
-import FirebaseLogin from './pages/FirebaseLogin'
 import Navbar from './components/NavBar.js';
 import AddPerson from './components/AddPerson.js';
 import EditPerson from './components/EditPerson.js';
 import LoginButton from './components/LoginButton';
+import UserLoginInfo from './components/UserLoginInfo'
 //import NewEmpty from './components/NewTreeForm';
 import React, { useState } from 'react';
 
@@ -36,6 +36,7 @@ function App() {
     <div>
       <Navbar/>
       <Router>
+      <UserLoginInfo/>
         <Switch>
           <Route exact path="/" component={Homepage} />
           <Route path="/create" component={Create} />
@@ -46,7 +47,6 @@ function App() {
           <Route path="/treeId=:treeId/create" component={IndivTree} render={(treeId) => <IndivTree {...treeId}/>}/>
           <Route path="/login" component={Login} />
           {/*<Route path="/new" component={NewEmpty} />*/}
-          {/* <Route path="/emailLogin" component={FirebaseLogin} /> */}
           <Route path="/emailLogin" component={LoginButton} />
           <Route path="/treeID=:treeId/edit/:id" component={EditPerson} render={(treeID, props) => <EditPerson {...props}/>} />
         </Switch>

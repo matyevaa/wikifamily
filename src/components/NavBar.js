@@ -1,6 +1,5 @@
 import React, {useState, useEffect, Fragment} from 'react';
 import axios from "axios";
-import { useUserContext } from "../context/userContext";
 import LoginButton from "./LoginButton"
 import { Auth0Provider } from '@auth0/auth0-react';
 import { useAuth0 } from '@auth0/auth0-react';
