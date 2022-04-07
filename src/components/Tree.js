@@ -3,21 +3,16 @@ import Tree from "react-d3-tree";
 import clone from "clone";
 
 
-const containerStyles = {
-  width: "100%",
-  height: "80vh"
-};
-
 export default class CenteredTree extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      //db_data: this.props.dataDB,
+      db_data: this.props.dataDB,
       visibility: false,
       data: []
     }
     this.showTree = this.showTree.bind(this);
-    console.log("db ", this.state.db_data);
+    console.log("db ", this.state.dataDB);
   }
 
   injectedNodesCount = 0;
@@ -50,12 +45,16 @@ export default class CenteredTree extends React.PureComponent {
     this.setState({
       visibility: !visibility,
       data: {
-          name: this.props.dataDB[1].first_name,
+          name: this.props.dataDB[0].ParentName,
           children: [
-            {  name: this.props.dataDB[2].first_name },
-            { name: this.props.dataDB[3].first_name }
+            { name: this.props.dataDB[0].Child1,
+              children: [
+                { name: this.props.dataDB[0].Child2 }
+              ]
+            },
+            { name: "Bogonok's Sibling"}
           ]
-        }
+      }
     })
   }
 
@@ -80,11 +79,14 @@ export default class CenteredTree extends React.PureComponent {
     }
     else {
       return (
-        <div style={containerStyles} ref={tc => (this.treeContainer = tc)}>
-          <button onClick={this.addChildNode}>Add Node</button>
-          <button onClick={this.removeChildNode}>Remove Node</button>
-          <button onClick={this.showTree}> {this.state.visibility ? "Close Tree" : "Show Tree"}</button>
-
+        <div className="containerStyles" ref={tc => (this.treeContainer = tc)}>
+          <div className="showTreeContainer">
+            <button className="graphBtn" id="showTree" onClick={this.showTree}> {this.state.visibility ? "Close Tree" : "Show Tree"}</button>
+          </div>
+          <div className="graphBtnContainer">
+            <button className="graphBtn" id="addGraphNode" onClick={this.addChildNode}>Add Node</button>
+            <button className="graphBtn" onClick={this.removeChildNode}>Remove Node</button>
+          </div>
           {visibility ?
             <Tree
               data={this.state.data}

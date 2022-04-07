@@ -9,6 +9,7 @@ const LoginButton = () => {
     //     localStorage.setItem("userName", JSON.stringify("oauth_noName"))
     //     localStorage.setItem("userEmail", JSON.stringify("oauth_noEmail"))
     localStorage.setItem("loginVersion", JSON.stringify("oauth"))
+    
   }
 
   return (

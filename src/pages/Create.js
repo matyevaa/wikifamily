@@ -10,22 +10,13 @@ const styles = {
   textAlign: "center"
 };
 
-
-const tree = [{
-  "name":"Root Node","collapsed":true,"nodes":
-    [{"name":"Node 1","collapsed":true,"nodes":
-      [{"name":"Sub node"}]},
-    {"name":"Node 2","collapsed":true,"nodes":
-      [{"name":"Sub node "}]},
-    {"name":"Node 3","collapsed":true,"nodes":
-      [{"name":"Sub node"}]}]}];
-
-
 const Create = () => {
 
   const [dataDB, setData] = useState([]);
   const [shareStart, setShareStart] = useState("");
   const [shareEnd, setShareEnd] = useState("");
+  const [showView, setShowView] = useState(false);
+  const [showGraph, setShowGraph] = useState(false);
 
   useEffect(() => {
     getData();
@@ -67,11 +58,11 @@ const Create = () => {
     .catch(err => console.log(err));
   };
 
-  /* 
+  /*
   // api call to share fragment of DB
   // send start indivID and end --> + email to share it with
   // will need to do check of whether or not email exists in user DB
-  
+
   const shareEdit = async(id) => {
     console.log("individual id chosen is: ", id);
     // await axios.put (`http://localhost:5000/api1/put/${individual_id}`, {
@@ -91,9 +82,6 @@ const Create = () => {
       setShareEnd(id)
       console.log("end: " + id)
     }
-
-
-
     // setShareSE([shareSE +","+ id])
     // console.log(shareSE)
   }
@@ -101,18 +89,24 @@ const Create = () => {
 
   return (
     <div className="content">
-      <h1 className="subtopic text">Create Tree Page</h1>
-      <Tree dataDB={dataDB}/>
+      <h1 className="subtopic">Create Tree Page</h1>
 
+      <div className="tree_center">
+        <div class="tree_options">
+          <h3 id="tree_view" onClick={() => { setShowView(showView => !showView); setShowGraph(false) } }>Tree View</h3>
+          <h3 id="tree_graph" onClick={() => { setShowGraph(showGraph => !showGraph); setShowView(false) } }>Tree Graph</h3>
+        </div>
+      </div>
+
+      { showView ? <TreeList list={dataDB}/> : null }
+      { showGraph ? <Tree dataDB={dataDB}/> : null }
 
       <div className="class_btn">
         <h3>Database Data</h3>
         <Link to="/add" className="add_btn">Add Person</Link>
-
-        <TreeList list={tree}/>
-
-
       </div>
+
+
       <table className="result_table">
         <thead>
           <tr>
