@@ -41,13 +41,15 @@ GOOGLE_CLIENT_SECRET=os.environ.get("GOOGLE_CLIENT_SECRET")
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://b2f8725312304e:0c26bf48@us-cdbr-east-05.cleardb.net/heroku_688d3d7a3cbb111'
+# mysql://b2f8725312304e:0c26bf48@us-cdbr-east-05.cleardb.net/heroku_688d3d7a3cbb111?reconnect=true
 
 # for Facebook
-facebook_blueprint = make_facebook_blueprint(client_id="REMOVED", client_secret="REMOVED")
+facebook_blueprint = make_facebook_blueprint(client_id="1647653595405093", client_secret="7bad27c3dc273670e94b219ebd5accb6")
 app.register_blueprint(facebook_blueprint, url_prefix="/auth/facebook/wikifam", scope=["id","name","email"])
 # for Google
-google_blueprint = make_google_blueprint(client_id="REMOCED",client_secret="REMOVED", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
+google_blueprint = make_google_blueprint(client_id="829398755356-9fsjod7oisuf8sn0rihoj30fk76mcfko.apps.googleusercontent.com",client_secret="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", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
 app.register_blueprint(google_blueprint,url_prefix="/auth")
 
 
@@ -59,7 +61,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(250), unique=True)
 
 class OAuth(OAuthConsumerMixin, db.Model):
-    user_id = db.Column(db.String, db.ForeignKey(User.id), nullable=False)
+    user_id = db.Column(db.String(250), db.ForeignKey(User.id), nullable=False)
     user = db.relationship(User)
 
 login_manager = LoginManager(app)
