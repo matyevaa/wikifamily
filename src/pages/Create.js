@@ -10,17 +10,6 @@ const styles = {
   textAlign: "center"
 };
 
-
-const tree = [{
-  "name":"Root Node","collapsed":true,"nodes":
-    [{"name":"Node 1","collapsed":true,"nodes":
-      [{"name":"Sub node"}]},
-    {"name":"Node 2","collapsed":true,"nodes":
-      [{"name":"Sub node "}]},
-    {"name":"Node 3","collapsed":true,"nodes":
-      [{"name":"Sub node"}]}]}];
-
-
 const Create = () => {
 
   const [dataDB, setData] = useState([]);
@@ -67,11 +56,11 @@ const Create = () => {
     .catch(err => console.log(err));
   };
 
-  /* 
+  /*
   // api call to share fragment of DB
   // send start indivID and end --> + email to share it with
   // will need to do check of whether or not email exists in user DB
-  
+
   const shareEdit = async(id) => {
     console.log("individual id chosen is: ", id);
     // await axios.put (`http://localhost:5000/api1/put/${individual_id}`, {
@@ -109,7 +98,7 @@ const Create = () => {
         <h3>Database Data</h3>
         <Link to="/add" className="add_btn">Add Person</Link>
 
-        <TreeList list={tree}/>
+        <TreeList list={dataDB}/>
 
 
       </div>

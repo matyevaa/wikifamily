@@ -12,12 +12,12 @@ export default class CenteredTree extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      //db_data: this.props.dataDB,
+  //    db_data: this.props.dataDB,
       visibility: false,
       data: []
     }
     this.showTree = this.showTree.bind(this);
-    console.log("db ", this.state.db_data);
+    console.log("db ", this.state.dataDB);
   }
 
   injectedNodesCount = 0;
@@ -50,12 +50,16 @@ export default class CenteredTree extends React.PureComponent {
     this.setState({
       visibility: !visibility,
       data: {
-          name: this.props.dataDB[1].first_name,
+          name: this.props.dataDB[0].ParentName,
           children: [
-            {  name: this.props.dataDB[2].first_name },
-            { name: this.props.dataDB[3].first_name }
+            { name: this.props.dataDB[0].Child1,
+              children: [
+                { name: this.props.dataDB[0].Child2 }
+              ]
+            },
+            { name: "Bogonok's Sibling"}
           ]
-        }
+      }
     })
   }
 

@@ -23,24 +23,73 @@ def connect():
 
 @app.route('/api1/create', methods=['GET', 'DELETE', 'PUT'])
 def get_family():
-    print("get family apis")
+    print("get children of the root individual (parent is NULL)")
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    # gets parents value
-    # cursor.execute('SELECT DISTINCT c.first_name FROM individual i, individual j, individual c WHERE i.parent=c.individual_id AND j.parent=c.individual_id')
-    # get child and parent
-    cursor.execute('SELECT DISTINCT i.first_name, c.first_name FROM individual i, individual c WHERE i.individual_id=84 AND i.parent=c.individual_id')
-    f = cursor.fetchall()
-    print("Selected ", f)
+    # get parent root
+    #cursor.execute("SELECT * FROM individual WHERE parent is NULL")
+    #row_headers1 = [x[0] for x in cursor.description]
+    #r = cursor.fetchall()
+    #print("root in get data: ", r)
+    #json_data = []
+    #for result in r:
+    #    json_data.append(dict(zip(row_headers1, result)))
 
-    cursor.execute("SELECT * FROM individual")
+    # get parent and children
+    # cursor.execute('''
+    #     SELECT
+	#        p.first_name as Parent,
+    #        GROUP_CONCAT(c.first_name ORDER BY c.first_name) as Children
+    #        FROM individual c
+    #        JOIN individual p
+    #        ON c.parent = p.individual_id
+    #        GROUP BY p.individual_id;
+    # ''')
+
+    # cursor.execute('''
+    #     SELECT t1.first_name AS lev1,
+    #         t2.first_name as lev2,
+    #         t3.first_name as lev3,
+    #         t4.first_name as lev4
+    #     FROM individual AS t1
+    #     LEFT JOIN individual AS t2 ON t2.parent = t1.individual_id
+    #     LEFT JOIN individual AS t3 ON t3.parent = t2.individual_id
+    #     LEFT JOIN individual AS t4 ON t4.parent = t3.individual_id
+    # ''')
+
+
+    cursor.execute('''
+        SELECT
+            p1.individual_id as individual_id,
+            p1.first_name as ParentName,
+            p2.first_name as Child1,
+            p3.first_name as Child2,
+            p4.first_name as Child3,
+            p5.first_name as Child4
+FROM individual p1
+ LEFT JOIN individual AS p2 ON p2.parent = p1.individual_id
+ LEFT JOIN individual AS p3 ON p3.parent = p2.individual_id
+ LEFT JOIN individual AS p4 ON p4.parent = p3.individual_id
+ LEFT JOIN individual AS p5 on p5.parent = p4.individual_id
+WHERE p1.parent is null AND 1 IN  (p1.parent,
+                   p2.parent,
+                   p3.
+                   parent,
+                   p4.parent,
+                   p5.parent)
+    ''')
+
+
+    # get everyone
+    #cursor.execute("SELECT * FROM individual")
     row_headers = [x[0] for x in cursor.description]
     data = cursor.fetchall()
     json_data = []
     for result in data:
         json_data.append(dict(zip(row_headers, result)))
+
     return json.dumps(json_data)
 
 @app.route('/api1/create', methods=['GET','POST'])
@@ -327,10 +376,10 @@ def create_empty_tree():
     msg = ''
     if request.method=='POST':
         theform = request.get_json(force=True)
-        
+
         uid = theform['user_id']
         fn = theform['parent']
-        
+
         cursor.execute('SELECT * FROM family WHERE family_name = %s', (fid,))
         result = cursor.fetchone()
         if result:

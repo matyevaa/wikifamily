@@ -4,6 +4,10 @@ body {
   padding: 40px;
 }
 
+.collapsible {
+  padding-left: 1rem;
+}
+
 .tree_item {
   margin-top: 20px;
   margin-bottom: 20px;
