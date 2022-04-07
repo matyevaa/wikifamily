@@ -15,6 +15,8 @@ const Create = () => {
   const [dataDB, setData] = useState([]);
   const [shareStart, setShareStart] = useState("");
   const [shareEnd, setShareEnd] = useState("");
+  const [showView, setShowView] = useState(false);
+  const [showGraph, setShowGraph] = useState(false);
 
   useEffect(() => {
     getData();
@@ -87,15 +89,23 @@ const Create = () => {
 
   return (
     <div className="content">
-      <h1 className="subtopic text">Create Tree Page</h1>
-      <Tree dataDB={dataDB}/>
+      <h1 className="subtopic">Create Tree Page</h1>
+
+      <div className="tree_center">
+        <div class="tree_options">
+          <h3 id="tree_view" onClick={() => { setShowView(showView => !showView); setShowGraph(false) } }>Tree View</h3>
+          <h3 id="tree_graph" onClick={() => { setShowGraph(showGraph => !showGraph); setShowView(false) } }>Tree Graph</h3>
+        </div>
+      </div>
+
+      { showView ? <TreeList list={dataDB}/> : null }
+      { showGraph ? <Tree dataDB={dataDB}/> : null }
 
       <div className="class_btn">
         <h3>Database Data</h3>
         <Link to="/add" className="add_btn">Add Person</Link>
       </div>
 
-      <TreeList list={dataDB}/>
 
       <table className="result_table">
         <thead>

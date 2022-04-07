@@ -3,16 +3,11 @@ import Tree from "react-d3-tree";
 import clone from "clone";
 
 
-const containerStyles = {
-  width: "100%",
-  height: "80vh"
-};
-
 export default class CenteredTree extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-  //    db_data: this.props.dataDB,
+      db_data: this.props.dataDB,
       visibility: false,
       data: []
     }
@@ -84,11 +79,14 @@ export default class CenteredTree extends React.PureComponent {
     }
     else {
       return (
-        <div style={containerStyles} ref={tc => (this.treeContainer = tc)}>
-          <button onClick={this.addChildNode}>Add Node</button>
-          <button onClick={this.removeChildNode}>Remove Node</button>
-          <button onClick={this.showTree}> {this.state.visibility ? "Close Tree" : "Show Tree"}</button>
-
+        <div className="containerStyles" ref={tc => (this.treeContainer = tc)}>
+          <div className="showTreeContainer">
+            <button className="graphBtn" id="showTree" onClick={this.showTree}> {this.state.visibility ? "Close Tree" : "Show Tree"}</button>
+          </div>
+          <div className="graphBtnContainer">
+            <button className="graphBtn" id="addGraphNode" onClick={this.addChildNode}>Add Node</button>
+            <button className="graphBtn" onClick={this.removeChildNode}>Remove Node</button>
+          </div>
           {visibility ?
             <Tree
               data={this.state.data}
