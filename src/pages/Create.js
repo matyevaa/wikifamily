@@ -80,9 +80,6 @@ const Create = () => {
       setShareEnd(id)
       console.log("end: " + id)
     }
-
-
-
     // setShareSE([shareSE +","+ id])
     // console.log(shareSE)
   }
@@ -93,15 +90,13 @@ const Create = () => {
       <h1 className="subtopic text">Create Tree Page</h1>
       <Tree dataDB={dataDB}/>
 
-
       <div className="class_btn">
         <h3>Database Data</h3>
         <Link to="/add" className="add_btn">Add Person</Link>
-
-        <TreeList list={dataDB}/>
-
-
       </div>
+
+      <TreeList list={dataDB}/>
+
       <table className="result_table">
         <thead>
           <tr>
