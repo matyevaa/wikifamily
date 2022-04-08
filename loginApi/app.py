@@ -157,6 +157,8 @@ def googleLoggedIn(blueprint, token):
     # find auth token in DBor create
     query = OAuth.query.filter_by(provider=blueprint.name, user_id=user_id)
 
+    print(query)
+
     try:
         oauth = query.one()
     except NoResultFound:

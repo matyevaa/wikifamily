@@ -33,10 +33,12 @@ const Works = (userId) => {
       window.location.href="http://localhost:3005/creator=" + saved + "/works"
     }
 
-    // if used the api to llogin 
+    // if used the api to llogin
     if (JSON.parse(localStorage.getItem("loginVersion") != '"oauth"')) {
       localStorage.setItem("loginVersion", JSON.stringify("thirdParty"))
       if(JSON.parse(localStorage.getItem("userName")) == null) {
+        // need refresh twice or else wont show the 'welcome name"
+        // add another parameter that would only be done once when first logging in
         window.location.reload(false);
         window.location.reload(false);
       }
@@ -73,7 +75,6 @@ const Works = (userId) => {
         </tr>
       ))}</div>
     }
-    
   }
 
   
