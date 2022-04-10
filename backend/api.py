@@ -1,3 +1,4 @@
+# from crypt import methods
 from flask import Flask, render_template, redirect, url_for
 from flask import jsonify
 from flask import request
@@ -374,27 +375,32 @@ def create_empty_tree():
     cnx = dbInfo[0]
 
     msg = ''
+    theform = request.get_json(force=True)
+    print("add tree")
+    
+    b = theform['user_id']
+    d = theform['parent']
+
+    # SELECT * from family where family_id = "" and family_name="";
+
     if request.method=='POST':
-        theform = request.get_json(force=True)
+        query = 'INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s);'
+        data = (d, b,)
 
-        uid = theform['user_id']
-        fn = theform['parent']
+        cursor.execute(query, data)
+        cnx.commit()
+        msg = "Successfully added nwe tree"
+        print(msg)
 
-        cursor.execute('SELECT * FROM family WHERE family_name = %s', (fid,))
-        result = cursor.fetchone()
-        if result:
-            msg = 'A family tree with that name already exists'
-        elif result is None:
-            cursor.execute('''INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s)''', (fn,uid))
-
-            cnx.commit()
-            msg = "Successfully added a person!"
     else:
-        msg = "Please fill out the form."
-    print("Message: ", msg)
+        print("did not add")
+        b = theform['user_id']
+        d = theform['parent']
+        
     cursor.close()
     cnx.close()
-    return json.dumps("thx")
+
+    return "200"
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

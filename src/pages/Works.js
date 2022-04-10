@@ -39,8 +39,8 @@ const Works = (userId) => {
       if(JSON.parse(localStorage.getItem("userName")) == null) {
         // need refresh twice or else wont show the 'welcome name"
         // add another parameter that would only be done once when first logging in
-        window.location.reload(false);
-        window.location.reload(false);
+        // window.location.reload(false);
+        // window.location.reload(false);
       }
     }
   }
@@ -81,7 +81,7 @@ const Works = (userId) => {
   return(
     <div className="content">
       <h1 className="subtopic text">Here are your works!</h1>
-      <button className="add_tree_btn">Create New Tree (does nothing rn)</button>
+      <button className="add_tree_btn" onClick={() => {window.location.href="http://localhost:3005/new"}}>Create New Tree</button>
       {/* <p className="description text"><a href= { createIndivTreeLinks(10) }>indiv family tree</a></p> */}
       
 
