@@ -224,8 +224,11 @@ def logout():
     return 'loggedOut'
 
 @app.route("/api2/getInfo/<id>")
+@cross_origin(supports_credentials=True)
 def getName(id):
     user = User.query.get((id))
+
+    print(user)
 
     userInfo = []
     userInfo.append(user.name)
@@ -275,6 +278,41 @@ def deleteStat(response):
         return "sucessfully deleted user data"
     else:
         return "was unable to delete user data"
+
+# check if the email exists in the DB
+# @app.route("/api2/emailExist/<email>")
+# def checkExist(email):
+#     # msg = ''
+#     # theform = request.get_json(force=True)
+#     print("share individuals")
+
+#     # c = theform['email_share']
+
+#     # user = User.query.get((c))
+#     print(email)
+#     user = User.query.filter_by(email=email).first() is not None
+
+#     print("user info is ")
+#     print(user)
+
+#     return str(user)
+
+@app.route("/api2/emailExist/", methods=['POST'])
+def checkExist():
+    # msg = ''
+    theform = request.get_json(force=True)
+    print("share individuals")
+
+    c = theform['email_share']
+
+    # user = User.query.get((c))
+    print(c)
+    user = User.query.filter_by(email=c).first() is not None
+
+    print("user info is ")
+    print(user)
+
+    return json.dumps(str(user))
 
 if __name__ == '__main__':
     db.create_all()

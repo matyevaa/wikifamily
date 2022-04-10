@@ -402,5 +402,40 @@ def create_empty_tree():
 
     return "200"
 
+# when enters the email has already been checked that it exists
+@app.route('/api1/share', methods=['POST'])
+def shareWithUser():
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    msg = ''
+    theform = request.get_json(force=True)
+    print("share individuals")
+    
+    b = theform['start_share']
+    d = theform['end_share']
+    c = theform['email_share']
+
+    if request.method =='POST':
+        query = 'INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s);'
+        data = (d, b,)
+
+        cursor.execute(query, data)
+        cnx.commit()
+        msg = "Successfully added nwe tree"
+        print(msg)
+
+    else:
+        print("did not add")
+        b = theform['user_id']
+        d = theform['parent']
+        
+    cursor.close()
+    cnx.close()
+
+    return "200"
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

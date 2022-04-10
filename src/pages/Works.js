@@ -14,10 +14,6 @@ const Works = (userId) => {
   }, []);
 
   const findingUserId = () => {
-    // if (isAuthenticated == true) {
-    //   localStorage.setItem("userId", JSON.stringify(user.nickname))
-    // }
-
 
     console.log("pathname: " + userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6))
 
