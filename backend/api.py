@@ -1,4 +1,5 @@
 # from crypt import methods
+from unicodedata import name
 from flask import Flask, render_template, redirect, url_for
 from flask import jsonify
 from flask import request
@@ -389,13 +390,26 @@ def create_empty_tree():
 
         cursor.execute(query, data)
         cnx.commit()
-        msg = "Successfully added nwe tree"
+        msg = "Successfully added new tree"
         print(msg)
 
+        # query = "SELECT * from family where family_id = %s and family_name=%s;"
+        # data = (d, b,)
+
+        # cursor.execute(query, data)
+        # row_headers = [x[0] for x in cursor.description]
+        # data = cursor.fetchall()
+        # json_data = []
+        # print(msg)
+        # for result in data:
+        #     json_data.append(dict(zip(row_headers, result)))
+
+        print(json_data)
+        # query = 'INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id) VALUES (%s,%s,%s,%s,%s,%s,%s);'
+        # data = ("Jane", "Doe", "Individual Person Example", "F", "-", "-", GET TREE ID)
+
     else:
-        print("did not add")
-        b = theform['user_id']
-        d = theform['parent']
+        print("did not create new tree")
         
     cursor.close()
     cnx.close()
@@ -403,33 +417,35 @@ def create_empty_tree():
     return "200"
 
 # when enters the email has already been checked that it exists
-@app.route('/api1/share', methods=['POST'])
-def shareWithUser():
+@app.route('/api1/share/<start>/<end>/<treeid>/<name>/<collaborator>', methods=['POST'])
+def shareWithUser(start,end,treeid, name, collaborator):
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    msg = ''
-    theform = request.get_json(force=True)
-    print("share individuals")
-    
-    b = theform['start_share']
-    d = theform['end_share']
-    c = theform['email_share']
+    # can also do bt with names
+    query = "SELECT individual_id, first_name,last_name, gender, info, birth, death,family_id, children, parent  FROM individual WHERE family_id = %d AND (individual_id between %d AND %d)"
+    data = (treeid,start - 1, end + 1)
 
-    if request.method =='POST':
-        query = 'INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s);'
-        data = (d, b,)
+    cursor.execute(query, data)
 
-        cursor.execute(query, data)
-        cnx.commit()
-        msg = "Successfully added nwe tree"
-        print(msg)
+    # print out results of the query
+    print(list(cursor.fetchall()))
 
-    else:
-        print("did not add")
-        b = theform['user_id']
-        d = theform['parent']
+    # create new family tree for collaborator
+    query = 'INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s);'
+    data = ("Shared Tree: " + name, "0",collaborator)
+
+    cursor.execute(query, data)
+    cnx.commit()
+
+    # for each person in the list add another treeID to the treeID column
+    # change family_id type to set?
+
+    # cursor.execute(query, data)
+    # cnx.commit()
+    msg = "Successfully added nwe tree"
+    print(msg)
         
     cursor.close()
     cnx.close()
