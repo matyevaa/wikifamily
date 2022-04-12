@@ -146,6 +146,7 @@ const IndivTree = (treeId) => {
 
         {/* NEED TO CHANGE TO HOVER MOUSE CH TO POINTER */}
         <p>Click to <span onClick={() => {changeConditon();}}>share</span> individuals</p>
+        
         <form id="target" encType="multipart/form-data" onSubmit={createEmpty}>
           <div>
             <label>Family Tree Name</label>
