@@ -28,7 +28,7 @@ function Navbar(props) {
     const getUserInfoLocal = () => {
     let tempId = JSON.parse(localStorage.getItem("userId"))
     let loginVersion = JSON.parse(localStorage.getItem("loginVersion"))
-    
+
     let tempName
     let tempEmail
 
@@ -52,7 +52,7 @@ function Navbar(props) {
             localStorage.setItem("userId", JSON.stringify(user.nickname))
             localStorage.setItem("userName", JSON.stringify(user.nickname))
       }
-      
+
       let temp = [tempName, tempEmail, tempId]
       setUserInfo(temp)
     }
@@ -61,10 +61,11 @@ function Navbar(props) {
       const result = await axios (`http://localhost:3000/api2/getInfo/${JSON.parse(localStorage.getItem("userId"))}`, {
         headers: { 'Content-Type': 'application/json'}
       })
+      .then(result => {localStorage.setItem("userName", JSON.stringify(result.data[0]))
+      localStorage.setItem("userEmail", JSON.stringify(result.data[2]))})
       .catch(err => console.log(err));
       // console.log("navbar: " + result.data);
-      localStorage.setItem("userName", JSON.stringify(result.data[0]))
-      localStorage.setItem("userEmail", JSON.stringify(result.data[2]))
+
     };
 
     const renderAuthButton = () => {
@@ -75,7 +76,7 @@ function Navbar(props) {
         return <div>
           {console.log(userInfo)}
           <button className='accountBtns'>Welcome {userInfo[0]}!</button>
-          {whichLogout()}          
+          {whichLogout()}
         </div>
       }
     }
@@ -93,7 +94,7 @@ function Navbar(props) {
 
     const whichLogout = () => {
       if (JSON.parse(localStorage.getItem("loginVersion")) == "thirdParty") {
-        return <button type="button" className="accountBtns rightButton"  
+        return <button type="button" className="accountBtns rightButton"
           onClick={() => {handleLogout(); }}>Logout</button>
       }
       else {
@@ -113,13 +114,13 @@ function Navbar(props) {
     const gettingUserId = () => {
       let saved = JSON.parse(localStorage.getItem("userId"))
       return "http://localhost:3005/creator=" + userInfo[2] + "/works"
-      
+
     }
-  
+
   return (
           <div className="nav">
             <div className="navLogo">
-              <img className="logo"  src="/logo192_70x70.png" alt="wikiFamily Logo" />
+              <img className="logo"  src="/Wiki.png" alt="wikiFamily Logo" />
             </div>
 
             <div className="navLinks">
@@ -130,7 +131,7 @@ function Navbar(props) {
                 <li id="nav_item"><a href="/about">About</a></li>
               </ul>
             </div>
-    
+
             <div className="accountContainer">
               {renderAuthButton()}
             </div>
