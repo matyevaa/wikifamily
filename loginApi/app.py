@@ -1,3 +1,4 @@
+# from crypt import methods
 from re import template
 from flask import Flask, render_template, url_for, redirect, flash, make_response, request
 from facepy import SignedRequest
@@ -279,40 +280,32 @@ def deleteStat(response):
     else:
         return "was unable to delete user data"
 
-# check if the email exists in the DB
-# @app.route("/api2/emailExist/<email>")
-# def checkExist(email):
-#     # msg = ''
-#     # theform = request.get_json(force=True)
-#     print("share individuals")
-
-#     # c = theform['email_share']
-
-#     # user = User.query.get((c))
-#     print(email)
-#     user = User.query.filter_by(email=email).first() is not None
-
-#     print("user info is ")
-#     print(user)
-
-#     return str(user)
-
-@app.route("/api2/emailExist/", methods=['POST'])
+@app.route("/api2/emailExist", methods=['POST'])
+@cross_origin(supports_credentials=True)
 def checkExist():
     # msg = ''
-    theform = request.get_json(force=True)
-    print("share individuals")
+    if request.method=='POST':
+        json_data = []
+        print("share individuals")
+        theform = request.get_json(force=True)
+        
+        c = theform['email_share']
 
-    c = theform['email_share']
-
-    # user = User.query.get((c))
-    print(c)
-    user = User.query.filter_by(email=c).first() is not None
-
-    print("user info is ")
-    print(user)
-
-    return json.dumps(str(user))
+        print(c)
+        user = User.query.filter_by(email=c).first() is not None
+        print(user)
+        json_data.append(user)
+        if (user == True):
+            
+            user = User.query.filter_by(email=c).first()
+            user = user.id
+            print(user)
+            json_data.append(user)
+    else:
+        print( "Please fill out form")
+        
+    # json_data[0] = true/false --> if true json_data[0] = user's id
+    return json.dumps(json_data)
 
 if __name__ == '__main__':
     db.create_all()

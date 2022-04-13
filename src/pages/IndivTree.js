@@ -8,14 +8,20 @@ import { Link } from "react-router-dom";
 
 const IndivTree = (treeId) => {
   const [treeName, setTreeName] = useState(["no data"]);
-  const [treeIdentif, setItendif] = useState();
+  // const [treeIdentif, setItendif] = useState();
 
   const [wantShare, setWantShare] = useState(false);
+  const [collaboratorExist, setcollaboratorExist] = useState(false);
+  const [collabID, setcollabID] = useState("");
+
+
   const [shareStart, setShareStart] = useState("");
   const [shareEnd, setShareEnd] = useState("");
 
   const [parent, setParent] = useState("");
   const [treeElements, updateTree] = useState([])
+
+  const treeIdentif = treeId.match.params.treeId;
 
   // adding from /create
   const [dataDB, setData] = useState([]);
@@ -85,12 +91,29 @@ const IndivTree = (treeId) => {
   }
 
   // whether it has share indiv showing or not
-  const shareCont = (item) => {
+  const shareContShow = (item) => {
     if (wantShare == false) {
       return <td>{item.individual_id}</td>
     }
     else {
       return <div onClick={() => sharingStartEnd(item.individual_id)}><td>{item.individual_id}</td></div>
+    }
+  }
+
+  // ch whether show share with person or not
+  const sharingConditionShow = () => {
+    if (wantShare == false) {
+      // dont show anything
+    }
+    
+    else {
+      return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
+          <div>
+            <label>Family Tree Name</label>
+            <input ref={parentRef} type="text" placeholder="Enter email of collaborator" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
+          </div>
+          <button className="add_btn" type="submit">Share Tree</button>
+        </form>
     }
   }
 
@@ -105,34 +128,38 @@ const IndivTree = (treeId) => {
   }
 
   const createEmpty = async(e) => {
-
     e.preventDefault();
-    await axios.post('http://localhost:3000/api2/emailExist', {
+      const result = await axios.post (`http://localhost:3000/api2/emailExist`, {
       method:'POST',
       headers: { 'Content-Type': 'application/json'},
-      parent: parent,
+      email_share: parent,
     });
+
+    setcollaboratorExist(result.data[0])
+
+    if(collaboratorExist == true) {
+      setcollabID(result.data[1])
+      console.log("in share function")
+      const result = await axios (`http://localhost:5000/api2/share/${shareStart}/${shareEnd}/${treeIdentif}/${treeName['family_name']}/${collabID}`, {
+        headers: { 'Content-Type': 'application/json'},
+      });
+    }
+    console.log(result)
 
     let link = "http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"
   }
 
+  const collaboratorEditing = async() => {
+    console.log("in share function")
+      const result = await axios.post (`http://localhost:5000/api2/share/${shareStart}/${shareEnd}/${treeIdentif}/${treeName['family_name']}/${collabID}`, {
+      headers: { 'Content-Type': 'application/json'},
+    });
 
-  const parentRef = useRef()
-
-  function handleAddPerson(e){
-    const parent = parentRef.current.value
-    if (parent === '' ) return
-
-    updateTree(prevTreeElements => {
-      return [...prevTreeElements, {parent: parent}]
-    })
-    parentRef.current.value = null
+    console.log(result)
 
   }
 
-  
-
-
+  const parentRef = useRef()
   
   return(
     <div className="content">
@@ -145,15 +172,9 @@ const IndivTree = (treeId) => {
         <Link to={addLink} className="add_btn">Add Person</Link>
 
         {/* NEED TO CHANGE TO HOVER MOUSE CH TO POINTER */}
-        <p>Click to <span onClick={() => {changeConditon();}}>share</span> individuals</p>
+        <p>Click to <span className='hover_pointer' onClick={() => {changeConditon();}}>share</span> individuals</p>
+        {sharingConditionShow()}
         
-        <form id="target" encType="multipart/form-data" onSubmit={createEmpty}>
-          <div>
-            <label>Family Tree Name</label>
-            <input ref={parentRef} type="text" placeholder="Enter email of collaborator" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
-          </div>
-          <button className="add_btn" type="submit"  onClick={handleAddPerson}>Share Tree</button>
-        </form>
 
         
       </div>
@@ -178,7 +199,7 @@ const IndivTree = (treeId) => {
        {dataDB.map((item, idx) => (
           <tr key={idx}>
             {/* <td>{item.individual_id}</td> */}
-            {shareCont(item)}
+            {shareContShow(item)}
             <td>{item.first_name}</td>
             <td>{item.last_name}</td>
             <td>{item.info}</td>

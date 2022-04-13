@@ -1,4 +1,5 @@
 # from crypt import methods
+from hashlib import new
 from unicodedata import name
 from flask import Flask, render_template, redirect, url_for
 from flask import jsonify
@@ -170,7 +171,6 @@ def get_individual(individual_id):
     cnx.close()
     return json.dumps(json_data)
 
-
 @app.route('/api1/edit/<individual_id>', methods=['PUT', 'PATCH'])
 def edit_person(individual_id):
     dbInfo = connect()
@@ -257,7 +257,10 @@ def get_family_w_treeID(treeId):
     f = cursor.fetchall()
     print("Selectedjj ", f)
 
-    cursor.execute("SELECT * FROM individual WHERE family_id = %s", (treeId,))
+    # FOR OG TREE SEARCH W ID
+    # cursor.execute("SELECT * FROM individual WHERE family_id = %s", (treeId,))
+    cursor.execute("SELECT * FROM individual WHERE FIND_IN_SET(%s, family_ids)", (treeId,))
+
     row_headers = [x[0] for x in cursor.description]
     data = cursor.fetchall()
     json_data = []
@@ -293,7 +296,7 @@ def add_person_w_treeID(treeId):
         if result:
             msg = 'Such a person already exists in your family!'
         elif result is None:
-            cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,))
+            cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,treeId))
             cnx.commit()
             msg = "Successfully added a person!"
     else:
@@ -382,8 +385,6 @@ def create_empty_tree():
     b = theform['user_id']
     d = theform['parent']
 
-    # SELECT * from family where family_id = "" and family_name="";
-
     if request.method=='POST':
         query = 'INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s);'
         data = (d, b,)
@@ -392,21 +393,6 @@ def create_empty_tree():
         cnx.commit()
         msg = "Successfully added new tree"
         print(msg)
-
-        # query = "SELECT * from family where family_id = %s and family_name=%s;"
-        # data = (d, b,)
-
-        # cursor.execute(query, data)
-        # row_headers = [x[0] for x in cursor.description]
-        # data = cursor.fetchall()
-        # json_data = []
-        # print(msg)
-        # for result in data:
-        #     json_data.append(dict(zip(row_headers, result)))
-
-        print(json_data)
-        # query = 'INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id) VALUES (%s,%s,%s,%s,%s,%s,%s);'
-        # data = ("Jane", "Doe", "Individual Person Example", "F", "-", "-", GET TREE ID)
 
     else:
         print("did not create new tree")
@@ -417,40 +403,103 @@ def create_empty_tree():
     return "200"
 
 # when enters the email has already been checked that it exists
-@app.route('/api1/share/<start>/<end>/<treeid>/<name>/<collaborator>', methods=['POST'])
+@app.route('/api2/share/<start>/<end>/<treeid>/<name>/<collaborator>')
 def shareWithUser(start,end,treeid, name, collaborator):
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
+    print("info sent: %s %s %s %s %s", str(start), str(end), str(treeid), str(name), str(collaborator))
+
     # can also do bt with names
-    query = "SELECT individual_id, first_name,last_name, gender, info, birth, death,family_id, children, parent  FROM individual WHERE family_id = %d AND (individual_id between %d AND %d)"
-    data = (treeid,start - 1, end + 1)
+    # query = "SELECT individual_id, first_name,last_name, gender, info, birth, death,family_id, children, parent  FROM individual WHERE family_id = %s AND (individual_id between %s AND %s);"
+    query = "SELECT individual_id, first_name,last_name, gender, info, birth, death,family_id, children, parent  FROM individual WHERE FIND_IN_SET(%s, family_ids) AND (individual_id between %s AND %s);"
+    data = (str(treeid), str(int(start) - 1), str(int(end) + 1))
 
     cursor.execute(query, data)
 
     # print out results of the query
-    print(list(cursor.fetchall()))
-
-    # create new family tree for collaborator
-    query = 'INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s);'
-    data = ("Shared Tree: " + name, "0",collaborator)
-
-    cursor.execute(query, data)
-    cnx.commit()
-
-    # for each person in the list add another treeID to the treeID column
-    # change family_id type to set?
-
-    # cursor.execute(query, data)
-    # cnx.commit()
-    msg = "Successfully added nwe tree"
-    print(msg)
-        
+    print("People that would be shared")
+    individuals = list(cursor.fetchall())
+    print(individuals)
     cursor.close()
     cnx.close()
 
+    # create and return the family tree id that was just made
+    createEmptySharedTree(name, collaborator)
+
+    newTree = returnSharedTreeID(name, collaborator)
+    print(newTree[0])
+
+    # for each person in the list add another treeID to the treeID column
+    addTreeIds(individuals, newTree[0])
+        
+
     return "200"
+
+def createEmptySharedTree(name, collaborator):
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    print("in create tree\n")
+
+    name = "Shared Tree: " + name
+
+    print(name, collaborator)
+
+    # create new family tree for collaborator
+    query = 'INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s);'
+    data = (name, collaborator)
+    cursor.execute(query, data)
+    cnx.commit()
+
+    
+    cursor.close()
+    cnx.close()
+
+def returnSharedTreeID(name, collaborator):
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    print("in retTreeId\n")
+    print(name, collaborator)
+
+    cursor.execute("SELECT family_id FROM family WHERE owner_id=%s", (collaborator,))
+
+    newTree = list(cursor.fetchall())
+
+    totTrees = len(newTree)
+
+    print(newTree)
+    cursor.close()
+    cnx.close()
+
+    return newTree[totTrees-1]
+
+def addTreeIds(listIndividuals, addTree):
+    print("add tree ids param")
+    i = 0
+    for indivs in listIndividuals:
+        # call function to edit individuals one by one
+        indivEditTrees(listIndividuals[i][0], addTree)
+        i += 1
+
+def indivEditTrees(id, treeid):
+    print(treeid, id)
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    query='UPDATE individual SET family_ids = concat(family_ids,%s) WHERE individual_id = %s;'
+    data = ((","+ str(treeid)), id,)
+
+    cursor.execute(query, data)
+    cnx.commit()
+    cursor.close()
+    cnx.close()
+
 
 
 if __name__ == "__main__":
