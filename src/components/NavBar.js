@@ -71,11 +71,11 @@ function Navbar(props) {
     const renderAuthButton = () => {
       if (dataDB == false && isAuthenticated == false) {
         console.log("Was not logged in");
-        return  <button type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
+        return  <button id="log" type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
       } else {
         return <div>
           {console.log(userInfo)}
-          <button className='accountBtns'>Welcome {userInfo[0]}!</button>
+          <button id="welcome" className='accountBtns'>Welcome {userInfo[0]}!</button>
           {whichLogout()}
         </div>
       }
