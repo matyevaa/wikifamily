@@ -41,24 +41,24 @@ const Login = () => {
   // </FacebookLoginButton>
 
   return (
-    
+
     <div className="content loginContainer">
       <div className='loginButton'>
-        <FacebookLoginButton size='32px' onClick={(e) => 
+        <FacebookLoginButton size='32px' onClick={(e) =>
             {e.preventDefault();
             window.location.href='http://localhost:3000/facebook/login';
-        }} 
+        }}
         align='center'/>
       </div>
       <div className='loginButton'>
-        <GoogleLoginButton size='32px' onClick={(e) => 
+        <GoogleLoginButton size='32px' onClick={(e) =>
             {e.preventDefault();
             window.location.href='http://localhost:3000/google/login';
-        }} 
+        }}
         align='center'/>
       </div>
 
-      <h2 className='loginTxt'>Or</h2>
+      <h2 className='loginTxt'>or</h2>
 
       <div className='loginButton emailContainer'>
       {/* <button onClick={() => {loginWithRedirect()}}>

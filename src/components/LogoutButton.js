@@ -13,7 +13,7 @@ const LogoutButton = () => {
 
   return (
     isAuthenticated && (
-      <button onClick={() => { remLocal();logout();}}>
+      <button id="log_gmail" className="accountBtns" onClick={() => { remLocal();logout();}}>
         Log Out
       </button>
     )

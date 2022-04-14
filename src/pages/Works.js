@@ -75,10 +75,10 @@ const Works = (userId) => {
 
 
   return(
-    <div className="centerDiv">
+    <div id="works_page" className="centerDiv">
       <div className="content">
         <h1 className="subtopic text">Here are your works!</h1>
-        <button className="add_tree_btn" onClick={() => {window.location.href="http://localhost:3005/new"}}>Create New Tree</button>
+        <div className="btn_center"><button className="add_tree_btn" onClick={() => {window.location.href="http://localhost:3005/new"}}>Create New Tree</button></div>
         {/* <p className="description text"><a href= { createIndivTreeLinks(10) }>indiv family tree</a></p> */}
         {treesOutput()}
       </div>
