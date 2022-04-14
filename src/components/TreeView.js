@@ -39,13 +39,52 @@ import TreeView from 'react-expandable-treeview';
                label: items.Child3,
                children: [ {
                  id: n+4,
-                 label: items.Child4
+                 label: items.Child4,
+                 children: [ {
+                   id: n+5,
+                   label: items.Child5,
+                   children: [ {
+                     id: n+6,
+                     label: items.Child6,
+                     children: [ {
+                       id: n+7,
+                       label: items.Child7,
+                       children: [ {
+                         id: n+8,
+                         label: items.Child8,
+                         children: [ {
+                           id: n+9,
+                           label: items.Child9,
+                           children: [ {
+                             id: n+10,
+                             label: items.Child10,
+                           children: [ {
+                             id: n+11,
+                             label: items.Child11,
+                           children: [ {
+                             id: n+12,
+                             label: items.Child12,
+                             children: [ {
+                               id: n+13,
+                               label: items.Child13,
+                               children: [ {
+                                 id: n+14,
+                                 label: items.Child14
+                                    }]
+                                  }]
+                                }]
+                              }]
+                            }] // 10
+                          }] // 9
+                        }] // 8
+                     }], // 7
+                   }] // 6
+                  }]
+                }]
                }]
              }]
            }]
         }]
-      }
-   ]
 
    return (
       <TreeView class="tree_item" data={data} renderNode={({label}) => <div>{label}</div>}/>
