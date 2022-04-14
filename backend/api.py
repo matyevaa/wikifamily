@@ -76,12 +76,7 @@ FROM individual p1
  LEFT JOIN individual AS p3 ON p3.parent = p2.individual_id
  LEFT JOIN individual AS p4 ON p4.parent = p3.individual_id
  LEFT JOIN individual AS p5 on p5.parent = p4.individual_id
-WHERE p1.parent is null AND 1 IN  (p1.parent,
-                   p2.parent,
-                   p3.
-                   parent,
-                   p4.parent,
-                   p5.parent)
+WHERE p1.parent is null
     ''')
 
 
@@ -381,7 +376,7 @@ def create_empty_tree():
     msg = ''
     theform = request.get_json(force=True)
     print("add tree")
-    
+
     b = theform['user_id']
     d = theform['parent']
 
@@ -396,7 +391,7 @@ def create_empty_tree():
 
     else:
         print("did not create new tree")
-        
+
     cursor.close()
     cnx.close()
 
@@ -433,7 +428,7 @@ def shareWithUser(start,end,treeid, name, collaborator):
 
     # for each person in the list add another treeID to the treeID column
     addTreeIds(individuals, newTree[0])
-        
+
 
     return "200"
 
@@ -454,7 +449,7 @@ def createEmptySharedTree(name, collaborator):
     cursor.execute(query, data)
     cnx.commit()
 
-    
+
     cursor.close()
     cnx.close()
 
