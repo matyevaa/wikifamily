@@ -4,9 +4,9 @@ import YouTube from 'react-youtube'
 class YoutubeVideo extends Component {
   videoOnReady (event) {
     const player = event.target
-    this.setState({
-      playerObj: player
-    })
+    // this.setState({
+    //   playerObj: player
+    // })
     player.seekTo(50)
     console.log(event.target)
   }
