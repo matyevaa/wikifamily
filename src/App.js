@@ -1,7 +1,6 @@
 import './style/App.css';
 /* import pages */
 import Homepage from './pages/Homepage.js';
-import Create from './pages/Create.js';
 import Help from './pages/Help.js';
 import Login from './pages/Login.js';
 import About from './pages/About.js';
@@ -39,7 +38,6 @@ function App() {
       <UserLoginInfo/>
         <Switch>
           <Route exact path="/" component={Homepage} />
-          <Route path="/create" component={Create} />
           <Route path="/help" component={Help} />
           <Route path="/about" component={About} />
           <Route path="/add/:id" component={AddPerson} render={(id) => <AddPerson {...id}/>}/>

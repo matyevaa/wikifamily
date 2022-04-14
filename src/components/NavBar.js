@@ -105,7 +105,7 @@ function Navbar(props) {
     const navBarConditon = () => {
       if ((dataDB == false && isAuthenticated == true || (dataDB == true && isAuthenticated == false))) {
         // console.log("should show create tree");
-        return <div><li id="nav_item"><a href="/create">CreateTree</a></li>
+        return <div>
         <li id="nav_item"> <a href= { gettingUserId() }>Works</a></li>
         </div>
       }
