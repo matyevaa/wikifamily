@@ -88,6 +88,7 @@ const Create = () => {
 
 
   return (
+  <div className="centerDiv">
     <div className="content">
       <h1 className="subtopic">Create Tree Page</h1>
 
@@ -148,6 +149,7 @@ const Create = () => {
         </tbody>
        </table>
     </div>
+  </div>
   );
 }
 

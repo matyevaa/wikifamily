@@ -19,7 +19,7 @@ const Works = (userId) => {
 
     let temp = userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6)
     console.log("temp " + temp.toString())
-    
+
     if (temp.toString() != null) { // user id passed in
       console.log("What gonna put in localstorage " + temp)
       localStorage.setItem("userId", JSON.stringify(temp))
@@ -46,7 +46,7 @@ const Works = (userId) => {
     // parse through them to get the id/description
 
     return "http://localhost:3005/treeId=" + treeId + "/create"
-    
+
   }
 
   const getFamilyTrees = async(user_id) => {
@@ -73,15 +73,15 @@ const Works = (userId) => {
     }
   }
 
-  
-  return(
-    <div className="content">
-      <h1 className="subtopic text">Here are your works!</h1>
-      <button className="add_tree_btn" onClick={() => {window.location.href="http://localhost:3005/new"}}>Create New Tree</button>
-      {/* <p className="description text"><a href= { createIndivTreeLinks(10) }>indiv family tree</a></p> */}
-      
 
-      {treesOutput()}
+  return(
+    <div className="centerDiv">
+      <div className="content">
+        <h1 className="subtopic text">Here are your works!</h1>
+        <button className="add_tree_btn" onClick={() => {window.location.href="http://localhost:3005/new"}}>Create New Tree</button>
+        {/* <p className="description text"><a href= { createIndivTreeLinks(10) }>indiv family tree</a></p> */}
+        {treesOutput()}
+      </div>
     </div>
   );
 }
