@@ -1,17 +1,59 @@
 import React, {useState, useEffect} from 'react';
+import { Link } from "react-router-dom";
+import { render } from "react-dom";
+import Tree from "../components/Tree";
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
+import TreeList from "../components/TreeView";
+
+const styles = {
+  fontFamily: "sans-serif",
+  textAlign: "center"
+};
 
 const Works = (userId) => {
+
   const [userIdT, setUserIdT] = useState("");
   const [id, setid] = useState("");
-  const [dataDB, setData] = useState([]);
+
+  const [dataDB_trees, setData_trees] = useState([]);
+  const [shareStart, setShareStart] = useState("");
+  const [shareEnd, setShareEnd] = useState("");
 
   useEffect(() => {
     findingUserId();
     let saved = JSON.parse(localStorage.getItem("userId"))
     getFamilyTrees(saved);
   }, []);
+
+  /*
+  // api call to share fragment of DB
+  // send start indivID and end --> + email to share it with
+  // will need to do check of whether or not email exists in user DB
+
+  const shareEdit = async(id) => {
+    console.log("individual id chosen is: ", id);
+    // await axios.put (`http://localhost:5000/api1/put/${individual_id}`, {
+    //   headers: { 'Content-Type': 'application/json'}
+    // })
+    // .then(response => setData(response.data))
+    // .catch(err => console.log(err));
+  }; */
+
+  const sharingStartEnd = (id) => {
+    console.log("individual id chosen is: ", id);
+    if (shareStart == "") {
+      setShareStart(id)
+      console.log("start: " + id)
+    }
+    else {
+      setShareEnd(id)
+      console.log("end: " + id)
+    }
+    // setShareSE([shareSE +","+ id])
+    // console.log(shareSE)
+  }
+
 
   const findingUserId = () => {
 
@@ -53,19 +95,19 @@ const Works = (userId) => {
     const result = await axios ('http://localhost:5000/api1/listTrees/' + user_id, {
       headers: { 'Content-Type': 'application/json'}
     })
-    .then(result => setData(result.data))
+    .then(result => setData_trees(result.data))
     .catch(err => console.log(err));
     console.log("getFamilyTrees: ")
-    console.log(dataDB);
+    console.log(dataDB_trees);
   };
 
   const treesOutput = () => {
-    if (dataDB == "" || dataDB == null) {
+    if (dataDB_trees == "" || dataDB_trees == null) {
       return <p className="description text">No Trees</p>
     }
     else{
       return <div>
-      {dataDB.map((item, idx) => (
+      {dataDB_trees.map((item, idx) => (
         <tr key={idx}>
           <td className="description text"><a href= { createIndivTreeLinks(item.family_id) }>{item.family_name}</a></td>
         </tr>
@@ -74,15 +116,14 @@ const Works = (userId) => {
   }
 
 
-  return(
-    <div id="works_page" className="centerDiv">
-      <div className="content">
-        <h1 className="subtopic text">Here are your works!</h1>
-        <div className="btn_center"><button className="add_tree_btn" onClick={() => {window.location.href="http://localhost:3005/new"}}>Create New Tree</button></div>
-        {/* <p className="description text"><a href= { createIndivTreeLinks(10) }>indiv family tree</a></p> */}
-        {treesOutput()}
-      </div>
+  return (
+  <div className="centerDiv">
+    <div className="content">
+      <h1 className="subtopic">Your Works</h1>
+      <div className="btn_center"><button className="add_tree_btn" onClick={() => {window.location.href="http://localhost:3005/new"}}>Create New Tree</button></div>
+      {treesOutput()}
     </div>
+  </div>
   );
 }
 
