@@ -4,7 +4,7 @@ body {
   padding: 40px;
   background-image: url('./tree.png');
   background-repeat: no-repeat;
-  background-position: center bottom;
+  background-position: center bottom fixed;
   background-size: cover;
   bottom: 0;
   min-height: 100%;
