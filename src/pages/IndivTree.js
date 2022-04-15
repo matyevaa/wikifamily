@@ -92,7 +92,7 @@ const IndivTree = (treeId) => {
 
   // whether it has share indiv showing or not
   const shareContShow = (item) => {
-    if (wantShare == false) {
+    if (wantShare == false || wantShare == undefined) {
       return <td>{item.individual_id}</td>
     }
     else {
@@ -102,7 +102,7 @@ const IndivTree = (treeId) => {
 
   // ch whether show share with person or not
   const sharingConditionShow = () => {
-    if (wantShare == false) {
+    if (wantShare == false || wantShare == undefined) {
       // dont show anything
     }
     
@@ -119,7 +119,7 @@ const IndivTree = (treeId) => {
 
   // ch bt true and false
   const changeConditon = () => {
-    if (wantShare == false) {
+    if (wantShare == false || wantShare == undefined) {
         setWantShare(true)
     }
     else {

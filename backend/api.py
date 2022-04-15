@@ -275,10 +275,6 @@ def add_person_w_treeID(treeId):
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    #cursor.execute('SELECT family_id FROM family')
-    #f = cursor.fetchall()
-    #print("Family id in post ", f)
-
     print("/create GET POST")
     msg = ''
     if request.method=='POST':
@@ -291,11 +287,21 @@ def add_person_w_treeID(treeId):
         d = theform['death']
         fid = theform['family_id']
         p = theform['parent']
+
+        # if user not input parent ID make it automatically 0
+        if p == "":
+            p = "0"
+
         cursor.execute('SELECT * FROM individual WHERE first_name = %s', (fn,))
         result = cursor.fetchone()
         if result:
             msg = 'Such a person already exists in your family!'
         elif result is None:
+            # check if the tree was shared 
+            # cursor.execute("SELECT shared_from from family where family_id=%s;", (treeId,))
+            # if shared get the id and insert it with current tree id
+            # else... do nothing
+
             cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,treeId))
             cnx.commit()
             msg = "Successfully added a person!"
@@ -372,6 +378,26 @@ def edit_person_w_treeID(individual_id, treeId):
     cnx.close()
     return redirect(url_for('get_family_w_treeID', treeId=treeId))
 
+def returnSharedTreeID(name, collaborator):
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    print("in retTreeId\n")
+    print(name, collaborator)
+
+    cursor.execute("SELECT family_id FROM family WHERE owner_id=%s", (collaborator,))
+
+    newTree = list(cursor.fetchall())
+
+    totTrees = len(newTree)
+
+    print(newTree)
+    cursor.close()
+    cnx.close()
+
+    return newTree[totTrees-1]
+
 @app.route('/api1/createTree', methods=['POST'])
 def create_empty_tree():
     dbInfo = connect()
@@ -396,6 +422,17 @@ def create_empty_tree():
 
     else:
         print("did not create new tree")
+        
+    newlyCreatedTree = returnSharedTreeID(d,b)
+    print(newlyCreatedTree[0])
+    
+    # avbdavjkfvbhfdvbj
+    query='UPDATE individual SET family_ids = concat(family_ids,%s) WHERE individual_id = "0";'
+    data = ((","+ str(newlyCreatedTree[0])),)
+
+    cursor.execute(query, data)
+
+    cnx.commit()
         
     cursor.close()
     cnx.close()
@@ -432,7 +469,7 @@ def shareWithUser(start,end,treeid, name, collaborator):
     print(newTree[0])
 
     # for each person in the list add another treeID to the treeID column
-    addTreeIds(individuals, newTree[0])
+    addTreeIds(individuals, newTree[0], treeid)
         
 
     return "200"
@@ -458,32 +495,12 @@ def createEmptySharedTree(name, collaborator):
     cursor.close()
     cnx.close()
 
-def returnSharedTreeID(name, collaborator):
-    dbInfo = connect()
-    cursor = dbInfo[1]
-    cnx = dbInfo[0]
-
-    print("in retTreeId\n")
-    print(name, collaborator)
-
-    cursor.execute("SELECT family_id FROM family WHERE owner_id=%s", (collaborator,))
-
-    newTree = list(cursor.fetchall())
-
-    totTrees = len(newTree)
-
-    print(newTree)
-    cursor.close()
-    cnx.close()
-
-    return newTree[totTrees-1]
-
-def addTreeIds(listIndividuals, addTree):
+def addTreeIds(listIndividuals, addTree, ogTree):
     print("add tree ids param")
     i = 0
     for indivs in listIndividuals:
         # call function to edit individuals one by one
-        indivEditTrees(listIndividuals[i][0], addTree)
+        indivEditTrees(listIndividuals[i][0], addTree, ogTree)
         i += 1
 
 def indivEditTrees(id, treeid):
