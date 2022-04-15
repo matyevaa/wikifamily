@@ -76,12 +76,7 @@ FROM individual p1
  LEFT JOIN individual AS p3 ON p3.parent = p2.individual_id
  LEFT JOIN individual AS p4 ON p4.parent = p3.individual_id
  LEFT JOIN individual AS p5 on p5.parent = p4.individual_id
-WHERE p1.parent is null AND 1 IN  (p1.parent,
-                   p2.parent,
-                   p3.
-                   parent,
-                   p4.parent,
-                   p5.parent)
+WHERE p1.parent is null and p1.family_id=1 AND FIND_IN_SET(1,p1.family_ids)
     ''')
 
 
@@ -242,31 +237,30 @@ def getFamilyName(id):
     return json.dumps(json_data)
 
     # testing for getting data w treeId
-@app.route('/api1/createjj/<treeId>', methods=['GET', 'DELETE', 'PUT'])
-@cross_origin(supports_credentials=True)
-def get_family_w_treeID(treeId):
-    print("get family apis, /<treeId>")
-    dbInfo = connect()
-    cursor = dbInfo[1]
-    cnx = dbInfo[0]
-
-    # gets parents value
-    # cursor.execute('SELECT DISTINCT c.first_name FROM individual i, individual j, individual c WHERE i.parent=c.individual_id AND j.parent=c.individual_id')
-    # get child and parent
-    cursor.execute('SELECT DISTINCT i.first_name, c.first_name FROM individual i, individual c WHERE i.individual_id=84 AND i.parent=c.individual_id')
-    f = cursor.fetchall()
-    print("Selectedjj ", f)
-
-    # FOR OG TREE SEARCH W ID
-    # cursor.execute("SELECT * FROM individual WHERE family_id = %s", (treeId,))
-    cursor.execute("SELECT * FROM individual WHERE FIND_IN_SET(%s, family_ids)", (treeId,))
-
-    row_headers = [x[0] for x in cursor.description]
-    data = cursor.fetchall()
-    json_data = []
-    for result in data:
-        json_data.append(dict(zip(row_headers, result)))
-    return json.dumps(json_data)
+# @app.route('/api1/createjj/<treeId>', methods=['GET', 'DELETE', 'PUT'])
+# @cross_origin(supports_credentials=True)
+# def get_family_w_treeID(treeId):
+#     print("get family apis, /<treeId>")
+#     dbInfo = connect()
+#     cursor = dbInfo[1]
+#     cnx = dbInfo[0]
+#
+#     # gets parents value
+#     # cursor.execute('SELECT DISTINCT c.first_name FROM individual i, individual j, individual c WHERE i.parent=c.individual_id AND j.parent=c.individual_id')
+#     # get child and parent
+#     cursor.execute('SELECT DISTINCT i.first_name, c.first_name FROM individual i, individual c WHERE i.individual_id=84 AND i.parent=c.individual_id')
+#     f = cursor.fetchall()
+#     print("Selectedjj ", f)
+#     # FOR OG TREE SEARCH W ID
+#     # cursor.execute("SELECT * FROM individual WHERE family_id = %s", (treeId,))
+#     cursor.execute("SELECT * FROM individual WHERE FIND_IN_SET(%s, family_ids)", (treeId,))
+#
+#     row_headers = [x[0] for x in cursor.description]
+#     data = cursor.fetchall()
+#     json_data = []
+#     for result in data:
+#         json_data.append(dict(zip(row_headers, result)))
+#     return json.dumps(json_data)
 
 @app.route('/api1/createjj/<treeId>', methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
@@ -407,7 +401,7 @@ def create_empty_tree():
     msg = ''
     theform = request.get_json(force=True)
     print("add tree")
-    
+
     b = theform['user_id']
     d = theform['parent']
 
@@ -491,7 +485,7 @@ def createEmptySharedTree(name, collaborator):
     cursor.execute(query, data)
     cnx.commit()
 
-    
+
     cursor.close()
     cnx.close()
 

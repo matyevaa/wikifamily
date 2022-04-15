@@ -4,6 +4,7 @@ import React from 'react';
 const About = ({
 }) => {
   return(
+  <div className="centerDiv">
     <div className="content">
       <h1 className="subtopic text">About Page</h1>
       <p className="description text">Lorem ipsum dolor sit amet, ea detracto legendos imperdiet mel, ius ne noster graecis minimum. Ex usu animal officiis, nam unum mediocritatem ei. Aliquip definiebas nec et, ius te mutat bonorum, at eos ferri veritus adversarium. Cu quo alterum scribentur, fastidii detracto adolescens his ne. Id eum idque moderatius deterruisset.
@@ -13,6 +14,7 @@ const About = ({
                                               Sea cibo suscipiantur te. Eu atqui clita mei. Cum ut dolorum abhorreant. Nec inani menandri ex, habeo menandri nec ut.
       </p>
     </div>
+  </div>
   );
 }
 

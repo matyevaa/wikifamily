@@ -6,8 +6,9 @@ import YoutubeVideo from '../components/YoutubeVideo';
 class Help extends React.Component{
   render () {
     return(
+    <div className="centerDiv">
       <div className = "content">
-        <div className='Help'> 
+        <div className='Help'>
           <h1 className = "subtopic text">WikiFamily Tutorial</h1>
           <YoutubeVideo videoId='mPZkdNFkNps' />
           <h1 className="subtopic text">Q & A</h1>
@@ -19,6 +20,7 @@ class Help extends React.Component{
         </p>
         </div>
       </div>
+    </div>
     )
   }
 
@@ -26,4 +28,3 @@ class Help extends React.Component{
 
 
 export default Help;
-

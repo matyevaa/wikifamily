@@ -1,14 +1,16 @@
 import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
-
-// adding from /create
+import TreeList from "../components/TreeView";
 import Tree from "../components/Tree";
 import { Link } from "react-router-dom";
-// end add from /create
 
 const IndivTree = (treeId) => {
   const [treeName, setTreeName] = useState(["no data"]);
   // const [treeIdentif, setItendif] = useState();
+
+
+  const [showView, setShowView] = useState(false);
+  const [showGraph, setShowGraph] = useState(false);
 
   const [wantShare, setWantShare] = useState(false);
   const [collaboratorExist, setcollaboratorExist] = useState(false);
@@ -37,7 +39,7 @@ const IndivTree = (treeId) => {
     // adding from /create
     getData(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7));
     // end add from /create
-    
+
   }, []);
 
   const getFamilyName = async(treeID) => {
@@ -58,13 +60,14 @@ const IndivTree = (treeId) => {
 
   // adding from /create
   const getData = async(treeID) => {
-    const result = await axios (`http://localhost:5000/api1/createjj/${treeID}`, {
+    const result = await axios (`http://localhost:5000/api1/create`, {
       headers: { 'Content-Type': 'application/json'}
     })
     .then(result => setData(result.data))
     .catch(err => console.log(err));
     console.log("in get data indivtree.js");
   };
+
   console.log("Get Data:", dataDB);
 
   const delData = async(individual_id) => {
@@ -76,6 +79,23 @@ const IndivTree = (treeId) => {
     getData();
   };
   // end add from /create
+
+  const getIndividual = async(individual_id) => {
+    const result = await axios (`/api1/create/${individual_id}`, {
+      headers: { 'Content-Type': 'application/json'}
+    })
+    .catch(err => console.log(err));
+    console.log("getData: " + result);
+  };
+
+  const updateData = async(individual_id) => {
+    console.log("In Update, individual_id is ", individual_id);
+    await axios.put (`http://localhost:5000/api1/put/${individual_id}`, {
+      headers: { 'Content-Type': 'application/json'}
+    })
+    .then(response => setData(response.data))
+    .catch(err => console.log(err));
+  };
 
   // sharing individuals// sets starting and end points, end points can be changed if keep clicking
   const sharingStartEnd = (id) => {
@@ -105,7 +125,7 @@ const IndivTree = (treeId) => {
     if (wantShare == false || wantShare == undefined) {
       // dont show anything
     }
-    
+
     else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
           <div>
@@ -160,12 +180,23 @@ const IndivTree = (treeId) => {
   }
 
   const parentRef = useRef()
-  
+
   return(
     <div className="content">
       <h1 className="subtopic text">Family tree ID: {treeName['family_name']}</h1>
 
-      <Tree dataDB={dataDB}/>
+      <div className="tree_center">
+        <div class="tree_options">
+          <h3 id="tree_view" onClick={() => { setShowView(showView => !showView); setShowGraph(false) } }>Tree View</h3>
+          <h3 id="tree_graph" onClick={() => { setShowGraph(showGraph => !showGraph); setShowView(false) } }>Tree Graph</h3>
+        </div>
+      </div>
+
+      { showView ? <TreeList list={dataDB}/> : null }
+      { showGraph ? <Tree dataDB={dataDB}/> : null }
+
+      {dataDB ? console.log("api: ", dataDB) : console.log("no api")}
+
 
       <div className="class_btn">
         <h3>Database Data</h3>
@@ -174,9 +205,9 @@ const IndivTree = (treeId) => {
         {/* NEED TO CHANGE TO HOVER MOUSE CH TO POINTER */}
         <p>Click to <span className='hover_pointer' onClick={() => {changeConditon();}}>share</span> individuals</p>
         {sharingConditionShow()}
-        
 
-        
+
+
       </div>
       <table className="result_table">
         <thead>
