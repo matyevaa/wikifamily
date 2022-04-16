@@ -31,64 +31,81 @@ def get_family():
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    # get parent root
-    #cursor.execute("SELECT * FROM individual WHERE parent is NULL")
-    #row_headers1 = [x[0] for x in cursor.description]
-    #r = cursor.fetchall()
-    #print("root in get data: ", r)
-    #json_data = []
-    #for result in r:
-    #    json_data.append(dict(zip(row_headers1, result)))
-
-    # get parent and children
-    # cursor.execute('''
-    #     SELECT
-	#        p.first_name as Parent,
-    #        GROUP_CONCAT(c.first_name ORDER BY c.first_name) as Children
-    #        FROM individual c
-    #        JOIN individual p
-    #        ON c.parent = p.individual_id
-    #        GROUP BY p.individual_id;
-    # ''')
-
-    # cursor.execute('''
-    #     SELECT t1.first_name AS lev1,
-    #         t2.first_name as lev2,
-    #         t3.first_name as lev3,
-    #         t4.first_name as lev4
-    #     FROM individual AS t1
-    #     LEFT JOIN individual AS t2 ON t2.parent = t1.individual_id
-    #     LEFT JOIN individual AS t3 ON t3.parent = t2.individual_id
-    #     LEFT JOIN individual AS t4 ON t4.parent = t3.individual_id
-    # ''')
-
-
-    cursor.execute('''
-        SELECT
-            p1.individual_id as individual_id,
-            p1.first_name as ParentName,
-            p2.first_name as Child1,
-            p3.first_name as Child2,
-            p4.first_name as Child3,
-            p5.first_name as Child4
-FROM individual p1
- LEFT JOIN individual AS p2 ON p2.parent = p1.individual_id
- LEFT JOIN individual AS p3 ON p3.parent = p2.individual_id
- LEFT JOIN individual AS p4 ON p4.parent = p3.individual_id
- LEFT JOIN individual AS p5 on p5.parent = p4.individual_id
-WHERE p1.parent is null and p1.family_id=1 AND FIND_IN_SET(1,p1.family_ids)
-    ''')
-
-
-    # get everyone
-    #cursor.execute("SELECT * FROM individual")
+    # tree traversal algorithm
+    # first get the children of a root, in children we see each of childs's id and name
+    children_root, children, new_children = [], [], [];
+    sql_root = '''select c.individual_id, c.first_name
+                FROM individual p1
+                LEFT JOIN individual c ON p1.individual_id = c.parent
+                WHERE p1.family_id=1 AND p1.parent is null AND c.individual_id is not null;
+           '''
+    cursor.execute(sql_root)
+    datas = cursor.fetchall()
     row_headers = [x[0] for x in cursor.description]
-    data = cursor.fetchall()
-    json_data = []
-    for result in data:
-        json_data.append(dict(zip(row_headers, result)))
+    for result in datas:
+        # got the root's children
+        children_root.append(dict(zip(row_headers, result)))
+    print("children root: ", children_root[0])
+    backup_return = children_root[0]
 
-    return json.dumps(json_data)
+    # get the children of root
+    for parent in children_root:
+        root_id = parent['individual_id']
+        print("parent's individual id is: ", root_id)
+        cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE p1.family_id=1 AND c.individual_id is not null AND p1.individual_id = %s', (root_id,))
+        datas2 = cursor.fetchall()
+        for result in datas2:
+            children.append(dict(zip(row_headers, result)))
+        print("children array: ", children)
+        # try to add children array into childrn_root as a nested key
+        parent["children"] = children
+
+    # ATTENTION: THIS IS FOR FAMILY_ID = 1 (FIX IT LATER)
+
+    # PUT THIS ALL IN A FOR LOOP UNTIL THE END OF THE PATH
+    # the end of the path: no children for all of parents
+    count_sql = '''SELECT COUNT(first_name) FROM individual WHERE family_id=1'''
+    cursor.execute(count_sql)
+    count_fetch = cursor.fetchall();
+    substract = len(children) + 1
+    count = count_fetch[0][0] - substract
+    print("how many children?", count)
+    while count>0:
+    # for each child, look if they have children_root
+        # and if so, append to a new children array & then add it as a nested key
+        for parent_who_was_child in children:
+            parent_id = parent_who_was_child['individual_id']
+            #print("parent who was child's id: ", parent_id)
+            cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE p1.family_id=1 AND c.individual_id is not null AND p1.individual_id = %s', (parent_id,))
+            datas3 = cursor.fetchall()
+            if datas3:
+                new_children = []
+                for result in datas3:
+                    new_children.append(dict(zip(row_headers, result)))
+                    print("parents: ", parent_who_was_child)
+                    print("his children: ", new_children)
+                    parent_who_was_child["children"] = new_children
+                    children = new_children
+                    print("updated children: (should be = to new children)", children)
+                    count = count - 1
+            else:
+                print("in else, this guy doesn't have children")
+                count = count - 1
+                continue
+            print("COUNT IN FOR LOOP for a child: ", count)
+            # count = count - 1
+            print("COUNT UPDATE: ", count)
+            if count==0:
+                break
+            else:
+                print("count is alive: ", count)
+                continue
+        print("DATAS3 outside of the for loop: ", datas3)
+
+    print("broke from while loop")
+    print("final array: ", children_root)
+
+    return json.dumps(children_root)
 
 @app.route('/api1/create', methods=['GET','POST'])
 def add_person():
@@ -291,7 +308,7 @@ def add_person_w_treeID(treeId):
         if result:
             msg = 'Such a person already exists in your family!'
         elif result is None:
-            # check if the tree was shared 
+            # check if the tree was shared
             # cursor.execute("SELECT shared_from from family where family_id=%s;", (treeId,))
             # if shared get the id and insert it with current tree id
             # else... do nothing
@@ -416,10 +433,10 @@ def create_empty_tree():
 
     else:
         print("did not create new tree")
-        
+
     newlyCreatedTree = returnSharedTreeID(d,b)
     print(newlyCreatedTree[0])
-    
+
     # avbdavjkfvbhfdvbj
     query='UPDATE individual SET family_ids = concat(family_ids,%s) WHERE individual_id = "0";'
     data = ((","+ str(newlyCreatedTree[0])),)
@@ -427,7 +444,7 @@ def create_empty_tree():
     cursor.execute(query, data)
 
     cnx.commit()
-        
+
     cursor.close()
     cnx.close()
 
@@ -464,7 +481,7 @@ def shareWithUser(start,end,treeid, name, collaborator):
 
     # for each person in the list add another treeID to the treeID column
     addTreeIds(individuals, newTree[0], treeid)
-        
+
 
     return "200"
 
