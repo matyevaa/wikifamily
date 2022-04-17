@@ -182,6 +182,7 @@ const IndivTree = (treeId) => {
   const parentRef = useRef()
 
   return(
+   <div className="centerDiv">
     <div className="content">
       <h1 className="subtopic text">Family tree ID: {treeName['family_name']}</h1>
 
@@ -247,6 +248,7 @@ const IndivTree = (treeId) => {
         ))}
         </tbody>
        </table>
+    </div>
     </div>
   );
 }
