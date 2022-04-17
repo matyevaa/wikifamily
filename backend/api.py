@@ -67,7 +67,7 @@ def get_family():
     count_sql = '''SELECT COUNT(first_name) FROM individual WHERE family_id=1'''
     cursor.execute(count_sql)
     count_fetch = cursor.fetchall();
-    substract = len(children) + 1
+    substract = len(children) + 2
     count = count_fetch[0][0] - substract
     print("how many children?", count)
     while count>0:

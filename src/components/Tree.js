@@ -12,7 +12,7 @@ export default class CenteredTree extends React.PureComponent {
       data: []
     }
     this.showTree = this.showTree.bind(this);
-    console.log("db ", this.state.dataDB);
+    console.log("db ", this.state.db_data);
   }
 
   injectedNodesCount = 0;
@@ -42,10 +42,11 @@ export default class CenteredTree extends React.PureComponent {
 
   showTree = () => {
     const { visibility } = this.state;
+    console.log("here ", this.state.db_data);
     this.setState({
       visibility: !visibility,
       data: {
-          name: this.props.dataDB[0].ParentName,
+          name: this.state.db_data[0].first_name,
           children: [
             { name: this.props.dataDB[0].Child1,
               children: [
