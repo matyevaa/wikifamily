@@ -156,22 +156,27 @@ const IndivTree = (treeId) => {
     });
 
     setcollaboratorExist(result.data[0])
-
-    if(collaboratorExist == true) {
-      setcollabID(result.data[1])
-      console.log("in share function")
-      const result = await axios (`http://localhost:5000/api2/share/${shareStart}/${shareEnd}/${treeIdentif}/${treeName['family_name']}/${collabID}`, {
-        headers: { 'Content-Type': 'application/json'},
-      });
-    }
     console.log(result)
+    let id
+    if(result.data[0] == true) {
+      // setcollabID(result.data[1])
+      id = result.data[1]
+      console.log(id)
+      
+      setcollabID(id)
+    }
+
+    collaboratorEditing(id);
+    
 
     let link = "http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"
   }
 
-  const collaboratorEditing = async() => {
+  const collaboratorEditing = async(id) => {
     console.log("in share function")
-      const result = await axios.post (`http://localhost:5000/api2/share/${shareStart}/${shareEnd}/${treeIdentif}/${treeName['family_name']}/${collabID}`, {
+    console.log(collabID)
+      const result = await axios.post (`http://localhost:5000/api2/share/${shareStart}/${shareEnd}/${treeIdentif}/${treeName['family_name']}/${id}`, {
+        method:'POST',
       headers: { 'Content-Type': 'application/json'},
     });
 
