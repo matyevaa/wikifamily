@@ -76,11 +76,13 @@ def get_family(id):
     # PUT THIS ALL IN A FOR LOOP UNTIL THE END OF THE PATH
     # the end of the path: no children for all of parents
     cursor.execute('''SELECT COUNT(first_name) FROM individual WHERE family_id=%s''',(fam_id,))
-    count_fetch = cursor.fetchall();
-    substract = len(children) + 2
+    count_fetch = cursor.fetchall()
+    substract = len(children) + 1
+    print("count fetch: ", count_fetch[0][0]) #17
+    print("len chil ", len(children)) #1
     count = count_fetch[0][0] - substract
     print("how many children?", count)
-    while count>0:
+    while count>=0:
     # for each child, look if they have children_root
         # and if so, append to a new children array & then add it as a nested key
         for parent_who_was_child in children:
