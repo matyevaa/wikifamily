@@ -16,19 +16,19 @@ const AddPerson = (tree_id) => {
 
   const [treeElements, updateTree] = useState([])
 
-  // const tree_id = props.match.params.id;
+  const tree = tree_id.match.params.id;
 
   const history = useHistory();
 
   // get current tree id
-  console.log("pathname: " + tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length))
-  let treeID = tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length)
-  let link = "/treeID="+ treeID +"/create"
+  // console.log("pathname: " + tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length))
+  // let treeID = tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length)
+  let link = "/treeID="+ tree +"/create"
   // let link = "/treeID="+ tree_id +"/create"
 
   const savePerson = async(e) => {
     e.preventDefault();
-    let getLink = "http://localhost:5000/api1/createjj/" + treeID
+    let getLink = "http://localhost:5000/api1/createjjadd/" + tree
     await axios.post(getLink, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
@@ -39,7 +39,7 @@ const AddPerson = (tree_id) => {
       birth: birth,
       death: death,
       // family_id: family_id,
-      family_id: treeID,
+      family_id: tree,
       parent: parent,
     });
     

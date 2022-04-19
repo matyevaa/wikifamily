@@ -1,4 +1,5 @@
 # from crypt import methods
+# from crypt import methods
 from hashlib import new
 from unicodedata import name
 from flask import Flask, render_template, redirect, url_for
@@ -66,7 +67,7 @@ def get_family():
     # the end of the path: no children for all of parents
     count_sql = '''SELECT COUNT(first_name) FROM individual WHERE family_id=1'''
     cursor.execute(count_sql)
-    count_fetch = cursor.fetchall();
+    count_fetch = cursor.fetchall()
     substract = len(children) + 2
     count = count_fetch[0][0] - substract
     print("how many children?", count)
@@ -254,32 +255,32 @@ def getFamilyName(id):
     return json.dumps(json_data)
 
     # testing for getting data w treeId
-# @app.route('/api1/createjj/<treeId>', methods=['GET', 'DELETE', 'PUT'])
-# @cross_origin(supports_credentials=True)
-# def get_family_w_treeID(treeId):
-#     print("get family apis, /<treeId>")
-#     dbInfo = connect()
-#     cursor = dbInfo[1]
-#     cnx = dbInfo[0]
-#
-#     # gets parents value
-#     # cursor.execute('SELECT DISTINCT c.first_name FROM individual i, individual j, individual c WHERE i.parent=c.individual_id AND j.parent=c.individual_id')
-#     # get child and parent
-#     cursor.execute('SELECT DISTINCT i.first_name, c.first_name FROM individual i, individual c WHERE i.individual_id=84 AND i.parent=c.individual_id')
-#     f = cursor.fetchall()
-#     print("Selectedjj ", f)
-#     # FOR OG TREE SEARCH W ID
-#     # cursor.execute("SELECT * FROM individual WHERE family_id = %s", (treeId,))
-#     cursor.execute("SELECT * FROM individual WHERE FIND_IN_SET(%s, family_ids)", (treeId,))
-#
-#     row_headers = [x[0] for x in cursor.description]
-#     data = cursor.fetchall()
-#     json_data = []
-#     for result in data:
-#         json_data.append(dict(zip(row_headers, result)))
-#     return json.dumps(json_data)
+@app.route('/api1/createjj/<treeId>', methods=['GET', 'DELETE', 'PUT'])
+@cross_origin(supports_credentials=True)
+def get_family_w_treeID(treeId):
+    print("get family apis, /<treeId>")
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
 
-@app.route('/api1/createjj/<treeId>', methods=['GET','POST'])
+    # gets parents value
+    # cursor.execute('SELECT DISTINCT c.first_name FROM individual i, individual j, individual c WHERE i.parent=c.individual_id AND j.parent=c.individual_id')
+    # get child and parent
+    cursor.execute('SELECT DISTINCT i.first_name, c.first_name FROM individual i, individual c WHERE i.individual_id=84 AND i.parent=c.individual_id')
+    f = cursor.fetchall()
+    print("Selectedjj ", f)
+    # FOR OG TREE SEARCH W ID
+    # cursor.execute("SELECT * FROM individual WHERE family_id = %s", (treeId,))
+    cursor.execute("SELECT * FROM individual WHERE FIND_IN_SET(%s, family_ids)", (treeId,))
+
+    row_headers = [x[0] for x in cursor.description]
+    data = cursor.fetchall()
+    json_data = []
+    for result in data:
+        json_data.append(dict(zip(row_headers, result)))
+    return json.dumps(json_data)
+
+@app.route('/api1/createjjadd/<treeId>', methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def add_person_w_treeID(treeId):
     dbInfo = connect()
@@ -309,11 +310,17 @@ def add_person_w_treeID(treeId):
             msg = 'Such a person already exists in your family!'
         elif result is None:
             # check if the tree was shared
-            # cursor.execute("SELECT shared_from from family where family_id=%s;", (treeId,))
-            # if shared get the id and insert it with current tree id
-            # else... do nothing
+            cursor.execute("select shared_from from family where family_id = %s;", (fid,))
+            listIds = list(cursor.fetchall())
+            if (listIds != ""):
+                print("added new person list of ids is: ")
+                print(listIds)
 
-            cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,treeId))
+                for id in listIds:
+                    fid += "," + id[0]
+
+
+            cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,fid))
             cnx.commit()
             msg = "Successfully added a person!"
     else:
@@ -451,7 +458,8 @@ def create_empty_tree():
     return "200"
 
 # when enters the email has already been checked that it exists
-@app.route('/api2/share/<start>/<end>/<treeid>/<name>/<collaborator>')
+@app.route('/api2/share/<start>/<end>/<treeid>/<name>/<collaborator>', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def shareWithUser(start,end,treeid, name, collaborator):
     dbInfo = connect()
     cursor = dbInfo[1]
@@ -474,7 +482,7 @@ def shareWithUser(start,end,treeid, name, collaborator):
     cnx.close()
 
     # create and return the family tree id that was just made
-    createEmptySharedTree(name, collaborator)
+    createEmptySharedTree(name, collaborator, treeid)
 
     newTree = returnSharedTreeID(name, collaborator)
     print(newTree[0])
@@ -485,7 +493,7 @@ def shareWithUser(start,end,treeid, name, collaborator):
 
     return "200"
 
-def createEmptySharedTree(name, collaborator):
+def createEmptySharedTree(name, collaborator, ogTreeId):
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -497,8 +505,8 @@ def createEmptySharedTree(name, collaborator):
     print(name, collaborator)
 
     # create new family tree for collaborator
-    query = 'INSERT INTO family (family_name, family_size, owner_id) VALUES (%s,"0",%s);'
-    data = (name, collaborator)
+    query = 'INSERT INTO family (family_name, family_size, owner_id, shared_from) VALUES (%s,"0",%s,%s);'
+    data = (name, collaborator, ogTreeId)
     cursor.execute(query, data)
     cnx.commit()
 
