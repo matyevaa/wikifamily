@@ -227,7 +227,6 @@ const IndivTree = (treeId) => {
               <td>Gender</td>
               <td>Birth</td>
               <td>Death</td>
-              <td>Family</td>
               <td>Parent</td>
               <td></td>
            </tr>
@@ -244,7 +243,6 @@ const IndivTree = (treeId) => {
             <td>{item.gender}</td>
             <td>{item.birth}</td>
             <td>{item.death}</td>
-            <td>{item.family_id}</td>
             <td>{item.parent}</td>
             <td>
               <Link to={`edit/${item.individual_id}`} className="edit_btn">Edit</Link>

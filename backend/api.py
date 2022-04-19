@@ -32,20 +32,32 @@ def get_family(id):
 
     # tree traversal algorithm
     # first get the children of a root, in children we see each of childs's id and name
-    children_root, children, new_children = [], [], [];
+    root_node, children_root, children, new_children = [], [], [], [];
+    root = '''select individual_id, first_name
+                FROM individual
+                WHERE family_id=%s AND parent is null AND individual_id is not null;
+           '''
     sql_root = '''select c.individual_id, c.first_name
                 FROM individual p1
                 LEFT JOIN individual c ON p1.individual_id = c.parent
                 WHERE p1.family_id=%s AND p1.parent is null AND c.individual_id is not null;
            '''
-    cursor.execute(sql_root,(id,))
-    datas = cursor.fetchall()
+    cursor.execute(root,(id,))
+    root_data = cursor.fetchall()
     row_headers = [x[0] for x in cursor.description]
-    for result in datas:
-        # got the root's children
-        children_root.append(dict(zip(row_headers, result)))
-    print("children root: ", children_root[0])
-    backup_return = children_root[0]
+    for result in root_data:
+        root_node.append(dict(zip(row_headers, result)))
+    print("ROOT: ", root_node[0])
+    children_root.append(root_node[0])
+    print("Children Root Initial: ", children_root)
+
+
+    # cursor.execute(sql_root,(id,))
+    # datas = cursor.fetchall()
+    # for result in datas:
+    #     # got the root's children
+    #     children_root.append(dict(zip(row_headers, result)))
+    # print("children root: ", children_root[1])
 
     # get the children of root
     for parent in children_root:
@@ -54,10 +66,11 @@ def get_family(id):
         print("parent's individual id is: ", root_id)
         cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE p1.family_id=%s AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
         datas2 = cursor.fetchall()
+        children = []
         for result in datas2:
             children.append(dict(zip(row_headers, result)))
         print("children array: ", children)
-        # try to add children array into childrn_root as a nested key
+        # try to add children array into children_root as a nested key
         parent["children"] = children
 
     # PUT THIS ALL IN A FOR LOOP UNTIL THE END OF THE PATH
