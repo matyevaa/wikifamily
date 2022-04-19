@@ -1,4 +1,6 @@
+from asyncio.windows_events import NULL
 from hashlib import new
+from tkinter.messagebox import NO
 from unicodedata import name
 from flask import Flask, render_template, redirect, url_for
 from flask import jsonify
@@ -121,7 +123,7 @@ def get_whole_family(id):
     cnx = dbInfo[0]
 
     print("HERE ")
-    cursor.execute("select * from individual where family_id=%s order by parent",(id,))
+    cursor.execute("select * from individual where FIND_IN_SET(%s, family_ids) order by parent",(id,))
     row_headers = [x[0] for x in cursor.description]
     data = cursor.fetchall()
     json_data = []
@@ -333,19 +335,33 @@ def add_person_w_treeID(treeId):
             msg = 'Such a person already exists in your family!'
         elif result is None:
             # check if the tree was shared
-            cursor.execute("select shared_from from family where family_id = %s;", (fid,))
-            listIds = list(cursor.fetchall())
-            if (listIds != ""):
-                print("added new person list of ids is: ")
-                print(listIds)
+           cursor.execute("select shared_from from family where family_id = %s;", (fid,))
+           listIds = list(cursor.fetchall())
+           print(listIds)
 
-                for id in listIds:
-                    fid += "," + id[0]
+           if (listIds != ""):
+               print("added new person list of ids is: ")
+               print(listIds)
+               for id in listIds:
+                   print(fid)
+                   print(id[0])
+                   if(id[0] != None):
+                       fid += "," + id[0]
+           
+        #    if (res != [] or res != NULL):
+        #        listIds = list(cursor.fetchall())
+        #        print("added new person list of ids is: ")
+        #        print(listIds)
+        #        for id in listIds:
+        #            print(id)
+        #            fid += "," + str(id[0])
 
-
-            cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,fid))
-            cnx.commit()
-            msg = "Successfully added a person!"
+        # check if the tree was shared
+        
+                   
+        cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,fid))
+        cnx.commit()
+        msg = "Successfully added a person!"
     else:
         msg = "Please fill out the form."
     print("Message: ", msg)
