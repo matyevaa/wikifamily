@@ -8,7 +8,6 @@ const IndivTree = (treeId) => {
   const [treeName, setTreeName] = useState(["no data"]);
   // const [treeIdentif, setItendif] = useState();
 
-
   const [showView, setShowView] = useState(false);
   const [showGraph, setShowGraph] = useState(false);
 
@@ -27,6 +26,8 @@ const IndivTree = (treeId) => {
 
   // adding from /create
   const [dataDB, setData] = useState([]);
+  const [dataFamily, setDataFamily] = useState([]);
+
   let addLink = "/add/" + treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
   // end add from /create
 
@@ -35,11 +36,8 @@ const IndivTree = (treeId) => {
     console.log("get name for tree: ")
     console.log(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7))
     getFamilyName(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7));
-
-    // adding from /create
+    getWholeFamily(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7));
     getData(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7));
-    // end add from /create
-
   }, []);
 
   const getFamilyName = async(treeID) => {
@@ -58,9 +56,8 @@ const IndivTree = (treeId) => {
     return treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
   }
 
-  // adding from /create
   const getData = async(treeID) => {
-    const result = await axios (`http://localhost:5000/api1/create`, {
+    const result = await axios (`http://localhost:5000/api1/create/${treeID}`, {
       headers: { 'Content-Type': 'application/json'}
     })
     .then(result => setData(result.data))
@@ -68,7 +65,15 @@ const IndivTree = (treeId) => {
     console.log("in get data indivtree.js");
   };
 
-  console.log("Get Data:", dataDB);
+  const getWholeFamily = async(treeID) => {
+    const result = await axios (`http://localhost:5000/api1/create-family/${treeID}`, {
+      headers: { 'Content-Type': 'application/json'}
+    })
+    .then(result => setDataFamily(result.data))
+    .catch(err => console.log(err));
+    console.log("in get whole family: ", dataFamily);
+  };
+
 
   const delData = async(individual_id) => {
     console.log("In Delete, individual_id is ", individual_id);
@@ -125,14 +130,13 @@ const IndivTree = (treeId) => {
     if (wantShare == false || wantShare == undefined) {
       // dont show anything
     }
-
     else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
           <div>
-            <label>Family Tree Name</label>
+            <label className="label_text">Family Tree Name</label>
             <input ref={parentRef} type="text" placeholder="Enter email of collaborator" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
           </div>
-          <button className="add_btn" type="submit">Share Tree</button>
+          <button className="btn" type="submit">Share Tree</button>
         </form>
     }
   }
@@ -162,12 +166,12 @@ const IndivTree = (treeId) => {
       // setcollabID(result.data[1])
       id = result.data[1]
       console.log(id)
-      
+
       setcollabID(id)
     }
 
     collaboratorEditing(id);
-    
+
 
     let link = "http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"
   }
@@ -205,14 +209,12 @@ const IndivTree = (treeId) => {
 
 
       <div className="class_btn">
-        <h3>Database Data</h3>
-        <Link to={addLink} className="add_btn">Add Person</Link>
-
-        {/* NEED TO CHANGE TO HOVER MOUSE CH TO POINTER */}
-        <p>Click to <span className='hover_pointer' onClick={() => {changeConditon();}}>share</span> individuals</p>
-        {sharingConditionShow()}
-
-
+        <h3 id="dashboard">Family Individuals Dashboard</h3>
+        <div clasName="dash_tools">
+          <Link to={addLink} id="btn" className="add_btn">Add Person</Link>
+          <button id="shareBtn" onClick={() => {changeConditon();}}>Share Individuals</button>
+          {sharingConditionShow()}
+        </div>
 
       </div>
       <table className="result_table">
@@ -231,9 +233,8 @@ const IndivTree = (treeId) => {
            </tr>
         </thead>
         <tbody>
-        {dataDB ? console.log("api: ", dataDB) : console.log("no api")}
 
-       {dataDB.map((item, idx) => (
+       {dataFamily.map((item, idx) => (
           <tr key={idx}>
             {/* <td>{item.individual_id}</td> */}
             {shareContShow(item)}

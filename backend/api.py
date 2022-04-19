@@ -1,5 +1,3 @@
-# from crypt import methods
-# from crypt import methods
 from hashlib import new
 from unicodedata import name
 from flask import Flask, render_template, redirect, url_for
@@ -25,8 +23,8 @@ def connect():
     cursor = cnx.cursor()
     return (cnx, cursor)
 
-@app.route('/api1/create', methods=['GET', 'DELETE', 'PUT'])
-def get_family():
+@app.route('/api1/create/<id>', methods=['GET', 'DELETE', 'PUT'])
+def get_family(id):
     print("get children of the root individual (parent is NULL)")
     dbInfo = connect()
     cursor = dbInfo[1]
@@ -38,9 +36,9 @@ def get_family():
     sql_root = '''select c.individual_id, c.first_name
                 FROM individual p1
                 LEFT JOIN individual c ON p1.individual_id = c.parent
-                WHERE p1.family_id=1 AND p1.parent is null AND c.individual_id is not null;
+                WHERE p1.family_id=%s AND p1.parent is null AND c.individual_id is not null;
            '''
-    cursor.execute(sql_root)
+    cursor.execute(sql_root,(id,))
     datas = cursor.fetchall()
     row_headers = [x[0] for x in cursor.description]
     for result in datas:
@@ -52,8 +50,9 @@ def get_family():
     # get the children of root
     for parent in children_root:
         root_id = parent['individual_id']
+        fam_id = id
         print("parent's individual id is: ", root_id)
-        cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE p1.family_id=1 AND c.individual_id is not null AND p1.individual_id = %s', (root_id,))
+        cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE p1.family_id=%s AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
         datas2 = cursor.fetchall()
         for result in datas2:
             children.append(dict(zip(row_headers, result)))
@@ -61,13 +60,10 @@ def get_family():
         # try to add children array into childrn_root as a nested key
         parent["children"] = children
 
-    # ATTENTION: THIS IS FOR FAMILY_ID = 1 (FIX IT LATER)
-
     # PUT THIS ALL IN A FOR LOOP UNTIL THE END OF THE PATH
     # the end of the path: no children for all of parents
-    count_sql = '''SELECT COUNT(first_name) FROM individual WHERE family_id=1'''
-    cursor.execute(count_sql)
-    count_fetch = cursor.fetchall()
+    cursor.execute('''SELECT COUNT(first_name) FROM individual WHERE family_id=%s''',(fam_id,))
+    count_fetch = cursor.fetchall();
     substract = len(children) + 2
     count = count_fetch[0][0] - substract
     print("how many children?", count)
@@ -77,25 +73,18 @@ def get_family():
         for parent_who_was_child in children:
             parent_id = parent_who_was_child['individual_id']
             #print("parent who was child's id: ", parent_id)
-            cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE p1.family_id=1 AND c.individual_id is not null AND p1.individual_id = %s', (parent_id,))
+            cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE p1.family_id=%s AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
             datas3 = cursor.fetchall()
             if datas3:
                 new_children = []
                 for result in datas3:
                     new_children.append(dict(zip(row_headers, result)))
-                    print("parents: ", parent_who_was_child)
-                    print("his children: ", new_children)
                     parent_who_was_child["children"] = new_children
                     children = new_children
-                    print("updated children: (should be = to new children)", children)
                     count = count - 1
             else:
-                print("in else, this guy doesn't have children")
                 count = count - 1
                 continue
-            print("COUNT IN FOR LOOP for a child: ", count)
-            # count = count - 1
-            print("COUNT UPDATE: ", count)
             if count==0:
                 break
             else:
@@ -107,6 +96,25 @@ def get_family():
     print("final array: ", children_root)
 
     return json.dumps(children_root)
+
+
+# get the whole family for the table
+@app.route('/api1/create-family/<id>', methods=['GET'])
+def get_whole_family(id):
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    print("HERE ")
+    cursor.execute("select * from individual where family_id=%s order by parent",(id,))
+    row_headers = [x[0] for x in cursor.description]
+    data = cursor.fetchall()
+    json_data = []
+    for result in data:
+        json_data.append(dict(zip(row_headers, result)))
+
+    return json.dumps(json_data)
+
 
 @app.route('/api1/create', methods=['GET','POST'])
 def add_person():

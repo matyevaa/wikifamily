@@ -9,9 +9,31 @@ body {
   bottom: 0;
 }
 
+#shareBtn {
+  margin-left: 1rem;
+  cursor: pointer;
+}
+
+#btn {
+  background-color: teal;
+  border: none;
+  color: white;
+  padding: 12px;
+  margin: 12px 0;
+  box-shadow: 0 1px 6px #ccc;
+  width: 100%;
+  border-radius: 6px;
+  font-size: 18px;
+  font-family: sans-serif;
+}
+
 #welcome {
   font-size: 22px;
   font-weight: 600;
+}
+
+.label_text {
+  font-family: sans-serif;
 }
 
 .centerDiv {
@@ -66,6 +88,10 @@ body {
   display: inline-block;
   padding: 10px;
   font-size: 18px;
+  font-family: sans-serif;
+}
+
+#dashboard {
   font-family: sans-serif;
 }
 
