@@ -2,10 +2,6 @@ body {
   font-family: 'Sztylet';
   margin-top: 100px;
   padding: 40px;
-  background-image: url('./tree.png');
-  background-repeat: no-repeat;
-  background-position: center bottom fixed;
-  background-size: cover;
   bottom: 0;
 }
 
@@ -222,7 +218,7 @@ li a:hover {
 .content {
   margin: 25px 50px 75px;
   padding: 50px;
-  background-color: #f2f2f2;
+  background-color: rgb(242, 242, 242, .97);
   width: 75%;
   box-shadow: 10px 10px 5px #aaaaaa;
 }
