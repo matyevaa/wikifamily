@@ -3,29 +3,30 @@ import TreeView from 'react-expandable-treeview';
 
  function TreeItem(props) {
    const items = props.item;
-   const [collapsed, setCollapsed] = useState();
-
-   const toggle = React.useCallback(() => setCollapsed(!collapsed), [collapsed]);
    console.log("props ", items);
-   console.log("collapse ", collapsed);
 
-   var n = 0;
+   var x = 0;
 
    const data = [{
-     id: n,
-     label: items.first_name,
-     children: items.children
+     id: x,
+     label: items.first_name, // parent #1
+     children: items.children.map( (child, idx) => ({
+         id: x= ++idx,
+         label: child.first_name, // child of parent #1
+         children: child.children.map( (child_child) => ({
+           id: x = ++idx,
+           label: child_child.first_name,
+           children: child_child.children
+              ? child_child.children.map( (child_child_child) => ({
+                  id: x = ++idx,
+                  label: child_child_child.first_name,
+                  children: child_child_child.children
+              }))
+              : null
+         }))
+       }))
    }]
 
-   /*
-   children: [
-       (items.children).map((child, idx) => {
-         id: idx+1,
-         label: child.first_name,
-         children: child.children
-       })
-   ]
-   */
 
 
    // const data = [
