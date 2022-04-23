@@ -44,6 +44,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://b2f8725312304e:0c26bf48@us-cdbr-east-05.cleardb.net/heroku_688d3d7a3cbb111'
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 299
+app.config['SQLALCHEMY_POOL_TIMEOUT'] = 20
 # mysql://b2f8725312304e:0c26bf48@us-cdbr-east-05.cleardb.net/heroku_688d3d7a3cbb111?reconnect=true
 
 # for Facebook

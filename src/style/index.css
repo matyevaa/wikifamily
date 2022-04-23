@@ -1,3 +1,11 @@
+html {
+  margin: 0;
+  background: url('./tree.png') no-repeat center 70px fixed;
+  /* background-size: contain; */
+  background-size: 110% 100%;
+  /* background-position: fixed top; */
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -5,7 +13,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: url('./tree.png') no-repeat center bottom fixed;
+  /* background: url('./tree.png') no-repeat center bottom fixed; */
   background-size: contain;
   -moz-background-size: contain;
   -webkit-background-size: contain;
