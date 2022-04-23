@@ -240,22 +240,55 @@ def delete_person_w_treeID(individual_id, treeId):
     id = individual_id
 
     # if id == 0 #jane doe update jane doe to remove curr treeId from family_ids
-    # call for all ids im family_ids
-    # for loop of all family_ids
-    # if family_ids[0] != treeId
-    # add it to new list of ids
-    # out of loop -- update family_ids of jane doe
-    # query='UPDATE individual SET family_ids = concat(family_ids,%s) WHERE individual_id = %s;'
-    # data = ((","+ str(treeid)), id,)
+    print("id is" + str(id))
+    if int(id) == 0 or str(id) == "0":
+        cursor.execute('SELECT family_ids FROM individual WHERE individual_id = %s', (id,))
+        
+        ids = cursor.fetchall()
+        print(ids[0][0])
 
-    # cursor.execute(query, data)
-    # cnx.commit()
+        # first family ID is 0 -- never to be deleted
+        # newFamIds = str(ids[0])
 
-    cursor.execute('DELETE FROM individual WHERE individual_id = %s', (id,))
-    cnx.commit()
-    msg = "Successfully deleted person!"
-    print(msg)
-    print("Person id is %s ", id)
+        ogIds = []
+        # i = 0
+        temp = ""
+        # get new set of family_ids
+        for char in ids[0][0]:
+            if char == ",":
+                if temp != str(treeId):
+                    ogIds.append(temp)
+                temp = ""
+
+            else:
+                temp += char
+
+        print(ogIds)
+
+        
+    
+        for id in ogIds:
+            if id == "0":
+                print("add first id")
+                finalId = str(id)
+            else:
+                finalId += "," + str(id)
+
+        print("final to insert in jane doe " + str(finalId))
+        
+        query='UPDATE individual SET family_ids = %s WHERE individual_id = 0;'
+        data = ((str(finalId)),)
+
+        cursor.execute(query, data)
+        cnx.commit()
+    else:
+
+        cursor.execute('DELETE FROM individual WHERE individual_id = %s', (id,))
+        cnx.commit()
+        msg = "Successfully deleted person!"
+        print(msg)
+        print("Person id is %s ", id)
+
     cursor.close()
     cnx.close()
     return redirect(url_for('get_whole_family', id=treeId))

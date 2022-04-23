@@ -27,20 +27,6 @@ const Works = (userId) => {
     getFamilyTrees(saved);
   }, []);
 
-  /*
-  // api call to share fragment of DB
-  // send start indivID and end --> + email to share it with
-  // will need to do check of whether or not email exists in user DB
-
-  const shareEdit = async(id) => {
-    console.log("individual id chosen is: ", id);
-    // await axios.put (`http://localhost:5000/api1/put/${individual_id}`, {
-    //   headers: { 'Content-Type': 'application/json'}
-    // })
-    // .then(response => setData(response.data))
-    // .catch(err => console.log(err));
-  }; */
-
   const sharingStartEnd = (id) => {
     console.log("individual id chosen is: ", id);
     if (shareStart == "") {
@@ -58,13 +44,13 @@ const Works = (userId) => {
 
   const findingUserId = () => {
 
-    console.log("pathname: " + userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6))
+    // console.log("pathname: " + userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6))
 
     let temp = userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6)
-    console.log("temp " + temp.toString())
+    // console.log("temp " + temp.toString())
 
     if (temp.toString() != null) { // user id passed in
-      console.log("What gonna put in localstorage " + temp)
+      // console.log("What gonna put in localstorage " + temp)
       localStorage.setItem("userId", JSON.stringify(temp))
     }
     else { // user id not passed in
