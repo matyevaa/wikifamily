@@ -292,19 +292,31 @@ def checkExist():
         c = theform['email_share']
 
         print(c)
-        user = User.query.filter_by(email=c).first() is not None
-        print(user)
-        json_data.append(user)
-        if (user == True):
-            
-            user = User.query.filter_by(email=c).first()
-            user = user.id
+
+        if(c.isdigit() == True):
+            print("is only decimal")
+            user = User.query.filter_by(id=c).first() is not None
             print(user)
             json_data.append(user)
+            if (user == True):
+                user = User.query.filter_by(id=c).first()
+                user = user.id
+                print(user)
+                json_data.append(user)
+
+        else:
+            print("is string")
+            user = User.query.filter_by(email=c).first() is not None
+            print(user)
+            json_data.append(user)
+            if (user == True):
+                user = User.query.filter_by(email=c).first()
+                user = user.id
+                print(user)
+                json_data.append(user)
     else:
         print( "Please fill out form")
-        
-    # json_data[0] = true/false --> if true json_data[0] = user's id
+
     return json.dumps(json_data)
 
 if __name__ == '__main__':

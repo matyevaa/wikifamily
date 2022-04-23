@@ -16,6 +16,8 @@ const EditPerson = (props, treeId) => {
   const [family_id, setFamily_id] = useState("");
   const [parent, setParent] = useState("");
 
+  const [allowEdit, setallowEdit] = useState(false);
+
   const individual_id = props.match.params.id;
   const tree_id = props.match.params.treeId;
 
@@ -29,7 +31,7 @@ const EditPerson = (props, treeId) => {
 
   const handleFormSubmit = async(e) => {
     e.preventDefault();
-    await axios.put(`http://localhost:5000/api1/edit/${individual_id}`, {
+    await axios.put(`http://localhost:5000/api1/edit/${individual_id}/${tree_id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json'},
       first_name: first_name,
@@ -59,19 +61,27 @@ const EditPerson = (props, treeId) => {
 
   const getPersonById = async() => {
     console.log("ind id: ", individual_id);
-    const result = await axios (`http://localhost:5000/api1/create/${individual_id}`, {
+    const result = await axios (`http://localhost:5000/api1/getInfo/${individual_id}`, {
       headers: { 'Content-Type': 'application/json'},
       method: "GET",
-      last_name: last_name
     })
     .then(result => {
       setData(result.data);
+
+      setFirst_name(result.data[0][0])
+      setLast_name(result.data[0][1])
+      setInfo(result.data[0][2])
+      setGender(result.data[0][3])
+      setBirth(result.data[0][4])
+      setDeath(result.data[0][5])
+      setParent(result.data[0][6])
+
       reset(result.data)
     })
     .catch(err => console.log(err));
-
   };
   console.log("Get Person By Id:", dataDB);
+
 
 //{...register('first_name')}
 
@@ -79,47 +89,42 @@ const EditPerson = (props, treeId) => {
     <div>
       <form id="target" onSubmit={handleFormSubmit} method="PUT" action={link} encType="multipart/form-data">
 
-        <div>
+      <div>
           <label>First Name</label>
-          <input type="text" placeholder="First Name" onChange={(e) => setFirst_name(e.target.value) }/>
+          <input type="text" placeholder="First Name" defaultValue={first_name} onChange={(e) => setFirst_name(e.target.value) }/>
         </div>
 
         <div>
           <label>Last Name</label>
-          <input type="text" placeholder="Last Name" name="last_name" value={last_name} onChange={(e) => setLast_name(e.target.value)}/>
+          <input type="text" placeholder="Last Name" defaultValue={last_name} name="last_name" value={last_name} onChange={(e) => setLast_name(e.target.value)}/>
         </div>
 
         <div>
           <label>Description</label>
-          <input type="text" placeholder="Info" name="info" value={info} onChange={(e) => setInfo(e.target.value)}/>
+          <input type="text" placeholder="Info" name="info" defaultValue={info} value={info} onChange={(e) => setInfo(e.target.value)}/>
         </div>
 
         <div>
           <label>Gender</label>
-          <input type="text" placeholder="Gender" name="gender" value={gender} onChange={(e) => setGender(e.target.value)}/>
+          <input type="text" placeholder="Gender" name="gender" defaultValue={gender} value={gender} onChange={(e) => setGender(e.target.value)}/>
         </div>
 
         <div>
           <label>Birth</label>
-          <input type="text" placeholder="Date of Birth" name="birth" value={birth} onChange={(e) => setBirth(e.target.value)}/>
+          <input type="text" placeholder="Date of Birth" name="birth" defaultValue={birth} value={birth} onChange={(e) => setBirth(e.target.value)}/>
         </div>
 
         <div>
           <label>Death</label>
-          <input type="text" placeholder="Date of Death" name="death" value={death} onChange={(e) => setDeath(e.target.value)}/>
-        </div>
-
-        <div>
-          <label>Family id</label>
-          <input type="text" placeholder="Family id" name="family_id_FK" value={family_id} onChange={(e) => setFamily_id(e.target.value)}/>
+          <input type="text" placeholder="Date of Death" name="death" defaultValue={death} value={death} onChange={(e) => setDeath(e.target.value)}/>
         </div>
 
         <div>
           <label>Parent id</label>
-          <input type="text" placeholder="Parent id" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
+          <input type="text" placeholder="Parent id" name="parent" defaultValue={parent} value={parent} onChange={(e) => setParent(e.target.value)}/>
         </div>
 
-          <Link className="link" to="/create">Back to Create Tree</Link>
+          <Link className="link" to={link}>Back to Create Tree</Link>
           <button className="edit_btn" type="submit">Edit Person</button>
       </form>
     </div>

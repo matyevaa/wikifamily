@@ -28,7 +28,7 @@ const AddPerson = (tree_id) => {
 
   const savePerson = async(e) => {
     e.preventDefault();
-    let getLink = "http://localhost:5000/api1/createjjadd/" + tree
+    let getLink = "http://localhost:5000/api1/createadd/" + tree
     await axios.post(getLink, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
@@ -54,7 +54,6 @@ const AddPerson = (tree_id) => {
   const birthRef = useRef()
   const deathRef = useRef()
   const parentRef = useRef()
-  // const familyIDRef = useRef()
 
   function handleAddPerson(e){
     const firstName = firstNameRef.current.value
@@ -64,12 +63,11 @@ const AddPerson = (tree_id) => {
     const birth = birthRef.current.value
     const death = deathRef.current.value
     const parent = parentRef.current.value
-    // const familyID = familyIDRef.current.value
 
-    if (firstName === '' || lastName === '' || desc === '' || gender === '' || parent === "" /* || familyID === ''  */) return
+    if (firstName === '' || lastName === '' || desc === '' || gender === '' || parent === "") return
 
     updateTree(prevTreeElements => {
-      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, birth: birth, death: death, parent: parent/* , familyID: treeID */}]
+      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, birth: birth, death: death, parent: parent}]
     })
 
     console.log(firstName)
@@ -80,7 +78,6 @@ const AddPerson = (tree_id) => {
     birthRef.current.value = null
     deathRef.current.value = null
     parentRef.current.value = null
-    // familyIDRef.current.value = null
   }
 
 
@@ -123,23 +120,10 @@ const AddPerson = (tree_id) => {
           <input ref={parentRef} type="text" placeholder="Parent ID" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
         </div>
 
-        {/* added code to line 135 */}
-
           <button className="add_btn" type="submit"  onClick={handleAddPerson}>Add Person</button>
       </form>
     </div>
   );
 }
-
-{/* <div>
-          <label>Family id</label>
-          {/* <input ref={familyIDRef} type="text" placeholder="Family id" name="family_id" value={family_id} onChange={(e) => setFamily_id(e.target.value)}/>
-          <input type="text" value={treeID}/>
-        </div>
-
-        <div>
-          <label>User ID</label>
-          <input type="text" value={JSON.parse(localStorage.getItem("userId"))}/>
-        </div> */}
 
 export default AddPerson;

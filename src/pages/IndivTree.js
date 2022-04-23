@@ -28,16 +28,15 @@ const IndivTree = (treeId) => {
   const [dataDB, setData] = useState([]);
   const [dataFamily, setDataFamily] = useState([]);
 
+  const [indivsExist, setindivsExist] = useState(false);
+
   let addLink = "/add/" + treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
   // end add from /create
 
   useEffect(() => {
-    // setItendif(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7));
-    console.log("get name for tree: ")
-    console.log(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7))
-    getFamilyName(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7));
-    getWholeFamily(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7));
-    getData(treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7));
+    getFamilyName(treeIdentif);
+    getWholeFamily();
+    getData();
   }, []);
 
   const getFamilyName = async(treeID) => {
@@ -56,17 +55,18 @@ const IndivTree = (treeId) => {
     return treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
   }
 
-  const getData = async(treeID) => {
-    const result = await axios (`http://localhost:5000/api1/create/${treeID}`, {
+  const getData = async() => {
+    const result = await axios (`http://localhost:5000/api1/create-family/${treeIdentif}`, {
       headers: { 'Content-Type': 'application/json'}
     })
     .then(result => setData(result.data))
     .catch(err => console.log(err));
     console.log("in get data indivtree.js");
+    
   };
 
-  const getWholeFamily = async(treeID) => {
-    const result = await axios (`http://localhost:5000/api1/create-family/${treeID}`, {
+  const getWholeFamily = async() => {
+    const result = await axios (`http://localhost:5000/api1/create-family/${treeIdentif}`, {
       headers: { 'Content-Type': 'application/json'}
     })
     .then(result => setDataFamily(result.data))
@@ -77,29 +77,12 @@ const IndivTree = (treeId) => {
 
   const delData = async(individual_id) => {
     console.log("In Delete, individual_id is ", individual_id);
-    await axios.delete (`http://localhost:5000/api1/deletejj/${individual_id}/${treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)}`, {
+    await axios.delete (`http://localhost:5000/api1/delete/${individual_id}/${treeIdentif}`, {
       headers: { 'Content-Type': 'application/json'}
     })
     .catch(err => console.log(err));
+    window.location.reload(false);
     getData();
-  };
-  // end add from /create
-
-  const getIndividual = async(individual_id) => {
-    const result = await axios (`/api1/create/${individual_id}`, {
-      headers: { 'Content-Type': 'application/json'}
-    })
-    .catch(err => console.log(err));
-    console.log("getData: " + result);
-  };
-
-  const updateData = async(individual_id) => {
-    console.log("In Update, individual_id is ", individual_id);
-    await axios.put (`http://localhost:5000/api1/put/${individual_id}`, {
-      headers: { 'Content-Type': 'application/json'}
-    })
-    .then(response => setData(response.data))
-    .catch(err => console.log(err));
   };
 
   // sharing individuals// sets starting and end points, end points can be changed if keep clicking
@@ -132,11 +115,15 @@ const IndivTree = (treeId) => {
     }
     else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
-          <div>
-            <label className="label_text">Family Tree Name</label>
-            <input ref={parentRef} type="text" placeholder="Enter email of collaborator" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
-          </div>
-          <button className="btn" type="submit">Share Tree</button>
+          <p>To share a tree choose the ID of a starting and ending point, then input an email and click 'Share Tree'. If they logged
+              in with Facebook and did not verify their email or used their phone number to register with us you'll have to input their
+              user id in order to share a tree with them!</p>
+
+            <div>
+              <label>Collaborator's email or user ID</label>
+              <input ref={parentRef} type="text" placeholder="Enter email or ID of collaborator" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
+            </div>
+            <button className="add_btn" type="submit">Share Tree</button>
         </form>
     }
   }

@@ -19,6 +19,7 @@ const Works = (userId) => {
   const [dataDB_trees, setData_trees] = useState([]);
   const [shareStart, setShareStart] = useState("");
   const [shareEnd, setShareEnd] = useState("");
+  const [wantShare, setWantShare] = useState(false);
 
   useEffect(() => {
     findingUserId();
@@ -115,11 +116,37 @@ const Works = (userId) => {
     }
   }
 
+    // ch bt true and false
+    const changeConditon = () => {
+      if (wantShare == false) {
+          setWantShare(true)
+      }
+      else {
+        setWantShare(false)
+      }
+    }
+  
+    const userIdconditionShow = () => {
+      if (wantShare == false || wantShare == undefined) {
+        // dont show anything
+      }
+  
+      else {
+        return <div>
+          <p className='text btn_center'>{JSON.parse(localStorage.getItem("userId"))}</p>
+        </div>
+      }
+    }
+
 
   return (
   <div className="centerDiv">
     <div className="content">
       <h1 className="subtopic">Your Works</h1>
+
+      <p className='btn_center' >Click  <span className='hover_pointer text' onClick={() => {changeConditon();}}> here </span>  to see your user ID</p>
+      {userIdconditionShow()}
+
       <div className="btn_center"><button className="add_tree_btn" onClick={() => {window.location.href="http://localhost:3005/new"}}>Create New Tree</button></div>
       {treesOutput()}
     </div>

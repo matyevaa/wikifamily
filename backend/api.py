@@ -116,7 +116,7 @@ def get_family(id):
 
 
 # get the whole family for the table
-@app.route('/api1/create-family/<id>', methods=['GET'])
+@app.route('/api1/create-family/<id>', methods=['GET', 'PUT', 'DELETE'])
 def get_whole_family(id):
     dbInfo = connect()
     cursor = dbInfo[1]
@@ -132,8 +132,8 @@ def get_whole_family(id):
 
     return json.dumps(json_data)
 
-
-@app.route('/api1/create', methods=['GET','POST'])
+# old family tree functions
+""" @app.route('/api1/create', methods=['GET','POST'])
 def add_person():
     dbInfo = connect()
     cursor = dbInfo[1]
@@ -234,7 +234,7 @@ def edit_person(individual_id):
     print(msg)
     cursor.close()
     cnx.close()
-    return redirect(url_for('get_family'))
+    return redirect(url_for('get_family')) """
 
 # FUNCTS GET TREE INFO
 # get list of tree ids, need add <userId> later
@@ -305,7 +305,7 @@ def get_family_w_treeID(treeId):
         json_data.append(dict(zip(row_headers, result)))
     return json.dumps(json_data)
 
-@app.route('/api1/createjjadd/<treeId>', methods=['GET','POST'])
+@app.route('/api1/createadd/<treeId>', methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def add_person_w_treeID(treeId):
     dbInfo = connect()
@@ -347,16 +347,6 @@ def add_person_w_treeID(treeId):
                    print(id[0])
                    if(id[0] != None):
                        fid += "," + id[0]
-           
-        #    if (res != [] or res != NULL):
-        #        listIds = list(cursor.fetchall())
-        #        print("added new person list of ids is: ")
-        #        print(listIds)
-        #        for id in listIds:
-        #            print(id)
-        #            fid += "," + str(id[0])
-
-        # check if the tree was shared
         
                    
         cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,fid))
@@ -367,9 +357,9 @@ def add_person_w_treeID(treeId):
     print("Message: ", msg)
     cursor.close()
     cnx.close()
-    return redirect(url_for('get_family_w_treeID', treeId=treeId))
+    return redirect(url_for('get_whole_family', id=treeId))
 
-@app.route('/api1/deletejj/<individual_id>/<treeId>', methods=['DELETE'])
+@app.route('/api1/delete/<individual_id>/<treeId>', methods=['DELETE'])
 def delete_person_w_treeID(individual_id, treeId):
     dbInfo = connect()
     cursor = dbInfo[1]
@@ -378,6 +368,19 @@ def delete_person_w_treeID(individual_id, treeId):
     print("/delete/id/<treeId> jjDELETE")
     msg = ''
     id = individual_id
+
+    # if id == 0 #jane doe update jane doe to remove curr treeId from family_ids
+    # call for all ids im family_ids
+    # for loop of all family_ids
+    # if family_ids[0] != treeId
+    # add it to new list of ids
+    # out of loop -- update family_ids of jane doe
+    # query='UPDATE individual SET family_ids = concat(family_ids,%s) WHERE individual_id = %s;'
+    # data = ((","+ str(treeid)), id,)
+
+    # cursor.execute(query, data)
+    # cnx.commit()
+
     cursor.execute('DELETE FROM individual WHERE individual_id = %s', (id,))
     cnx.commit()
     msg = "Successfully deleted person!"
@@ -385,7 +388,7 @@ def delete_person_w_treeID(individual_id, treeId):
     print("Person id is %s ", id)
     cursor.close()
     cnx.close()
-    return redirect(url_for('get_family_w_treeID', treeId=treeId))
+    return redirect(url_for('get_whole_family', id=treeId))
 
 
 @app.route('/api1/createjj/<treeId>/<individual_id>', methods=['GET'])
@@ -408,7 +411,7 @@ def get_individual_w_treeID(individual_id, treeId):
     return json.dumps(json_data)
 
 
-@app.route('/api1/editjj/<individual_id>/<treeId>', methods=['PUT', 'PATCH'])
+@app.route('/api1/edit/<individual_id>/<treeId>', methods=['PUT', 'PATCH'])
 def edit_person_w_treeID(individual_id, treeId):
     dbInfo = connect()
     cursor = dbInfo[1]
@@ -425,15 +428,25 @@ def edit_person_w_treeID(individual_id, treeId):
     g = theform['gender']
     b = theform['birth']
     d = theform['death']
-    query = 'UPDATE individual SET first_name=%s, last_name=%s, info=%s, gender=%s, birth=%s, death=%s WHERE individual_id = %s'
-    data = (fn, ls, i, g, b, d, id,)
-    cursor.execute(query, data)
+    p = theform['parent']
+
+    if p != "":
+        # if changing parent id
+        query = 'UPDATE individual SET first_name=%s, last_name=%s, info=%s, gender=%s, birth=%s, death=%s, parent=%s WHERE individual_id = %s'
+        data = (fn, ls, i, g, b, d, p, id,)
+        cursor.execute(query, data)
+    else:
+        # not changing parent id
+        query = 'UPDATE individual SET first_name=%s, last_name=%s, info=%s, gender=%s, birth=%s, death=%s WHERE individual_id = %s'
+        data = (fn, ls, i, g, b, d, id,)
+        cursor.execute(query, data)
     cnx.commit()
     msg = "Successfully updated person!"
     print(msg)
     cursor.close()
     cnx.close()
-    return redirect(url_for('get_family_w_treeID', treeId=treeId))
+    # return redirect(url_for('get_whole_family', id=treeId))
+    return redirect(url_for('get_whole_family', id=treeId))
 
 def returnSharedTreeID(name, collaborator):
     dbInfo = connect()
@@ -558,7 +571,7 @@ def addTreeIds(listIndividuals, addTree, ogTree):
     i = 0
     for indivs in listIndividuals:
         # call function to edit individuals one by one
-        indivEditTrees(listIndividuals[i][0], addTree, ogTree)
+        indivEditTrees(listIndividuals[i][0], addTree)
         i += 1
 
 def indivEditTrees(id, treeid):
@@ -575,6 +588,22 @@ def indivEditTrees(id, treeid):
     cursor.close()
     cnx.close()
 
+@app.route('/api1/getInfo/<id>', methods=['GET'])
+def getUserInfo(id):
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    cursor.execute("SELECT first_name, last_name, info, gender, birth, death, parent FROM individual WHERE individual_id = %s", (id,))
+
+    # row_headers = [x[0] for x in cursor.description]
+    individuals = list(cursor.fetchall())
+
+    print(individuals)
+
+    # cursor.close()
+    # cnx.close()
+    return json.dumps(individuals)
 
 
 if __name__ == "__main__":
