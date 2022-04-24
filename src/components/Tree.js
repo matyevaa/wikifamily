@@ -42,20 +42,27 @@ export default class CenteredTree extends React.PureComponent {
 
   showTree = () => {
     const { visibility } = this.state;
-    console.log("here ", this.state.db_data);
+    const items = this.state.db_data[0];
+    console.log("items", items.first_name);
+    const data = [{
+      name: items.first_name, // parent #1
+      children: items.children.map( (child, idx) => ({
+          name: child.first_name, // child of parent #1
+          children: child.children.map( (child_child) => ({
+            name: child_child.first_name,
+            children: child_child.children
+               ? child_child.children.map( (child_child_child) => ({
+                   name: child_child_child.first_name,
+                   children: child_child_child.children
+               }))
+               : null
+          }))
+        }))
+    }]
+
     this.setState({
       visibility: !visibility,
-      data: {
-          name: this.state.db_data[0].first_name,
-          children: [
-            { name: this.props.dataDB[0].Child1,
-              children: [
-                { name: this.props.dataDB[0].Child2 }
-              ]
-            },
-            { name: "Bogonok's Sibling"}
-          ]
-      }
+      data: data
     })
   }
 

@@ -313,6 +313,10 @@ li a:hover {
   cursor: pointer;
 }
 
+#user_id {
+  color: #3366cc;
+}
+
 @media only screen and (min-width: 700px) and (max-width: 1200px) {
 
 .content {

@@ -111,15 +111,15 @@ const Works = (userId) => {
         setWantShare(false)
       }
     }
-  
+
     const userIdconditionShow = () => {
       if (wantShare == false || wantShare == undefined) {
         // dont show anything
       }
-  
+
       else {
         return <div>
-          <p className='text btn_center'>{JSON.parse(localStorage.getItem("userId"))}</p>
+          <p id="user_id" className='text btn_center'>{JSON.parse(localStorage.getItem("userId"))}</p>
         </div>
       }
     }
@@ -130,7 +130,7 @@ const Works = (userId) => {
     <div className="content">
       <h1 className="subtopic">Your Works</h1>
 
-      <p className='btn_center' >Click  <span className='hover_pointer text' onClick={() => {changeConditon();}}> here </span>  to see your user ID</p>
+      <center><p className='hover_pointer text' onClick={() => {changeConditon();}}> Click here to see your user ID</p></center>
       {userIdconditionShow()}
 
       <div className="btn_center"><button className="add_tree_btn" onClick={() => {window.location.href="http://localhost:3005/new"}}>Create New Tree</button></div>
