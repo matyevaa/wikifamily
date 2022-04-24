@@ -120,7 +120,7 @@ function Navbar(props) {
   return (
           <div className="nav">
             <div className="navLogo">
-              <img className="logo"  src="/Wiki.png" alt="wikiFamily Logo" />
+              <a href="http://localhost:3005/"><img className="logo"  src="/Wiki.png" alt="wikiFamily Logo" /></a>
             </div>
 
             <div className="navLinks">

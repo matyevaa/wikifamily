@@ -10,6 +10,13 @@ const UserLoginInfo = () => {
   if (isAuthenticated == true){
     var uniqueLoginID = user.sub
     console.log(uniqueLoginID)
+
+    // do navbar changes w this
+    // use nickname for their name
+    localStorage.setItem("userId", JSON.stringify(uniqueLoginID))
+    localStorage.setItem("userEmail", JSON.stringify(user.email))
+    localStorage.setItem("userName", JSON.stringify(user.nickname))
+    
   }
 
   return(null)
