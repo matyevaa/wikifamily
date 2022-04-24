@@ -28,7 +28,6 @@ function Navbar(props) {
     const getUserInfoLocal = () => {
     let tempId = JSON.parse(localStorage.getItem("userId"))
     let loginVersion = JSON.parse(localStorage.getItem("loginVersion"))
-
     let tempName
     let tempEmail
 
@@ -45,12 +44,9 @@ function Navbar(props) {
       }
       else if (loginVersion == "oauth" && isAuthenticated == true) {
         console.log("was oauth login")
-            tempName = user.name
-            tempId = user.nickname
-            tempEmail = user.email
-
-            localStorage.setItem("userId", JSON.stringify(user.nickname))
-            localStorage.setItem("userName", JSON.stringify(user.nickname))
+            tempName = JSON.parse(localStorage.getItem("userName"))
+            tempId = JSON.parse(localStorage.getItem("userId"))
+            tempEmail = JSON.parse(localStorage.getItem("userEmail"))
       }
 
       let temp = [tempName, tempEmail, tempId]
@@ -98,7 +94,7 @@ function Navbar(props) {
           onClick={() => {handleLogout(); }}>Logout</button>
       }
       else {
-        return <div id= "LogoutButton"><LogoutButton/></div>
+        return <div id= "LogoutButton" ><LogoutButton/></div>
       }
     }
 
