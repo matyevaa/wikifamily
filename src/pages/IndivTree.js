@@ -56,13 +56,13 @@ const IndivTree = (treeId) => {
   }
 
   const getData = async() => {
-    const result = await axios (`http://localhost:5000/api1/create-family/${treeIdentif}`, {
+    const result = await axios (`http://localhost:5000/api1/create/${treeIdentif}`, {
       headers: { 'Content-Type': 'application/json'}
     })
     .then(result => setData(result.data))
     .catch(err => console.log(err));
     console.log("in get data indivtree.js");
-    
+
   };
 
   const getWholeFamily = async() => {

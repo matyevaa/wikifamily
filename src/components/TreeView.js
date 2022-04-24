@@ -17,6 +17,7 @@ import TreeView from 'react-expandable-treeview';
            id: x = ++idx,
            label: child_child.first_name,
            children: child_child.children
+
               ? child_child.children.map( (child_child_child) => ({
                   id: x = ++idx,
                   label: child_child_child.first_name,
@@ -26,7 +27,6 @@ import TreeView from 'react-expandable-treeview';
          }))
        }))
    }]
-
 
 
    // const data = [
@@ -93,7 +93,9 @@ import TreeView from 'react-expandable-treeview';
    //      }]
 
    return (
+
       <TreeView class="tree_item" data={data} renderNode={({label}) => <div>{label}</div>}/>
+
   )
  }
 
