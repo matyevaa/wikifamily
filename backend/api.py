@@ -140,7 +140,7 @@ def getFamilies(id):
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    cursor.execute("SELECT * FROM family WHERE owner_id =" + id)
+    cursor.execute("SELECT * FROM family WHERE owner_id = %s", (id,))
 
     row_headers = [x[0] for x in cursor.description]
     data = cursor.fetchall()

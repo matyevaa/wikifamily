@@ -323,10 +323,19 @@ def checkExist():
 
 @app.route("/api2/addEmailLogin/<id>/<email>/<name>")
 def addFromEmailLogin(id, email,name):
-    user = User(name=name, id=id, email=email)
-        
-    db.session.add_all(user)
-    db.session.commit()
+
+    user = User.query.filter_by(id=id).first() is not None
+    print(user)
+
+    # if the user existed then do nothing 
+
+    if (user == False): # add the user to the db
+        user = User(name=name, id=id, email=email)
+            
+        db.session.add(user)
+        db.session.commit()
+
+    return "200"
 
 if __name__ == '__main__':
     db.create_all()

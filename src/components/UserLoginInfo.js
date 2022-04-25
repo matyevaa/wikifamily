@@ -1,11 +1,25 @@
 import React from 'react';
 import { useAuth0, User } from "@auth0/auth0-react";
+import axios from "axios";
 
 //user.sub unique user identifier 
 
 const UserLoginInfo = () => {
   const { user, isAuthenticated } = useAuth0();
+  const { chekcDB, setchekcDB } = (false);
   
+   const putInDB = async(parsedId) => {
+    const result = await axios (`http://localhost:3000/api2/addEmailLogin/${parsedId}/${user.email}/${user.nickname}`, {
+      headers: { 'Content-Type': 'application/json'}
+    })
+    .then(result => {localStorage.setItem("userName", JSON.stringify(result.data[0]))
+    localStorage.setItem("userEmail", JSON.stringify(result.data[2]))})
+    .catch(err => console.log(err));
+    // console.log("navbar: " + result.data);
+
+    setchekcDB(true)
+
+  };
   
   if (isAuthenticated == true){
     var uniqueLoginID = user.sub
@@ -18,6 +32,10 @@ const UserLoginInfo = () => {
     localStorage.setItem("userId", JSON.stringify(parsedId))
     localStorage.setItem("userEmail", JSON.stringify(user.email))
     localStorage.setItem("userName", JSON.stringify(user.nickname))
+    if (chekcDB == false) {
+      putInDB(parsedId)
+    }
+    
   }
 
   return(null)
