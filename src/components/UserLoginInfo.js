@@ -11,12 +11,13 @@ const UserLoginInfo = () => {
     var uniqueLoginID = user.sub
     console.log(uniqueLoginID)
 
+    let parsedId = uniqueLoginID.slice(6,(uniqueLoginID.length))
+
     // do navbar changes w this
     // use nickname for their name
-    localStorage.setItem("userId", JSON.stringify(uniqueLoginID))
+    localStorage.setItem("userId", JSON.stringify(parsedId))
     localStorage.setItem("userEmail", JSON.stringify(user.email))
     localStorage.setItem("userName", JSON.stringify(user.nickname))
-    
   }
 
   return(null)

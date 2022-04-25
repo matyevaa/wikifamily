@@ -61,7 +61,7 @@ db = SQLAlchemy(app)
 class User(UserMixin, db.Model):
     id = db.Column(db.String(250), primary_key=True)
     name = db.Column(db.String(250), unique=False)
-    email = db.Column(db.String(250), unique=True)
+    email = db.Column(db.String(250), unique=False)
 
 class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.String(250), db.ForeignKey(User.id), nullable=False)
@@ -320,6 +320,13 @@ def checkExist():
         print( "Please fill out form")
 
     return json.dumps(json_data)
+
+@app.route("/api2/addEmailLogin/<id>/<email>/<name>")
+def addFromEmailLogin(id, email,name):
+    user = User(name=name, id=id, email=email)
+        
+    db.session.add_all(user)
+    db.session.commit()
 
 if __name__ == '__main__':
     db.create_all()

@@ -42,8 +42,8 @@ function Navbar(props) {
         tempEmail = JSON.parse(localStorage.getItem("userEmail"))
         tempId = JSON.parse(localStorage.getItem("userId"))
       }
-      else if (loginVersion == "oauth" && isAuthenticated == true) {
-        console.log("was oauth login")
+      else if (loginVersion == "oauth") {
+            console.log("was oauth login")
             tempName = JSON.parse(localStorage.getItem("userName"))
             tempId = JSON.parse(localStorage.getItem("userId"))
             tempEmail = JSON.parse(localStorage.getItem("userEmail"))

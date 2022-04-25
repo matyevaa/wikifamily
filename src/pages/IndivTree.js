@@ -115,9 +115,9 @@ const IndivTree = (treeId) => {
     }
     else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
-          <p>To share a tree choose the ID of a starting and ending point, then input an email and click 'Share Tree'. If they logged
-              in with Facebook and did not verify their email or used their phone number to register with us you'll have to input their
-              user id in order to share a tree with them!</p>
+          <p>To share a tree choose the ID of a starting and ending point, then input an email and click 'Share Tree'. Please enter an email for Google and Email users. For Facebook users 
+            please enter their user ID found in their works page.
+          </p>
 
             <div>
               <label>Collaborator's email or user ID</label>
@@ -155,9 +155,12 @@ const IndivTree = (treeId) => {
       console.log(id)
 
       setcollabID(id)
+      collaboratorEditing(id);
     }
-
-    collaboratorEditing(id);
+    else {
+      return <p>User did not exist. Try a different sharing method (user ID/ email) or verify you have the correct information/</p>
+    }
+    
 
 
     let link = "http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"
