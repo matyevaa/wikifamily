@@ -115,7 +115,7 @@ const IndivTree = (treeId) => {
     }
     else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
-          <p>To share a tree choose the ID of a starting and ending point, then input an email and click 'Share Tree'. Please enter an email for Google and Email users. For Facebook users 
+          <p>To share a tree choose the ID of a starting and ending point, then input an email and click 'Share Tree'. Please enter an email for Google and Email users. For Facebook users
             please enter their user ID found in their works page.
           </p>
 
@@ -160,7 +160,7 @@ const IndivTree = (treeId) => {
     else {
       return <p>User did not exist. Try a different sharing method (user ID/ email) or verify you have the correct information/</p>
     }
-    
+
 
 
     let link = "http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"
@@ -192,7 +192,7 @@ const IndivTree = (treeId) => {
         </div>
       </div>
 
-      { showView ? <TreeList list={dataDB}/> : null }
+      { showView ? <TreeList list={dataDB} count={dataFamily.length}/> : null }
       { showGraph ? <Tree dataDB={dataDB}/> : null }
 
       {dataDB ? console.log("api: ", dataDB) : console.log("no api")}
@@ -242,6 +242,7 @@ const IndivTree = (treeId) => {
         ))}
         </tbody>
        </table>
+       <h3>Family size is: {dataFamily.length}</h3>
     </div>
     </div>
   );
