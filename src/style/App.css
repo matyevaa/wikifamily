@@ -5,6 +5,44 @@ body {
   bottom: 0;
 }
 
+.popup-content {
+  position: relative;
+  margin: auto;
+  pointer-events: auto;
+  width: 50%;
+  border: solid 1.5px;
+}
+
+.list_info {
+  width: 50%;
+  float: right;
+  margin-left: 2rem;
+}
+
+#centralize {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#jon {
+  width: 250px;
+  height: 250px;
+  background-image: url("jon.jpg");
+  background-size: contain;
+  margin-left: -1rem;
+}
+
+.person_info {
+  font-size: 18px;
+  list-style-type: none;
+  letter-spacing: 0.5px;
+}
+
+.person_info span {
+  color: #3366CC;
+}
+
 #shareBtn {
   margin-left: 1rem;
   cursor: pointer;

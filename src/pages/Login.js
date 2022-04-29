@@ -64,7 +64,7 @@ const Login = () => {
       {/* <button onClick={() => {loginWithRedirect()}}>
         Log in with Email
       </button> */}
-        <LoginButton/>
+        <center><LoginButton/></center>
       </div>
     </div>
   );
