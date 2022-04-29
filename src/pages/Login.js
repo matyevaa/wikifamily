@@ -44,14 +44,14 @@ const Login = () => {
 
     <div className="content loginContainer">
       <div className='loginButton'>
-        <FacebookLoginButton size='32px' onClick={(e) =>
+        <FacebookLoginButton size='42px' onClick={(e) =>
             {e.preventDefault();
             window.location.href='http://localhost:3000/facebook/login';
         }}
         align='center'/>
       </div>
       <div className='loginButton'>
-        <GoogleLoginButton size='32px' onClick={(e) =>
+        <GoogleLoginButton size='42px' onClick={(e) =>
             {e.preventDefault();
             window.location.href='http://localhost:3000/google/login';
         }}

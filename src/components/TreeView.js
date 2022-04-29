@@ -53,7 +53,7 @@ import 'reactjs-popup/dist/index.css';
    return (
 
       <TreeView class="tree_item" data={data} renderNode={({label}) =>
-        <div>{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
+        <div className="test">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
           <Popup ref={ref}>
             <div className="pop">
               <ul className="person_info">

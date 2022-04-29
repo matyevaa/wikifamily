@@ -61,11 +61,6 @@ body {
   font-family: sans-serif;
 }
 
-#welcome {
-  font-size: 22px;
-  font-weight: 600;
-}
-
 .label_text {
   font-family: sans-serif;
 }
@@ -232,10 +227,37 @@ li a:hover {
   font-family: 'Sztylet';
 }
 
+#login_btn {
+  cursor: pointer;
+  width: calc(100% - 10px);
+}
+
+#login_btn:hover {
+  background-color: #006666;
+}
+
 #log_gmail {
   float: right;
-  margin-top: -28px;
-  margin-right: 3.2rem;
+  cursor: pointer !important;
+  margin-top: -35px;
+  margin-right: 4.5rem;
+  width: auto;
+  height: auto;
+}
+
+#log_gmail:hover {
+  text-decoration: underline;
+}
+
+#welcome {
+  font-size: 22px;
+  font-weight: 600;
+  cursor: default;
+  float: left;
+  right: 5rem;
+  margin-bottom: 2rem;
+  width: auto;
+  height: auto;
 }
 
 /* vertical line btw the buttons */

@@ -9,12 +9,12 @@ const LoginButton = () => {
     //     localStorage.setItem("userName", JSON.stringify("oauth_noName"))
     //     localStorage.setItem("userEmail", JSON.stringify("oauth_noEmail"))
     localStorage.setItem("loginVersion", JSON.stringify("oauth"))
-    
+
   }
 
   return (
     !isAuthenticated && (
-      <button onClick={() => {loginWithRedirect(); setLoginVersion()}}>
+      <button id="login_btn" onClick={() => {loginWithRedirect(); setLoginVersion()}}>
         Log in with Email
       </button>
     )

@@ -71,7 +71,7 @@ function Navbar(props) {
       } else {
         return <div>
           {console.log(userInfo)}
-          <button id="welcome" className='accountBtns'>Welcome {userInfo[0]}!</button>
+          <p id="welcome" className='accountBtns'>Welcome {userInfo[0]}!</p>
           {whichLogout()}
         </div>
       }
