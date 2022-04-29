@@ -9,7 +9,7 @@ export default class CenteredTree extends React.PureComponent {
     this.state = {
       db_data: this.props.dataDB,
       visibility: false,
-      data: []
+      data: [],
     }
     this.showTree = this.showTree.bind(this);
     console.log("db ", this.state.db_data);
@@ -40,23 +40,30 @@ export default class CenteredTree extends React.PureComponent {
     });
   };
 
+  traverse = (kids, x, idx) => {
+   var children_array = [];
+   if(kids) {
+     children_array.push(kids.map( (kid ) => ({
+       id: x = ++x,
+       name: kid.first_name,
+       children: kid.children ? this.traverse(kid.children, x) : null
+     })) )
+   }
+   return children_array.reverse()[0];
+ }
+
   showTree = () => {
     const { visibility } = this.state;
     const items = this.state.db_data[0];
+    var x = 0;
     console.log("items", items.first_name);
     const data = [{
+      id: x,
       name: items.first_name, // parent #1
       children: items.children.map( (child, idx) => ({
+          id: x = ++idx,
           name: child.first_name, // child of parent #1
-          children: child.children.map( (child_child) => ({
-            name: child_child.first_name,
-            children: child_child.children
-               ? child_child.children.map( (child_child_child) => ({
-                   name: child_child_child.first_name,
-                   children: child_child_child.children
-               }))
-               : null
-          }))
+          children: child.children ? this.traverse(child.children, x, idx) : null
         }))
     }]
 
@@ -65,6 +72,7 @@ export default class CenteredTree extends React.PureComponent {
       data: data
     })
   }
+
 
   componentDidMount(prevProps) {
     // Get treeContainer's dimensions so we can center the tree
