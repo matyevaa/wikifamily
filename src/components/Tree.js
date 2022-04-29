@@ -100,8 +100,8 @@ export default class CenteredTree extends React.PureComponent {
             <button className="graphBtn" id="showTree" onClick={this.showTree}> {this.state.visibility ? "Close Tree" : "Show Tree"}</button>
           </div>
           <div className="graphBtnContainer">
-            <button className="graphBtn" id="addGraphNode" onClick={this.addChildNode}>Add Node</button>
-            <button className="graphBtn" onClick={this.removeChildNode}>Remove Node</button>
+            {/*<button className="graphBtn" id="addGraphNode" onClick={this.addChildNode}>Add Node</button>
+            <button className="graphBtn" onClick={this.removeChildNode}>Remove Node</button>*/}
           </div>
           {visibility ?
             <Tree
