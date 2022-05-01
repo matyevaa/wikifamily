@@ -192,7 +192,7 @@ const IndivTree = (treeId) => {
         </div>
       </div>
 
-      { showView ? <TreeList list={dataDB} count={dataFamily.length}/> : null }
+      { showView ? <TreeList list={dataDB} family={dataFamily}/> : null }
       { showGraph ? <Tree dataDB={dataDB}/> : null }
 
       {dataDB ? console.log("api: ", dataDB) : console.log("no api")}
