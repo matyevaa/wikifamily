@@ -1,5 +1,6 @@
 from asyncio.windows_events import NULL
 from hashlib import new
+import re
 from tkinter.messagebox import NO
 from unicodedata import name
 from flask import Flask, render_template, redirect, url_for
@@ -35,10 +36,13 @@ def get_family(id):
     # tree traversal algorithm
     # first get the children of a root, in children we see each of childs's id and name
     root_node, children_root, children, new_children = [], [], [], [];
+
+    
     root = '''select individual_id, first_name
-                FROM individual
-                WHERE family_id=%s AND parent is null AND individual_id is not null;
-           '''
+            FROM individual
+            WHERE family_id=%s AND parent is null AND individual_id is not null;
+                '''
+
     sql_root = '''select c.individual_id, c.first_name
                 FROM individual p1
                 LEFT JOIN individual c ON p1.individual_id = c.parent
@@ -392,42 +396,33 @@ def create_empty_tree():
     return "200"
 
 # when enters the email has already been checked that it exists
-@app.route('/api2/share/<start>/<end>/<treeid>/<name>/<collaborator>', methods=['POST'])
+@app.route('/api2/share/<startingID>/<parentId>/<treeid>/<name>/<collaborator>', methods=['POST', 'GET'])
 @cross_origin(supports_credentials=True)
-def shareWithUser(start,end,treeid, name, collaborator):
-    dbInfo = connect()
-    cursor = dbInfo[1]
-    cnx = dbInfo[0]
+def shareWithUser(startingID, parentId,treeid, name, collaborator):
+    print("info sent: individual to share: %s parent id: %s treeid: %s name: %s collaborator: %s", str(startingID), str(parentId), str(treeid), str(name), str(collaborator))
 
-    print("info sent: %s %s %s %s %s", str(start), str(end), str(treeid), str(name), str(collaborator))
-
-    # can also do bt with names
-    # query = "SELECT individual_id, first_name,last_name, gender, info, birth, death,family_id, children, parent  FROM individual WHERE family_id = %s AND (individual_id between %s AND %s);"
-    query = "SELECT individual_id, first_name,last_name, gender, info, birth, death,family_id, children, parent  FROM individual WHERE FIND_IN_SET(%s, family_ids) AND (individual_id between %s AND %s);"
-    data = (str(treeid), str(int(start) - 1), str(int(end) + 1))
-
-    cursor.execute(query, data)
-
-    # print out results of the query
+    # replace --^ w/ new share tree
     print("People that would be shared")
-    individuals = list(cursor.fetchall())
-    print(individuals)
-    cursor.close()
-    cnx.close()
-
+    individuals = newTreeShare(startingID, parentId, treeid)
+    listIndivs = individuals.split(",")
+    print(listIndivs)
+    
+    
     # create and return the family tree id that was just made
-    createEmptySharedTree(name, collaborator, treeid)
+    createEmptySharedTree(name, collaborator, treeid, startingID)
+    
 
     newTree = returnSharedTreeID(name, collaborator)
     print(newTree[0])
 
+    # in create tree upate the share root
     # for each person in the list add another treeID to the treeID column
-    addTreeIds(individuals, newTree[0], treeid)
+    addTreeIds(listIndivs, newTree[0], treeid)
 
 
     return "200"
 
-def createEmptySharedTree(name, collaborator, ogTreeId):
+def createEmptySharedTree(name, collaborator, ogTreeId, rootID):
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -439,8 +434,8 @@ def createEmptySharedTree(name, collaborator, ogTreeId):
     print(name, collaborator)
 
     # create new family tree for collaborator
-    query = 'INSERT INTO family (family_name, family_size, owner_id, shared_from) VALUES (%s,"0",%s,%s);'
-    data = (name, collaborator, ogTreeId)
+    query = 'INSERT INTO family (family_name, family_size, owner_id, shared_from, shared_root) VALUES (%s,"0",%s,%s, %s);'
+    data = (name, collaborator, ogTreeId, rootID)
     cursor.execute(query, data)
     cnx.commit()
 
@@ -453,7 +448,9 @@ def addTreeIds(listIndividuals, addTree, ogTree):
     i = 0
     for indivs in listIndividuals:
         # call function to edit individuals one by one
-        indivEditTrees(listIndividuals[i][0], addTree)
+        indivEditTrees(indivs, addTree)
+        print(listIndividuals[i][0])
+        print(indivs)
         i += 1
 
 def indivEditTrees(id, treeid):
@@ -487,6 +484,109 @@ def getUserInfo(id):
     # cnx.close()
     return json.dumps(individuals)
 
+@app.route('/api1/testShareIndiv/<id>/<parentID>/<treeId>')
+def newTreeShare(id, parentID, treeId):
+    print("get children of the root individual (root will be %s)", id)
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    mimic = []
+
+    # tree traversal algorithm
+    # first get the children of a root, in children we see each of childs's id and name
+    root_node, children_root, children, new_children = [], [], [], [];
+    root = '''select individual_id, first_name
+                FROM individual
+                WHERE family_id=%s AND parent = %s AND individual_id = %s;
+           '''
+
+    cursor.execute(root,(treeId,parentID,id))
+    root_data = cursor.fetchall()
+
+    # mimic.append(id)
+
+    row_headers = [x[0] for x in cursor.description]
+    for result in root_data:
+        root_node.append(dict(zip(row_headers, result)))
+    # children_root.append(root_node[0])
+    children_root.append(root_node[0])
+
+    # get the children of root
+    for parent in children_root:
+        root_id = parent['individual_id']
+        fam_id = treeId
+        cursor.execute('SELECT c.individual_id FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
+        datas2 = cursor.fetchall()
+
+        children = []
+        for result in datas2:
+            children.append(dict(zip(row_headers, result)))
+            mimic.append(result)
+        # print("children array: ", children)
+        # try to add children array into children_root as a nested key
+        parent["children"] = children
+
+
+    # PUT THIS ALL IN A FOR LOOP UNTIL THE END OF THE PATH
+    # the end of the path: no children for all of parents
+    cursor.execute('''SELECT COUNT(first_name) FROM individual WHERE family_id=%s''',(fam_id,))
+    count_fetch = cursor.fetchall()
+    substract = len(children) + 1
+    count = count_fetch[0][0] - substract
+    # print("how many children?", count)
+    while count>=0:
+    # for each child, look if they have children_root
+        # and if so, append to a new children array & then add it as a nested key
+        for parent_who_was_child in children:
+            parent_id = parent_who_was_child['individual_id']
+            #print("parent who was child's id: ", parent_id)                                                                                                                                                        WHERE FIND_IN_SET(%s, p.1family_ids) -- og --> p1.family_id=%s
+            cursor.execute('SELECT c.individual_id FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
+            datas3 = cursor.fetchall()
+
+            # print("datas3 is")
+            # print(datas3)
+            
+            if datas3:
+                new_children = []
+                for result in datas3:
+                    new_children.append(dict(zip(row_headers, result)))
+
+                    parent_who_was_child["children"] = new_children
+                    mimic.append(result)
+                    children = new_children
+                    count = count - 1
+            else:
+                count = count - 1
+                continue
+            if count==0:
+                
+                break
+            else:
+                # print("count is alive: ", count)
+                continue
+
+    # removes the first name of root, individual_id, {},  [], , , : , ',  , from text
+
+    new0 = str(children_root).replace(root_node[0]['first_name'], "")
+    new = str(new0).replace(", 'first_name'", "")
+    new2 = str(new).replace("individual_id", "")
+    new3 = str(new2).replace("children", "")
+    new4 = str(new3).replace("[", "")
+    new5 = str(new4).replace("]", "")
+    new6 = str(new5).replace("{", "")
+    new7 = str(new6).replace("}", "")
+    new8 = str(new7).replace("'", "")
+    new9 = str(new8).replace(":", "")
+    new10 = str(new9).replace(" ", "")
+
+    final = new10.split(",")
+    print(final)
+    print(len(final))
+    print(type(final))
+
+    # ret in string form
+    return new10
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
