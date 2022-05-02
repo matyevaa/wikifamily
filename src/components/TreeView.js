@@ -28,6 +28,12 @@ import 'reactjs-popup/dist/index.css';
       return children_array.reverse()[0];
     };
 
+    const testSharing = () => {
+      console.log("clicked on person")
+    }
+
+
+
      const data = [{
        id: x,
        label: items.first_name, // parent #1
@@ -54,6 +60,7 @@ import 'reactjs-popup/dist/index.css';
 
       <TreeView class="tree_item" data={data} renderNode={({label}) =>
         <div className="test">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
+        {/* <div className="sharing" onClick={testSharing()}>{label}</div> */}
           <Popup ref={ref}>
             <div className="pop">
               <ul className="person_info">

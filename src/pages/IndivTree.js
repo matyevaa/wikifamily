@@ -86,16 +86,14 @@ const IndivTree = (treeId) => {
   };
 
   // sharing individuals// sets starting and end points, end points can be changed if keep clicking
-  const sharingStartEnd = (id) => {
+  const sharingStartEnd = (id, parentID) => {
     console.log("individual id chosen is: ", id);
-    if (shareStart == "") {
+    // if (shareStart == "") {
       setShareStart(id)
-      console.log("start: " + id)
-    }
-    else {
-      setShareEnd(id)
-      console.log("end: " + id)
-    }
+      console.log("startingid: " + id)
+      setShareEnd(parentID)
+      console.log("parentid: " + parentID)
+    // }
   }
 
   // whether it has share indiv showing or not
@@ -104,7 +102,7 @@ const IndivTree = (treeId) => {
       return <td>{item.individual_id}</td>
     }
     else {
-      return <div onClick={() => sharingStartEnd(item.individual_id)}><td>{item.individual_id}</td></div>
+      return <div onClick={() => sharingStartEnd(item.individual_id, item.parent)}><td>{item.individual_id}</td></div>
     }
   }
 
@@ -115,7 +113,8 @@ const IndivTree = (treeId) => {
     }
     else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
-          <p>To share a tree choose the ID of a starting and ending point, then input an email and click 'Share Tree'. Please enter an email for Google and Email users. For Facebook users
+          <p>To share an individual in the table click on the individuals ID, then input an email and click 'Share Tree'. To share an indiviudal 
+            in the tree list click on the individuals icon enter an email and click 'Share Tree'. Please enter an email for Google and Email users. For Facebook users
             please enter their user ID found in their works page.
           </p>
 
