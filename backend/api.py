@@ -37,18 +37,31 @@ def get_family(id):
     # first get the children of a root, in children we see each of childs's id and name
     root_node, children_root, children, new_children = [], [], [], [];
 
-    
-    root = '''select individual_id, first_name
-            FROM individual
-            WHERE family_id=%s AND parent is null AND individual_id is not null;
-                '''
+    # check if it is a shared tree
+    cursor.execute('SELECT shared_root from family where family_id = %s', (id,))
+    shared = cursor.fetchall()
+
+    if (shared[0][0] != None):
+        print("shared tree was " + str(shared[0][0]))
+        root = '''select individual_id, first_name
+                FROM individual
+                WHERE FIND_IN_SET(%s, family_ids) AND individual_id = %s;
+           '''
+        cursor.execute(root,(id,str(shared[0][0]),))
+        
+    else:
+        root = '''select individual_id, first_name
+                FROM individual
+                WHERE family_id=%s AND parent is null AND individual_id is not null;
+                    '''
+        cursor.execute(root,(id,))
 
     sql_root = '''select c.individual_id, c.first_name
                 FROM individual p1
                 LEFT JOIN individual c ON p1.individual_id = c.parent
                 WHERE p1.family_id=%s AND p1.parent is null AND c.individual_id is not null;
            '''
-    cursor.execute(root,(id,))
+    # cursor.execute(root,(id,))
     root_data = cursor.fetchall()
     row_headers = [x[0] for x in cursor.description]
     for result in root_data:
@@ -70,7 +83,7 @@ def get_family(id):
         root_id = parent['individual_id']
         fam_id = id
         print("parent's individual id is: ", root_id)
-        cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE p1.family_id=%s AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
+        cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
         datas2 = cursor.fetchall()
         children = []
         for result in datas2:
@@ -94,7 +107,7 @@ def get_family(id):
         for parent_who_was_child in children:
             parent_id = parent_who_was_child['individual_id']
             #print("parent who was child's id: ", parent_id)
-            cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE p1.family_id=%s AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
+            cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
             datas3 = cursor.fetchall()
             if datas3:
                 new_children = []
