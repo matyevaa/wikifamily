@@ -409,14 +409,14 @@ def create_empty_tree():
     return "200"
 
 # when enters the email has already been checked that it exists
-@app.route('/api2/share/<startingID>/<parentId>/<treeid>/<name>/<collaborator>', methods=['POST', 'GET'])
+@app.route('/api2/share/<startingID>/<treeid>/<name>/<collaborator>', methods=['POST', 'GET'])
 @cross_origin(supports_credentials=True)
-def shareWithUser(startingID, parentId,treeid, name, collaborator):
-    print("info sent: individual to share: %s parent id: %s treeid: %s name: %s collaborator: %s", str(startingID), str(parentId), str(treeid), str(name), str(collaborator))
+def shareWithUser(startingID,treeid, name, collaborator):
+    print("info sent: individual to share: %s parent id: %s treeid: %s name: %s collaborator: %s", str(startingID), str(treeid), str(name), str(collaborator))
 
     # replace --^ w/ new share tree
     print("People that would be shared")
-    individuals = newTreeShare(startingID, parentId, treeid)
+    individuals = newTreeShare(startingID, treeid)
     listIndivs = individuals.split(",")
     print(listIndivs)
     
@@ -497,8 +497,8 @@ def getUserInfo(id):
     # cnx.close()
     return json.dumps(individuals)
 
-@app.route('/api1/testShareIndiv/<id>/<parentID>/<treeId>')
-def newTreeShare(id, parentID, treeId):
+@app.route('/api1/testShareIndiv/<id>/<treeId>')
+def newTreeShare(id, treeId):
     print("get children of the root individual (root will be %s)", id)
     dbInfo = connect()
     cursor = dbInfo[1]
@@ -509,12 +509,17 @@ def newTreeShare(id, parentID, treeId):
     # tree traversal algorithm
     # first get the children of a root, in children we see each of childs's id and name
     root_node, children_root, children, new_children = [], [], [], [];
+    # root = '''select individual_id, first_name
+    #             FROM individual
+    #             WHERE family_id=%s AND parent = %s AND individual_id = %s;
+    #        '''
+
     root = '''select individual_id, first_name
                 FROM individual
-                WHERE family_id=%s AND parent = %s AND individual_id = %s;
+                WHERE FIND_IN_SET(%s, family_ids) AND individual_id = %s;
            '''
 
-    cursor.execute(root,(treeId,parentID,id))
+    cursor.execute(root,(treeId,id))
     root_data = cursor.fetchall()
 
     # mimic.append(id)

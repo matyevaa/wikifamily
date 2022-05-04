@@ -365,6 +365,10 @@ li a:hover {
   border: 1px solid black;
 }
 
+.errorMsg {
+  color: red;
+}
+
 .add_btn:hover, .edit_btn:hover, .del_btn:hover {
   background-color: #f2f2f2;
 }

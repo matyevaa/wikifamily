@@ -12,12 +12,14 @@ const IndivTree = (treeId) => {
   const [showGraph, setShowGraph] = useState(false);
 
   const [wantShare, setWantShare] = useState(false);
-  const [collaboratorExist, setcollaboratorExist] = useState(false);
+  const [showErrorMsg, setshowErrorMsg] = useState(false);
+  const [collaboratorExist, setcollaboratorExist] = useState();
   const [collabID, setcollabID] = useState("");
+  const [sharingInfo, setsharingInfo] = useState([]);
 
 
   const [shareStart, setShareStart] = useState("");
-  const [shareEnd, setShareEnd] = useState("");
+  const [isTableShare, setisTableShare] = useState(false);
 
   const [parent, setParent] = useState("");
   const [treeElements, updateTree] = useState([])
@@ -28,7 +30,7 @@ const IndivTree = (treeId) => {
   const [dataDB, setData] = useState([]);
   const [dataFamily, setDataFamily] = useState([]);
 
-  const [indivsExist, setindivsExist] = useState(false);
+  const [shareTreeView, setshareTreeView] = useState([]);
 
   let addLink = "/add/" + treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
   // end add from /create
@@ -62,7 +64,7 @@ const IndivTree = (treeId) => {
     .then(result => setData(result.data))
     .catch(err => console.log(err));
     console.log("in get data indivtree.js");
-
+    console.log(dataDB)
   };
 
   const getWholeFamily = async() => {
@@ -86,13 +88,12 @@ const IndivTree = (treeId) => {
   };
 
   // sharing individuals// sets starting and end points, end points can be changed if keep clicking
-  const sharingStartEnd = (id, parentID) => {
-    console.log("individual id chosen is: ", id);
+  const sharingStartEnd = (id) => {
     // if (shareStart == "") {
       setShareStart(id)
       console.log("startingid: " + id)
-      setShareEnd(parentID)
-      console.log("parentid: " + parentID)
+      setisTableShare(true)
+      console.log("will do table share...")
     // }
   }
 
@@ -102,7 +103,7 @@ const IndivTree = (treeId) => {
       return <td>{item.individual_id}</td>
     }
     else {
-      return <div onClick={() => sharingStartEnd(item.individual_id, item.parent)}><td>{item.individual_id}</td></div>
+      return <div onClick={() => sharingStartEnd(item.individual_id)}><td>{item.individual_id}</td></div>
     }
   }
 
@@ -112,18 +113,56 @@ const IndivTree = (treeId) => {
       // dont show anything
     }
     else {
+      // console.log(collaboratorExist)
+      // if(collaboratorExist == false) {
+      //   setcollaboratorExist(undefined)
+      //   return <div>
+      //     <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
+      //     <p>To share an individual in the table click on the individuals ID, then input an email and click 'Share Tree'. To share an indiviudal 
+      //       in the tree list click on the individuals icon enter an email and click 'Share Tree'. Please enter an email for Google and Email users. For Facebook users
+      //       please enter their user ID found in their works page.
+      //     </p>
+
+      //       <div>
+      //         <label>Collaborator's email or user ID</label>
+      //         <input ref={parentRef} type="text" placeholder="Enter email or ID of collaborator" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
+      //       </div>
+      //       <p>User did not exist. Try a different sharing method (user ID/ email) or verify you have the correct information/</p>
+      //       <button className="add_btn" type="submit">Very Collaborator</button>
+      //   </form>
+      //     </div>
+      // }
+      // else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
-          <p>To share an individual in the table click on the individuals ID, then input an email and click 'Share Tree'. To share an indiviudal 
-            in the tree list click on the individuals icon enter an email and click 'Share Tree'. Please enter an email for Google and Email users. For Facebook users
-            please enter their user ID found in their works page.
+          <p>To share an individual first enter the email or ID of your chosen collaborator and click 'Verify Collaborator'. This will verify whether 
+            the collaborator is registered with WikiFamily.
+            If sharing individuals through the table, click on the id of the individual you want to share. If you are using the tree list format click on 
+            the '...' under the users name. After choosing an individual to share click 'Share tree'. This will create a tree for your collaborator to edit, 
+            delete, and add individuals. Note that sharing an individual will share that individual and any descendants they may have.
           </p>
+          <p>Collaborators that registered with WikiFamily through Google and Email please use your email. Facebook users please enter your user ID
+            found in your Works page.</p>
 
             <div>
               <label>Collaborator's email or user ID</label>
               <input ref={parentRef} type="text" placeholder="Enter email or ID of collaborator" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
             </div>
-            <button className="add_btn" type="submit">Share Tree</button>
+
+            {showingErrpr()}
+
+            {/* <button className="add_btn" type="submit">Verify Collaborator</button> */}
+            {buttonShow()}
         </form>
+      // }
+    }
+  }
+
+  const buttonShow = () => {
+    if (collaboratorExist == true) {
+        return <button className="add_btn" type="submit">Share Tree</button>
+    }
+    else {
+      return <button className="add_btn" type="submit">Verify Collaborator</button>
     }
   }
 
@@ -149,31 +188,46 @@ const IndivTree = (treeId) => {
     console.log(result)
     let id
     if(result.data[0] == true) {
+      setshowErrorMsg(false)
       // setcollabID(result.data[1])
       id = result.data[1]
-      console.log(id)
-
+      // console.log(id)
+      setcollaboratorExist(true)
       setcollabID(id)
-      collaboratorEditing(id);
+      // for tree sharing
+      setsharingInfo([true,treeIdentif,treeName['family_name'],id])
+
+      // for table sharing
+      console.log(isTableShare)
+      if (isTableShare == true) {
+        console.log("doing table share")
+        collaboratorEditing(id);
+      }
     }
     else {
-      return <p>User did not exist. Try a different sharing method (user ID/ email) or verify you have the correct information/</p>
+      console.log("user did not exist")
+      setshowErrorMsg(true)
     }
+  }
 
-
-
-    let link = "http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"
+  const showingErrpr = () => {
+    if (showErrorMsg == true) {
+        return <p className='errorMsg'>User did not exist. Try a different sharing method (user ID/ email) or verify you have the correct information.</p>
+    }
   }
 
   const collaboratorEditing = async(id) => {
     console.log("in share function")
     console.log(collabID)
-      const result = await axios.post (`http://localhost:5000/api2/share/${shareStart}/${shareEnd}/${treeIdentif}/${treeName['family_name']}/${id}`, {
+      const result = await axios.post (`http://localhost:5000/api2/share/${shareStart}/${treeIdentif}/${treeName['family_name']}/${id}`, {
         method:'POST',
       headers: { 'Content-Type': 'application/json'},
     });
 
     console.log(result)
+
+    // set back to false after share w table
+    setisTableShare(false)
 
   }
 
@@ -191,7 +245,8 @@ const IndivTree = (treeId) => {
         </div>
       </div>
 
-      { showView ? <TreeList list={dataDB} family={dataFamily}/> : null }
+      { showView ? <TreeList list={dataDB} family={dataFamily} share={wantShare} collab={sharingInfo}/> : null }
+      {/* {console.log(collabID)} */}
       { showGraph ? <Tree dataDB={dataDB}/> : null }
 
       {dataDB ? console.log("api: ", dataDB) : console.log("no api")}
