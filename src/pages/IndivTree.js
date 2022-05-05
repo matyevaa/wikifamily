@@ -112,10 +112,10 @@ const IndivTree = (treeId) => {
     }
     else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
-          <p>To share an individual first enter the email or ID of your chosen collaborator and click 'Verify Collaborator'. This will verify whether 
+          <p>To share an individual first enter the email or ID of your chosen collaborator and click 'Verify Collaborator'. This will verify whether
             the collaborator is registered with WikiFamily.
-            If sharing individuals through the table, click on the id of the individual you want to share. If you are using the tree list format click on 
-            the '...' under the users name. After choosing an individual to share click 'Share tree'. This will create a tree for your collaborator to edit, 
+            If sharing individuals through the table, click on the id of the individual you want to share. If you are using the tree list format click on
+            the '...' under the users name. After choosing an individual to share click 'Share tree'. This will create a tree for your collaborator to edit,
             delete, and add individuals. Note that sharing an individual will share that individual and any descendants they may have.
           </p>
           <p>Collaborators that registered with WikiFamily through Google and Email please use your email. Facebook users please enter your user ID
@@ -213,7 +213,7 @@ const IndivTree = (treeId) => {
   return(
    <div className="centerDiv">
     <div className="content">
-      <h1 className="subtopic text">Family tree ID: {treeName['family_name']}</h1>
+      <h1 className="subtopic text"><span id="tree_name">{treeName['family_name']}</span> Family Tree</h1>
 
       <div className="tree_center">
         <div class="tree_options">

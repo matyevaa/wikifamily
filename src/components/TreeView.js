@@ -4,6 +4,7 @@ import { BsFileEarmarkPerson } from 'react-icons/bs';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import axios from 'axios';
+import HomeTree from "./HomeTree";
 
  function TreeItem(props) {
    const ref = useRef();
@@ -54,7 +55,7 @@ import axios from 'axios';
           method:'POST',
         headers: { 'Content-Type': 'application/json'},
       });
-  
+
       console.log("created tree with treelist")
       console.log(result)
       settreeviewShare(false)
@@ -98,7 +99,7 @@ import axios from 'axios';
 
       <TreeView className="tree_item" data={data} renderNode={({label,indiv_id}) =>
         <div className="test">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
-        
+
         {sharingShow(indiv_id)}
         {sharingFunct()}
           <Popup ref={ref}>
@@ -130,13 +131,21 @@ import axios from 'axios';
    //console.log("list ", list);
 
    return (
-    !list?.length ? null :
+     <div>
+
+     <HomeTree/>
+
+
+    {!list?.length ? null :
     <div>{list.map(f =>
       <div>
       <TreeItem key={f.individual_id} item={f} family={family} share={share} collab={collab}/>
     </div>)}
     </div>
-    )
- }
+    }
+
+    </div>
+  )
+}
 
 export default TreeList;

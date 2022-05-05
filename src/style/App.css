@@ -13,6 +13,10 @@ body {
   border: solid 1.5px;
 }
 
+#tree_name {
+  color: #3366CC;
+}
+
 .list_info {
   width: 50%;
   float: right;
