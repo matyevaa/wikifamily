@@ -35,7 +35,7 @@ def get_family(id):
 
     # tree traversal algorithm
     # first get the children of a root, in children we see each of childs's id and name
-    root_node, children_root, children, new_children = [], [], [], [];
+    root_node, children_root, children, new_children, spouses = [], [], [], [], [];
 
     # check if it is a shared tree
     cursor.execute('SELECT shared_root from family where family_id = %s', (id,))
@@ -48,7 +48,7 @@ def get_family(id):
                 WHERE FIND_IN_SET(%s, family_ids) AND individual_id = %s;
            '''
         cursor.execute(root,(id,str(shared[0][0]),))
-        
+
     else:
         root = '''select individual_id, first_name
                 FROM individual
@@ -119,15 +119,25 @@ def get_family(id):
             else:
                 count = count - 1
                 continue
+            # new stuff for spouse field
+            cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse')
+            datas4 = cursor.fetchall()
+            if datas4:
+                spouses = []
+                for result in datas4:
+                    spouses.append(dict(zip(row_headers, result)))
+                    parent_who_was_child["spouse"] = spouses
+                    print("I've just added a spouse: ", spouses)
+            else:
+                continue
+
             if count==0:
                 break
             else:
-                # print("count is alive: ", count)
                 continue
-        # print("DATAS3 outside of the for loop: ", datas3)
 
-    # print("broke from while loop")
-    # print("final array: ", children_root)
+    print("Final spouses: ", spouses)
+    print("Final children root: ", children_root)
 
     return json.dumps(children_root)
 
@@ -234,8 +244,8 @@ def add_person_w_treeID(treeId):
                    print(id[0])
                    if(id[0] != None):
                        fid += "," + id[0]
-        
-                   
+
+
         cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,fid))
         cnx.commit()
         msg = "Successfully added a person!"
@@ -260,7 +270,7 @@ def delete_person_w_treeID(individual_id, treeId):
     print("id is" + str(id))
     if int(id) == 0 or str(id) == "0":
         cursor.execute('SELECT family_ids FROM individual WHERE individual_id = %s', (id,))
-        
+
         ids = cursor.fetchall()
         print(ids[0][0])
 
@@ -282,8 +292,8 @@ def delete_person_w_treeID(individual_id, treeId):
 
         print(ogIds)
 
-        
-    
+
+
         for id in ogIds:
             if id == "0":
                 print("add first id")
@@ -292,7 +302,7 @@ def delete_person_w_treeID(individual_id, treeId):
                 finalId += "," + str(id)
 
         print("final to insert in jane doe " + str(finalId))
-        
+
         query='UPDATE individual SET family_ids = %s WHERE individual_id = 0;'
         data = ((str(finalId)),)
 
@@ -419,11 +429,11 @@ def shareWithUser(startingID,treeid, name, collaborator):
     individuals = newTreeShare(startingID, treeid)
     listIndivs = individuals.split(",")
     print(listIndivs)
-    
-    
+
+
     # create and return the family tree id that was just made
     createEmptySharedTree(name, collaborator, treeid, startingID)
-    
+
 
     newTree = returnSharedTreeID(name, collaborator)
     print(newTree[0])
@@ -519,7 +529,7 @@ def newTreeShare(id, treeId):
                 WHERE FIND_IN_SET(%s, family_ids) AND individual_id = %s;
            '''
 
-    
+
 
     cursor.execute(root,(treeId,id))
     root_data = cursor.fetchall()
@@ -567,7 +577,7 @@ def newTreeShare(id, treeId):
 
             print("datas3 is")
             print(datas3)
-            
+
             if datas3:
                 new_children = []
                 for result in datas3:
