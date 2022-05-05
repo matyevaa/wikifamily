@@ -3,6 +3,7 @@ import TreeView from 'react-expandable-treeview';
 import { BsFileEarmarkPerson } from 'react-icons/bs';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import axios from 'axios';
 
  function TreeItem(props) {
    const ref = useRef();
@@ -16,7 +17,7 @@ import 'reactjs-popup/dist/index.css';
    var children_array = [];
 
    useEffect(() => {
-    // testSharing()
+    testSharing()
   }, []);
 
    console.log("props for treeview ", props);
@@ -31,6 +32,7 @@ import 'reactjs-popup/dist/index.css';
         children_array.push(kids.map( (kid ) => ({
           id: x = ++x,
           label: kid.first_name,
+          indiv_id: kid.individual_id,
           children: kid.children ? traverse(kid.children, x) : null
         })) )
       }
@@ -38,28 +40,31 @@ import 'reactjs-popup/dist/index.css';
       return children_array.reverse()[0];
     };
 
-    const testSharing = () => {
-      console.log(idtoshare + " and sharing condition is " + wantShare + " with ID ", collabID)
+    const testSharing = (id) => {
+      console.log(id)
+      setidtoshare(id)
+      console.log(idtoshare + " "+ id + " and sharing condition is " + wantShare + " with ID ", collabID[3])
       settreeviewShare(true)
+    }
 
-      if(wantShare == true && collabID != "" && settreeviewShare == true) {
-          console.log("in share function for treeview")
-          console.log(collabID)
-          console.log(idtoshare)
-          // NEED TREEID + NAME
-          //   const result = axios.post (`http://localhost:5000/api2/share/${idtoshare}/${collabID[1]}/${collabID[2]}/${collabID[3]}`, {
-          //     method:'POST',
-          //   headers: { 'Content-Type': 'application/json'},
-          // });
-      
-          // console.log(result)
-          settreeviewShare(false)
-      }
+    const sharingFunct = () => {
+      console.log("in treeView " + collabID[0] + " " + idtoshare + " " + treeviewShare)
+      if (collabID[0] == true && idtoshare != undefined && treeviewShare == true) {
+        const result = axios.post (`http://localhost:5000/api2/share/${idtoshare}/${collabID[1]}/${collabID[2]}/${collabID[3]}`, {
+          method:'POST',
+        headers: { 'Content-Type': 'application/json'},
+      });
+  
+      console.log("created tree with treelist")
+      console.log(result)
+      settreeviewShare(false)
+      collabID[0] = false
+    }
     }
 
     const sharingShow = (indiv_id) => {
       if (wantShare == true) {
-        return <div id="sharing_id" defaultValue={indiv_id} onClick={ () => {setidtoshare(indiv_id); testSharing()}}>...</div>
+        return <div id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id)}}>{indiv_id}</div>
       }
     }
 
@@ -95,7 +100,7 @@ import 'reactjs-popup/dist/index.css';
         <div className="test">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
         
         {sharingShow(indiv_id)}
-          
+        {sharingFunct()}
           <Popup ref={ref}>
             <div className="pop">
               <ul className="person_info">

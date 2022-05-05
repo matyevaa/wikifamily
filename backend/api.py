@@ -66,9 +66,9 @@ def get_family(id):
     row_headers = [x[0] for x in cursor.description]
     for result in root_data:
         root_node.append(dict(zip(row_headers, result)))
-    print("ROOT: ", root_node[0])
+    # print("ROOT: ", root_node[0])
     children_root.append(root_node[0])
-    print("Children Root Initial: ", children_root)
+    # print("Children Root Initial: ", children_root)
 
 
     # cursor.execute(sql_root,(id,))
@@ -82,13 +82,13 @@ def get_family(id):
     for parent in children_root:
         root_id = parent['individual_id']
         fam_id = id
-        print("parent's individual id is: ", root_id)
+        # print("parent's individual id is: ", root_id)
         cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
         datas2 = cursor.fetchall()
         children = []
         for result in datas2:
             children.append(dict(zip(row_headers, result)))
-        print("children array: ", children)
+        # print("children array: ", children)
         # try to add children array into children_root as a nested key
         parent["children"] = children
 
@@ -97,10 +97,10 @@ def get_family(id):
     cursor.execute('''SELECT COUNT(first_name) FROM individual WHERE family_id=%s''',(fam_id,))
     count_fetch = cursor.fetchall()
     substract = len(children) + 1
-    print("count fetch: ", count_fetch[0][0]) #17
-    print("len chil ", len(children)) #1
+    # print("count fetch: ", count_fetch[0][0]) #17
+    # print("len chil ", len(children)) #1
     count = count_fetch[0][0] - substract
-    print("how many children?", count)
+    # print("how many children?", count)
     while count>=0:
     # for each child, look if they have children_root
         # and if so, append to a new children array & then add it as a nested key
@@ -122,12 +122,12 @@ def get_family(id):
             if count==0:
                 break
             else:
-                print("count is alive: ", count)
+                # print("count is alive: ", count)
                 continue
-        print("DATAS3 outside of the for loop: ", datas3)
+        # print("DATAS3 outside of the for loop: ", datas3)
 
-    print("broke from while loop")
-    print("final array: ", children_root)
+    # print("broke from while loop")
+    # print("final array: ", children_root)
 
     return json.dumps(children_root)
 
@@ -412,7 +412,7 @@ def create_empty_tree():
 @app.route('/api2/share/<startingID>/<treeid>/<name>/<collaborator>', methods=['POST', 'GET'])
 @cross_origin(supports_credentials=True)
 def shareWithUser(startingID,treeid, name, collaborator):
-    print("info sent: individual to share: %s parent id: %s treeid: %s name: %s collaborator: %s", str(startingID), str(treeid), str(name), str(collaborator))
+    print("info sent: individual to share: %s treeid: %s name: %s collaborator: %s", str(startingID), str(treeid), str(name), str(collaborator))
 
     # replace --^ w/ new share tree
     print("People that would be shared")
@@ -499,7 +499,7 @@ def getUserInfo(id):
 
 @app.route('/api1/testShareIndiv/<id>/<treeId>')
 def newTreeShare(id, treeId):
-    print("get children of the root individual (root will be %s)", id)
+    print("(root will be %s)", id)
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -519,6 +519,8 @@ def newTreeShare(id, treeId):
                 WHERE FIND_IN_SET(%s, family_ids) AND individual_id = %s;
            '''
 
+    
+
     cursor.execute(root,(treeId,id))
     root_data = cursor.fetchall()
 
@@ -529,6 +531,8 @@ def newTreeShare(id, treeId):
         root_node.append(dict(zip(row_headers, result)))
     # children_root.append(root_node[0])
     children_root.append(root_node[0])
+    print("root found was ")
+    print(root[0])
 
     # get the children of root
     for parent in children_root:
@@ -540,30 +544,29 @@ def newTreeShare(id, treeId):
         children = []
         for result in datas2:
             children.append(dict(zip(row_headers, result)))
-            mimic.append(result)
-        # print("children array: ", children)
+        print("children array: ", children)
         # try to add children array into children_root as a nested key
         parent["children"] = children
 
 
     # PUT THIS ALL IN A FOR LOOP UNTIL THE END OF THE PATH
     # the end of the path: no children for all of parents
-    cursor.execute('''SELECT COUNT(first_name) FROM individual WHERE family_id=%s''',(fam_id,))
+    cursor.execute('''SELECT COUNT(individual_id) FROM individual WHERE family_id=%s''',(fam_id,))
     count_fetch = cursor.fetchall()
     substract = len(children) + 1
     count = count_fetch[0][0] - substract
-    # print("how many children?", count)
+    print("how many children?", count)
     while count>=0:
     # for each child, look if they have children_root
         # and if so, append to a new children array & then add it as a nested key
         for parent_who_was_child in children:
             parent_id = parent_who_was_child['individual_id']
-            #print("parent who was child's id: ", parent_id)                                                                                                                                                        WHERE FIND_IN_SET(%s, p.1family_ids) -- og --> p1.family_id=%s
+            print("parent who was child's id: ", parent_id)                                                                                                                                                        # WHERE FIND_IN_SET(%s, p.1family_ids) -- og --> p1.family_id=%s
             cursor.execute('SELECT c.individual_id FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
             datas3 = cursor.fetchall()
 
-            # print("datas3 is")
-            # print(datas3)
+            print("datas3 is")
+            print(datas3)
             
             if datas3:
                 new_children = []
@@ -576,13 +579,16 @@ def newTreeShare(id, treeId):
                     count = count - 1
             else:
                 count = count - 1
+                print("cont")
                 continue
             if count==0:
-                
+                print("at zero")
                 break
             else:
-                # print("count is alive: ", count)
+                print("count is alive: ", count)
                 continue
+
+    print("DATAS3 outside of the for loop: ", datas3)
 
     # removes the first name of root, individual_id, {},  [], , , : , ',  , from text
 

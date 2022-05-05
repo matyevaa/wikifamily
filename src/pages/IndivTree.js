@@ -12,6 +12,7 @@ const IndivTree = (treeId) => {
   const [showGraph, setShowGraph] = useState(false);
 
   const [wantShare, setWantShare] = useState(false);
+  const [executeListShare, setexecuteListShare] = useState(false);
   const [showErrorMsg, setshowErrorMsg] = useState(false);
   const [collaboratorExist, setcollaboratorExist] = useState();
   const [collabID, setcollabID] = useState("");
@@ -22,15 +23,12 @@ const IndivTree = (treeId) => {
   const [isTableShare, setisTableShare] = useState(false);
 
   const [parent, setParent] = useState("");
-  const [treeElements, updateTree] = useState([])
 
   const treeIdentif = treeId.match.params.treeId;
 
   // adding from /create
   const [dataDB, setData] = useState([]);
   const [dataFamily, setDataFamily] = useState([]);
-
-  const [shareTreeView, setshareTreeView] = useState([]);
 
   let addLink = "/add/" + treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
   // end add from /create
@@ -113,26 +111,6 @@ const IndivTree = (treeId) => {
       // dont show anything
     }
     else {
-      // console.log(collaboratorExist)
-      // if(collaboratorExist == false) {
-      //   setcollaboratorExist(undefined)
-      //   return <div>
-      //     <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
-      //     <p>To share an individual in the table click on the individuals ID, then input an email and click 'Share Tree'. To share an indiviudal 
-      //       in the tree list click on the individuals icon enter an email and click 'Share Tree'. Please enter an email for Google and Email users. For Facebook users
-      //       please enter their user ID found in their works page.
-      //     </p>
-
-      //       <div>
-      //         <label>Collaborator's email or user ID</label>
-      //         <input ref={parentRef} type="text" placeholder="Enter email or ID of collaborator" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
-      //       </div>
-      //       <p>User did not exist. Try a different sharing method (user ID/ email) or verify you have the correct information/</p>
-      //       <button className="add_btn" type="submit">Very Collaborator</button>
-      //   </form>
-      //     </div>
-      // }
-      // else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
           <p>To share an individual first enter the email or ID of your chosen collaborator and click 'Verify Collaborator'. This will verify whether 
             the collaborator is registered with WikiFamily.
@@ -149,17 +127,14 @@ const IndivTree = (treeId) => {
             </div>
 
             {showingErrpr()}
-
-            {/* <button className="add_btn" type="submit">Verify Collaborator</button> */}
             {buttonShow()}
         </form>
-      // }
     }
   }
 
   const buttonShow = () => {
     if (collaboratorExist == true) {
-        return <button className="add_btn" type="submit">Share Tree</button>
+        return <button className="add_btn" type="submit" onClick={()=>{setexecuteListShare(true);}}>Share Tree</button>
     }
     else {
       return <button className="add_btn" type="submit">Verify Collaborator</button>
@@ -195,7 +170,7 @@ const IndivTree = (treeId) => {
       setcollaboratorExist(true)
       setcollabID(id)
       // for tree sharing
-      setsharingInfo([true,treeIdentif,treeName['family_name'],id])
+      setsharingInfo([executeListShare,treeIdentif,treeName['family_name'],id])
 
       // for table sharing
       console.log(isTableShare)
@@ -224,6 +199,8 @@ const IndivTree = (treeId) => {
       headers: { 'Content-Type': 'application/json'},
     });
 
+
+    console.log("created tree with tableshare")
     console.log(result)
 
     // set back to false after share w table
