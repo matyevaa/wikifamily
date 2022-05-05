@@ -5,6 +5,16 @@ body {
   bottom: 0;
 }
 
+.tree_label_btn {
+  background-color: #4c51bf !important;
+  display: inline-flex;
+  align-items: center;
+  border-color: transparent;
+  border-radius: 9999px;
+  color: white;
+  content: "+";
+}
+
 .popup-content {
   position: relative;
   margin: auto;

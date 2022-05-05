@@ -9,7 +9,7 @@ const TreeLabel = ({
   last,
   dob,
   dod,
-  spouseLName, 
+  spouseLName,
   spouseDOB,
   spouseDOD,
   gender,
@@ -23,9 +23,9 @@ const TreeLabel = ({
 
       {/*button for popup menu. Plus icon inserts "+" into button*/}
       <button
+        className="tree_label_btn"
         onClick={onClick}
         type="button"
-        className="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
         <PlusIcon />
       {/*button for popup menu for spouse. Plus icon inserts "+" into button*/}
@@ -40,10 +40,9 @@ const TreeLabel = ({
           </span>
 
           <button
+            className="tree_label_btn"
             onClick={onClick2}
-            type="button"
-            className="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
+            type="button">
             <PlusIcon />
           </button>
         </>
