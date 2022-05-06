@@ -306,6 +306,15 @@ li a:hover {
   box-shadow: 10px 10px 5px #aaaaaa;
 }
 
+.name {
+  text-decoration: underline;
+  font-style: italic;
+}
+
+#acknowledgements {
+  font-size: 30px;
+}
+
 .subtopic {
   text-align: center;
   font-size: 36px;
