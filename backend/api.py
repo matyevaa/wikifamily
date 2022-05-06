@@ -50,13 +50,13 @@ def get_family(id):
         cursor.execute(root,(id,str(shared[0][0]),))
 
     else:
-        root = '''select individual_id, first_name
+        root = '''select individual_id, first_name, last_name, birth, death, gender
                 FROM individual
                 WHERE family_id=%s AND parent is null AND individual_id is not null;
                     '''
         cursor.execute(root,(id,))
 
-    sql_root = '''select c.individual_id, c.first_name
+    sql_root = '''select c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender
                 FROM individual p1
                 LEFT JOIN individual c ON p1.individual_id = c.parent
                 WHERE p1.family_id=%s AND p1.parent is null AND c.individual_id is not null;
@@ -83,7 +83,7 @@ def get_family(id):
         root_id = parent['individual_id']
         fam_id = id
         # print("parent's individual id is: ", root_id)
-        cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
+        cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
         datas2 = cursor.fetchall()
         children = []
         for result in datas2:
@@ -107,7 +107,7 @@ def get_family(id):
         for parent_who_was_child in children:
             parent_id = parent_who_was_child['individual_id']
             #print("parent who was child's id: ", parent_id)
-            cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
+            cursor.execute('SELECT c.individual_id, c.first_name,  c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
             datas3 = cursor.fetchall()
             if datas3:
                 new_children = []
@@ -120,7 +120,7 @@ def get_family(id):
                 count = count - 1
                 continue
             # new stuff for spouse field
-            cursor.execute('SELECT c.individual_id, c.first_name FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse')
+            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse')
             datas4 = cursor.fetchall()
             if datas4:
                 spouses = []

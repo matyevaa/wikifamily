@@ -133,8 +133,10 @@ import HomeTree from "./HomeTree";
    return (
      <div>
 
-     <HomeTree/>
-
+     {list ?
+       <HomeTree list={list}/>
+      : null
+      }
 
     {!list?.length ? null :
     <div>{list.map(f =>

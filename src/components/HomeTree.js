@@ -5,7 +5,7 @@ import TreeLabel from "./TreeLabel";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
-const HomeTree = () => {
+const HomeTree = (props) => {
   const [editSpouse, setEditSpouse] = useState(false);
   const {
     register,
@@ -32,7 +32,7 @@ const HomeTree = () => {
   const handleFamilyMemberClose = () => setFamilyMember(false);
 
   /*handle Modal first show is to show popup menu. */
-  const data = [
+  /*const data = [
     {
       id: 0,
       label: (
@@ -55,7 +55,63 @@ const HomeTree = () => {
       gender: "male",
       pId: 1,
     },
-  ];
+  ];*/
+  const items = props.list[0];
+  var children_array = [];
+  console.log("items inside hometree: ", items);
+  var x=0;
+
+  const traverse = (kids, x, idx) => {
+    //console.log("KIDS ", kids, x);
+    if(kids) {
+      children_array.push(kids.map( (kid ) => ({
+        id: x = ++x,
+        label: <TreeLabel
+          onClick={handleModalFirstShow}
+          onClick2={handleEditModalOpen}
+            name={kid.first_name}
+            id={x=++x}
+            last={kid.last_name}
+            dob={kid.birth}
+            dod={kid.death}
+            gender={kid.gender}
+          />,
+        children: kid.children ? traverse(kid.children, x) : null
+      })) )
+    }
+    console.log("CHILDREN ARRAY ", children_array);
+    return children_array.reverse()[0];
+  };
+
+  const data = [{
+    id: x,
+    label: items ? (
+      <TreeLabel
+        onClick={handleModalFirstShow}
+        onClick2={handleEditModalOpen}
+          name={items.first_name}
+          id={x}
+          last={items.last_name}
+          dob={items.birth}
+          dod={items.death}
+          gender={items.gender}
+      />
+    ) : null,
+    children: items ? (items.children.map( (child, idx) => ({
+        id: x = ++idx,
+        label: <TreeLabel
+          onClick={handleModalFirstShow}
+          onClick2={handleEditModalOpen}
+          name={child.first_name}
+          id={x=++idx}
+          last={child.last_name}
+          dob={child.birth}
+          dod={child.death}
+          gender={child.gender}
+        />,
+        children: child.children ? traverse(child.children, x, idx) : null
+      })) ) : null
+  }]
 
   const [nodes, setNodes] = useState(data);
 
