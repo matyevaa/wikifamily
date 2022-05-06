@@ -7,8 +7,9 @@ const About = ({
   <div className="centerDiv">
     <div className="content">
       <h1 className="subtopic text">About Page</h1>
+      <center>
       <div className="description text">
-        <p>WikiFamily is the product of a 2021-2022 capstone project at <a href="https://oregonstate.edu/">Oregon State University</a>.
+        <p>WikiFamily is the product of a 2021-2022 capstone project at <a className="intextRef" href="https://oregonstate.edu/">Oregon State University</a>.
         <br/><br/>The developing team includes:
           <ul>
             <li className="name">Alex Uong</li>
@@ -23,6 +24,7 @@ const About = ({
           <br/><br/>The Wikifamily team would also like to thank professor <span className="name">Rob Hess</span> for guiding us in creating a tree view algorithm and our TA <span className="name">Matt Olson</span> for navigating us and tracking our success.
         </p>
       </div>
+      </center>
     </div>
   </div>
   );
