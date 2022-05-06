@@ -232,7 +232,7 @@ const IndivTree = (treeId) => {
       <div className="class_btn">
         <h3 id="dashboard">Family Individuals Dashboard</h3>
         <div clasName="dash_tools">
-          <Link to={addLink} id="btn" className="add_btn">Add Person</Link>
+          <Link to={addLink} id="btn" className="btns" id="add_btn">Add Person</Link>
           <button id="shareBtn" onClick={() => {changeConditon();}}>Share Individuals</button>
           {sharingConditionShow()}
         </div>
@@ -249,6 +249,7 @@ const IndivTree = (treeId) => {
               <td>Birth</td>
               <td>Death</td>
               <td>Parent</td>
+              <td>Spouse</td>
               <td></td>
            </tr>
         </thead>
@@ -265,15 +266,16 @@ const IndivTree = (treeId) => {
             <td>{item.birth}</td>
             <td>{item.death}</td>
             <td>{item.parent}</td>
-            <td>
-              <Link to={`edit/${item.individual_id}`} className="edit_btn">Edit</Link>
-              <button onClick={ () => delData(item.individual_id) } className="del_btn">Delete</button>
+            <td>{item.spouse}</td>
+            <td id="table_btns">
+              <Link to={`edit/${item.individual_id}`} className="btns" id="edit_btn">Edit</Link>
+              <button onClick={ () => delData(item.individual_id) } className="btns" id="del_btn">Delete</button>
             </td>
           </tr>
         ))}
         </tbody>
        </table>
-       <h3>Family size is: {dataFamily.length}</h3>
+       <h3 id="family_size">Family size is: {dataFamily.length}</h3>
     </div>
     </div>
   );

@@ -56,6 +56,9 @@ button {
   font-size: 18px;
   font-family: sans-serif;
 }
+button:hover {
+  background-color: #009999;
+}
 
 .container {
   box-shadow: 0 1px 6px #ccc;
