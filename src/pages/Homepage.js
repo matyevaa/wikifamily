@@ -11,7 +11,7 @@ const Homepage = ({
   return(
   <div className="centerDiv">
     <div className="content">
-      <h1 className="subtopic text"><strong>How can you create your own family tree?</strong></h1>
+      <h1 className="subtopic text">How can you create your own family tree?</h1>
       <p className="description text">
         Creating your own family trees no longer requires having to download 
         software, instead, you can now create and keep track of your family 
