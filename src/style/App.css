@@ -47,6 +47,11 @@ body {
   margin-left: -1rem;
 }
 
+#helpImgs {
+  height: 60%;
+  width: 200px;
+}
+
 .person_info {
   font-size: 18px;
   list-style-type: none;
@@ -430,6 +435,20 @@ li a:hover {
 
 #user_id {
   color: #3366cc;
+}
+
+.helpQuestion {
+  margin-bottom: 0px;
+  text-decoration: dotted;
+  font-weight: 15px;
+}
+
+.listQs{
+  margin-bottom: 0px;
+}
+
+.listQs a{
+  font-size: 17px;
 }
 
 @media only screen and (min-width: 700px) and (max-width: 1200px) {

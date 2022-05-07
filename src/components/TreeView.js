@@ -65,7 +65,7 @@ import HomeTree from "./HomeTree";
 
     const sharingShow = (indiv_id) => {
       if (wantShare == true) {
-        return <div id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id)}}>{indiv_id}</div>
+        return <div id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id)}}>...</div>
       }
     }
 

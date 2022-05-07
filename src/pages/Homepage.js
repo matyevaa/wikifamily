@@ -11,27 +11,34 @@ const Homepage = ({
   return(
   <div className="centerDiv">
     <div className="content">
-      <h1 className="subtopic text">How can you create your own family tree?</h1>
-      <p className="description text">Lorem ipsum dolor sit amet, ea detracto legendos imperdiet mel, ius ne noster graecis minimum. Ex usu animal officiis, nam unum mediocritatem ei. Aliquip definiebas nec et, ius te mutat bonorum, at eos ferri veritus adversarium. Cu quo alterum scribentur, fastidii detracto adolescens his ne. Id eum idque moderatius deterruisset.
-                                              Audire deleniti voluptatibus no mea, ea discere perpetua iracundia vis. Natum salutandi ut quo. Pertinax principes disputationi an quo, eam vulputate adipiscing ei, justo facilis omnesque eos id. Cu nominati molestiae efficiendi usu. Ea duo habeo feugiat adipisci.
-                                              Causae persecuti eum et. Ne scribentur delicatissimi eam, cu pri vero laboramus voluptaria. Bonorum argumentum eum cu, tantas deterruisset vim ea. Duo quod decore pericula et, ea his primis eruditi. At mazim albucius eligendi eos.
-                                              Ea pro quidam tractatos, per iudico laoreet no, lucilius tacimates et usu. Duo ne amet senserit, has at illud voluptaria, nibh probatus ut vim. Tota idque nullam ne has, in error eloquentiam nec, usu ferri pertinacia efficiendi cu. Cetero alterum liberavisse vim an, accumsan qualisque constituam ad eos, his et erant graeci. Eos ea quando partem nominavi.
-                                              Sea cibo suscipiantur te. Eu atqui clita mei. Cum ut dolorum abhorreant. Nec inani menandri ex, habeo menandri nec ut.
+      <h1 className="subtopic text"><strong>How can you create your own family tree?</strong></h1>
+      <p className="description text">
+        Creating your own family trees no longer requires having to download 
+        software, instead, you can now create and keep track of your family 
+        genealogy through WikiFamily an online platform to help counteract 
+        unnecessary software. 
       </p>
+      <p className="description text">Create an account with WikiFamily through 
+        email, Facebook, or Google and start creating your own family tree today!</p>
+
       <h1 className="subtopic text">Related topic on creating family trees</h1>
-      <p className="description text">Lorem ipsum dolor sit amet, ea detracto legendos imperdiet mel, ius ne noster graecis minimum. Ex usu animal officiis, nam unum mediocritatem ei. Aliquip definiebas nec et, ius te mutat bonorum, at eos ferri veritus adversarium. Cu quo alterum scribentur, fastidii detracto adolescens his ne. Id eum idque moderatius deterruisset.
-                                              Audire deleniti voluptatibus no mea, ea discere perpetua iracundia vis. Natum salutandi ut quo. Pertinax principes disputationi an quo, eam vulputate adipiscing ei, justo facilis omnesque eos id. Cu nominati molestiae efficiendi usu. Ea duo habeo feugiat adipisci.
-                                              Causae persecuti eum et. Ne scribentur delicatissimi eam, cu pri vero laboramus voluptaria. Bonorum argumentum eum cu, tantas deterruisset vim ea. Duo quod decore pericula et, ea his primis eruditi. At mazim albucius eligendi eos.
-                                              Ea pro quidam tractatos, per iudico laoreet no, lucilius tacimates et usu. Duo ne amet senserit, has at illud voluptaria, nibh probatus ut vim. Tota idque nullam ne has, in error eloquentiam nec, usu ferri pertinacia efficiendi cu. Cetero alterum liberavisse vim an, accumsan qualisque constituam ad eos, his et erant graeci. Eos ea quando partem nominavi.
-                                              Sea cibo suscipiantur te. Eu atqui clita mei. Cum ut dolorum abhorreant. Nec inani menandri ex, habeo menandri nec ut.
-      </p>
+      <p className="description text">VIDEO DEMO WILL BE PUT HERE</p>
+
       <h1 className="subtopic text">Available Features</h1>
-      <p className="description text">Lorem ipsum dolor sit amet, ea detracto legendos imperdiet mel, ius ne noster graecis minimum. Ex usu animal officiis, nam unum mediocritatem ei. Aliquip definiebas nec et, ius te mutat bonorum, at eos ferri veritus adversarium. Cu quo alterum scribentur, fastidii detracto adolescens his ne. Id eum idque moderatius deterruisset.
-                                              Audire deleniti voluptatibus no mea, ea discere perpetua iracundia vis. Natum salutandi ut quo. Pertinax principes disputationi an quo, eam vulputate adipiscing ei, justo facilis omnesque eos id. Cu nominati molestiae efficiendi usu. Ea duo habeo feugiat adipisci.
-                                              Causae persecuti eum et. Ne scribentur delicatissimi eam, cu pri vero laboramus voluptaria. Bonorum argumentum eum cu, tantas deterruisset vim ea. Duo quod decore pericula et, ea his primis eruditi. At mazim albucius eligendi eos.
-                                              Ea pro quidam tractatos, per iudico laoreet no, lucilius tacimates et usu. Duo ne amet senserit, has at illud voluptaria, nibh probatus ut vim. Tota idque nullam ne has, in error eloquentiam nec, usu ferri pertinacia efficiendi cu. Cetero alterum liberavisse vim an, accumsan qualisque constituam ad eos, his et erant graeci. Eos ea quando partem nominavi.
-                                              Sea cibo suscipiantur te. Eu atqui clita mei. Cum ut dolorum abhorreant. Nec inani menandri ex, habeo menandri nec ut.
+      <p className="description text">
+        WikiFamily aims to bring new features that are not so easily available in other  
+        family tree genealogy software. As such features available to WikiFamily users include
       </p>
+      <ul className="description text">
+        <li>Logging in and creating accounts through Google or Facebook or a traditional email address</li>
+        <li>Create or own several family trees</li>
+        <li>Collapse individuals and their descendants</li>
+        <li>Sharing an individual and their descendants</li>
+          <ul><li>Adding, editing, or deleting individuals in a shared tree will be reflected in the original tree </li></ul>
+        <li>Viewing a family tree in a list form or through a traditional family tree</li>
+          <ul><li>Example pictures added</li></ul>
+        <li>Family tree data is managed through a database</li>
+      </ul>
     </div>
   </div>
   );
