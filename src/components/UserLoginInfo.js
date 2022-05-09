@@ -32,6 +32,8 @@ const UserLoginInfo = () => {
     localStorage.setItem("userId", JSON.stringify(parsedId))
     localStorage.setItem("userEmail", JSON.stringify(user.email))
     localStorage.setItem("userName", JSON.stringify(user.nickname))
+    localStorage.setItem("oauth_first", JSON.stringify(true))
+
     if (chekcDB == false) {
       putInDB(parsedId)
     }

@@ -21,6 +21,9 @@ const Works = (userId) => {
   const [shareEnd, setShareEnd] = useState("");
   const [wantShare, setWantShare] = useState(false);
 
+  let finalID = userId.id
+  
+
   useEffect(() => {
     findingUserId();
     let saved = JSON.parse(localStorage.getItem("userId"))
@@ -47,19 +50,25 @@ const Works = (userId) => {
     // console.log("pathname: " + userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6))
 
     let temp = userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6)
-    // console.log("temp " + temp.toString())
+    console.log("temp " + temp.toString())
+    console.log("temp " + temp)
 
-    if (temp.toString() != null) { // user id passed in
-      // console.log("What gonna put in localstorage " + temp)
+    // if (finalID != undefined) { // user id passed in
+    if (temp != null && JSON.parse(localStorage.getItem("loginVersion") != '"oauth"')) { // ch "null" for heroku version
+      console.log("What gonna put in localstorage n was third" + temp)
       localStorage.setItem("userId", JSON.stringify(temp))
     }
-    else { // user id not passed in
-      let saved = JSON.parse(localStorage.getItem("userId"))
-      window.location.href="http://localhost:3005/creator=" + saved + "/works"
-    }
+    // else { // user id not passed in
+    //   console.log("link for creator id was null")
+    //   let saved = JSON.parse(localStorage.getItem("userId"))
+    //   finalID = saved
+    //   console.log("will put in " + saved)
+    //   window.location.href="http://localhost:3005/creator=" + saved + "/works"
+    // }
 
     // if used the api to llogin
     if (JSON.parse(localStorage.getItem("loginVersion") != '"oauth"')) {
+      console.log("was third party login " + temp)
       localStorage.setItem("loginVersion", JSON.stringify("thirdParty"))
       if(JSON.parse(localStorage.getItem("userName")) == null) {
         // need refresh twice or else wont show the 'welcome name"
@@ -96,7 +105,8 @@ const Works = (userId) => {
       return <div>
       {dataDB_trees.map((item, idx) => (
         <tr key={idx}>
-          <td className="description text"><a href= { createIndivTreeLinks(item.family_id) }>{item.family_name}</a></td>
+          <div id='indivTree'><td className="description text indivTree"><a href= { createIndivTreeLinks(item.family_id) }>{item.family_name}</a></td></div>
+          
         </tr>
       ))}</div>
     }

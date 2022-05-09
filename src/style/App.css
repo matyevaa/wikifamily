@@ -437,6 +437,22 @@ li a:hover {
   color: #3366cc;
 }
 
+.indivTree a:hover {
+  color: rgb(1, 73, 73);
+}
+
+.indivTree a {
+  color: #3366cc;
+  text-decoration: none;
+}
+
+#indivTree {
+  /* border: 2px solid #3366cc; */
+  padding: 6px;
+  border-radius: 6px;
+  margin: 10px;
+}
+
 .helpQuestion {
   margin-bottom: 0px;
   text-decoration: dotted;

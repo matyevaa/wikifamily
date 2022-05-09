@@ -163,22 +163,23 @@ def get_whole_family(id):
 # get list of tree ids, need add <userId> later
 @app.route('/api1/listTrees/<id>', methods=['GET'])
 def getFamilies(id):
-    dbInfo = connect()
-    cursor = dbInfo[1]
-    cnx = dbInfo[0]
+    if id != NULL:
+        dbInfo = connect()
+        cursor = dbInfo[1]
+        cnx = dbInfo[0]
 
-    cursor.execute("SELECT * FROM family WHERE owner_id = %s", (id,))
+        cursor.execute("SELECT * FROM family WHERE owner_id = %s", (id,))
 
-    row_headers = [x[0] for x in cursor.description]
-    data = cursor.fetchall()
-    json_data = []
-    for result in data:
-        json_data.append(dict(zip(row_headers, result)))
+        row_headers = [x[0] for x in cursor.description]
+        data = cursor.fetchall()
+        json_data = []
+        for result in data:
+            json_data.append(dict(zip(row_headers, result)))
 
-    print(json_data)
+        print(json_data)
 
-    cursor.close()
-    cnx.close()
+        cursor.close()
+        cnx.close()
     return json.dumps(json_data)
 
 # get name of tree from specific tree id, need to add userId later

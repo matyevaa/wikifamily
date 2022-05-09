@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 
 const IndivTree = (treeId) => {
   const [treeName, setTreeName] = useState(["no data"]);
-  // const [treeIdentif, setItendif] = useState();
 
   const [showView, setShowView] = useState(false);
   const [showGraph, setShowGraph] = useState(false);
@@ -50,10 +49,6 @@ const IndivTree = (treeId) => {
     console.log(treeName);
     console.log(result);
 };
-
-  const getTreeId = (treeID) => {
-    return treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
-  }
 
   const getData = async() => {
     const result = await axios (`http://localhost:5000/api1/create/${treeIdentif}`, {
@@ -132,9 +127,21 @@ const IndivTree = (treeId) => {
     }
   }
 
+  const ifSharingTable = () => {
+    // for table sharing
+    console.log("table sharing cond is" + isTableShare)
+    if (isTableShare == true) {
+      console.log("doing table share")
+      collaboratorEditing(collabID);
+    }
+    else {
+      setexecuteListShare(true)
+    }
+  }
+
   const buttonShow = () => {
     if (collaboratorExist == true) {
-        return <button className="add_btn" type="submit" onClick={()=>{setexecuteListShare(true);}}>Share Tree</button>
+        return <button className="add_btn" type="submit" onClick={()=>{setexecuteListShare(true); collaboratorEditing(collabID)}}>Share Tree</button>
     }
     else {
       return <button className="add_btn" type="submit">Verify Collaborator</button>
@@ -164,7 +171,7 @@ const IndivTree = (treeId) => {
     let id
     if(result.data[0] == true) {
       setshowErrorMsg(false)
-      // setcollabID(result.data[1])
+      
       id = result.data[1]
       // console.log(id)
       setcollaboratorExist(true)
@@ -172,12 +179,12 @@ const IndivTree = (treeId) => {
       // for tree sharing
       setsharingInfo([executeListShare,treeIdentif,treeName['family_name'],id])
 
-      // for table sharing
+      // // for table sharing
       console.log(isTableShare)
-      if (isTableShare == true) {
-        console.log("doing table share")
-        collaboratorEditing(id);
-      }
+      // if (isTableShare == true) {
+      //   console.log("doing table share")
+      //   collaboratorEditing(id);
+      // }
     }
     else {
       console.log("user did not exist")
@@ -194,18 +201,17 @@ const IndivTree = (treeId) => {
   const collaboratorEditing = async(id) => {
     console.log("in share function")
     console.log(collabID)
+    if (isTableShare == true) {
       const result = await axios.post (`http://localhost:5000/api2/share/${shareStart}/${treeIdentif}/${treeName['family_name']}/${id}`, {
         method:'POST',
-      headers: { 'Content-Type': 'application/json'},
-    });
-
-
-    console.log("created tree with tableshare")
-    console.log(result)
+        headers: { 'Content-Type': 'application/json'},
+      });
+      console.log("created tree with tableshare")
+      console.log(result)
+    }
 
     // set back to false after share w table
     setisTableShare(false)
-
   }
 
   const parentRef = useRef()

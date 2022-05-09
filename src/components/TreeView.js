@@ -33,6 +33,7 @@ import HomeTree from "./HomeTree";
         children_array.push(kids.map( (kid ) => ({
           id: x = ++x,
           label: kid.first_name,
+          last: kid.last_name,
           indiv_id: kid.individual_id,
           children: kid.children ? traverse(kid.children, x) : null
         })) )
@@ -75,10 +76,12 @@ import HomeTree from "./HomeTree";
        id: x,
        label: items.first_name, // parent #1
        indiv_id: items.individual_id,
+       last: items.last_name,
        children: items.children.map( (child, idx) => ({
            id: x = ++idx,
            label: child.first_name, // child of parent #1
            indiv_id: child.individual_id,
+           last: child.last_name,
            children: child.children ? traverse(child.children, x, idx) : null
          }))
      }]
@@ -97,27 +100,27 @@ import HomeTree from "./HomeTree";
 
    return (
 
-      <TreeView className="tree_item" data={data} renderNode={({label,indiv_id}) =>
+      <TreeView className="tree_item" data={data} renderNode={({label,indiv_id, last}) =>
         <div className="test">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
 
         {sharingShow(indiv_id)}
         {sharingFunct()}
-          <Popup ref={ref}>
+          <Popup >
             <div className="pop">
               <ul className="person_info">
-                { /*
+                
                   <div id="centralize">
                   <div id="jon"></div>
                   <div className="list_info">
-                    <li><span>First Name:</span> {search(label).first_name}</li>
-                    <li><span>Last Name:</span> {search(label).last_name}</li>
-                    <li><span>Information:</span> {search(label).info}</li>
+                    <li><span>First Name:</span> {label}</li>
+                    <li><span>Last Name:</span> {last}</li>
+                    {/* <li><span>Information:</span> {search(label).info}</li>
                     <li><span>Gender:</span> {search(label).gender}</li>
                     <li><span>Date of Birth:</span> {search(label).birth}</li>
-                    <li><span>Date of Death:</span> {search(label).death}</li>
+                    <li><span>Date of Death:</span> {search(label).death}</li> */}
                   </div>
                   </div>
-                */}
+                
               </ul>
             </div>
           </Popup>
