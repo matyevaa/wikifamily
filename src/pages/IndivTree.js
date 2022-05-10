@@ -171,7 +171,7 @@ const IndivTree = (treeId) => {
     let id
     if(result.data[0] == true) {
       setshowErrorMsg(false)
-      
+
       id = result.data[1]
       // console.log(id)
       setcollaboratorExist(true)
@@ -228,7 +228,7 @@ const IndivTree = (treeId) => {
         </div>
       </div>
 
-      { showView ? <TreeList list={dataDB} family={dataFamily} share={wantShare} collab={sharingInfo}/> : null }
+      { showView ? <TreeList list={dataDB} treeId={treeId} family={dataFamily} share={wantShare} collab={sharingInfo}/> : null }
       {/* {console.log(collabID)} */}
       { showGraph ? <Tree dataDB={dataDB}/> : null }
 

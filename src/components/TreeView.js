@@ -128,16 +128,16 @@ import HomeTree from "./HomeTree";
   )
  }
 
- const TreeList = ({list, family, share, collab}) => {
+ const TreeList = ({list, treeId, family, share, collab}) => {
 
    //console.log("count ", count);
-   //console.log("list ", list);
-
+   console.log("list ", list);
+   console.log("HERE", treeId);
    return (
      <div>
 
      {list ?
-       <HomeTree list={list}/>
+       <HomeTree list={list} treeId={treeId}/>
       : null
       }
 

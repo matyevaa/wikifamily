@@ -6,6 +6,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
+import axios from 'axios';
 
 const HomeTree = (props) => {
   const [editSpouse, setEditSpouse] = useState(false);
@@ -15,6 +16,18 @@ const HomeTree = (props) => {
     reset,
     formState: { errors },
   } = useForm();
+
+  console.log("tree id: ", props.treeId.match.params.treeId);
+  const treeIdentif = props.treeId.match.params.treeId;
+
+  const delData = async(individual_id) => {
+    console.log("In Delete in homeTree, individual_id is ", individual_id);
+    await axios.delete (`http://localhost:5000/api1/delete/${individual_id}/${treeIdentif}`, {
+      headers: { 'Content-Type': 'application/json'}
+    })
+    .catch(err => console.log(err));
+    window.location.reload(false);
+  };
 
   const [modalFirst, setModalFirst] = useState(false);
 
@@ -239,7 +252,8 @@ const HomeTree = (props) => {
         : { ...o, children: editNodeSpouse(o.children, id, data) }
     );
 
-  const handleFamilyMemberShow = (id) => {
+  const handleFamilyMemberShow = (id, result_id) => {
+    console.log("in handle modal, result_id is: ", result_id);
     setTypeId(id);
     if (id !== 3) {
       setModalFirst(false);
@@ -249,7 +263,9 @@ const HomeTree = (props) => {
     else {
       const removed = remove(nodes, selectedId);
       setNodes(removed);
+      delData(result_id);
       //setModalFirst(false);
+      console.log("in remove. we deleted the result id.");
       console.log("in remove. nodes are: ", nodes);
     }
   };
@@ -509,17 +525,16 @@ const HomeTree = (props) => {
                         {announcements.map((announcement) => (
                           <li key={announcement.id}>
                             <div>
+                            {label ? (label.props.id === selectedId || label.props.id == 0 ? result_id = label.props.indiv_id : null) : null}
+                            {console.log("result id is ", result_id)}
                               <h3>
-                                <button onClick={() => handleFamilyMemberShow(announcement.id)} type="button">
+                                <button onClick={() => handleFamilyMemberShow(announcement.id, result_id)} type="button">
                                   {announcement.title}
                                 </button>
                               </h3>
                             </div>
                           </li>
                         ))}
-                        <p>you clicked a person {selectedId ? selectedId : null}</p>
-                        <p>keys: {label ? (label.props.id === selectedId ? result_id = label.props.indiv_id : "") : null} </p>
-                        <p>props: {result_id}</p>
                       </div>
                     </div>
                 </ul>

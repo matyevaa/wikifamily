@@ -16,6 +16,10 @@ body {
   text-decoration: underline;
 }
 
+#close_a {
+  float: right;
+}
+
 #log {
   text-decoration: none !important;
 }
