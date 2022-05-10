@@ -522,11 +522,11 @@ const HomeTree = (props) => {
 
                       {console.log("INDIV: ", label.props)}
                       <div className="list_info">
+                        <h3>Choose your operation:</h3>
                         {announcements.map((announcement) => (
                           <li key={announcement.id}>
                             <div>
-                            {label ? (label.props.id === selectedId || label.props.id == 0 ? result_id = label.props.indiv_id : null) : null}
-                            {console.log("result id is ", result_id)}
+                            <p id="result_id_p">{label ? (label.props.id === selectedId || label.props.id == 0 ? (result_id = label.props.indiv_id) : null) : null}</p>
                               <h3>
                                 <button onClick={() => handleFamilyMemberShow(announcement.id, result_id)} type="button">
                                   {announcement.title}

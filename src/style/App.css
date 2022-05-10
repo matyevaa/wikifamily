@@ -24,9 +24,14 @@ body {
   text-decoration: none !important;
 }
 
+#result_id_p {
+  font-size: 0.01px;
+  visibility: hidden;
+}
+
 .popup-content {
   background-color: #f3f3f3 !important;
-  width: 25% !important;
+  width: 30% !important;
   height: auto !important;
   box-shadow: 5px 5px 3px #aaaaaa;
 }
