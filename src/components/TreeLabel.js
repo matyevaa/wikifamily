@@ -17,8 +17,8 @@ const TreeLabel = ({
 }) => {
   return (
     <div className="flex items-center">
-      <span className="mr-1 capitalize">
-        {name} {last} <br /> {gender} <br /> {dob} - {dod}
+      <span className="node_info">
+        {name} {last}<br/>{gender}<br/>{dob} - {dod}
       </span>
 
       <button

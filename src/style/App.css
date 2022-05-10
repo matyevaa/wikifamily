@@ -24,6 +24,10 @@ body {
   text-decoration: none !important;
 }
 
+#dob_dod {
+  margin-left: -5px !important;
+}
+
 #result_id_p {
   font-size: 0.01px;
   visibility: hidden;
@@ -45,6 +49,8 @@ body {
 }
 
 .tree_label_btn {
+  margin-left: 0.5rem;
+  margin-top: -1rem;
   background-color: #3366CC !important;
   padding: 7px !important;
   display: inline-flex;
@@ -53,6 +59,10 @@ body {
   border-radius: 9999px;
   color: white;
   content: "+";
+}
+
+.node_info {
+
 }
 
 .spouse {
