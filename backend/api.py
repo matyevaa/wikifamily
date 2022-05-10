@@ -89,6 +89,18 @@ def get_family(id):
         for result in datas2:
             children.append(dict(zip(row_headers, result)))
         # print("children array: ", children)
+        # new stuff for spouse field
+        cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse')
+        datas4 = cursor.fetchall()
+        if datas4:
+            spouses = []
+            print("DATA4: ", datas4)
+            for result in datas4:
+                spouses.append(dict(zip(row_headers, result)))
+                parent["spouse"] = spouses[0]
+                print("I've just added a spouse: ", parent)
+        else:
+            continue
         # try to add children array into children_root as a nested key
         parent["children"] = children
 
@@ -119,27 +131,17 @@ def get_family(id):
             else:
                 count = count - 1
                 continue
-            # new stuff for spouse field
-            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse')
-            datas4 = cursor.fetchall()
-            if datas4:
-                spouses = []
-                for result in datas4:
-                    spouses.append(dict(zip(row_headers, result)))
-                    parent_who_was_child["spouse"] = spouses
-                    print("I've just added a spouse: ", spouses)
-            else:
-                continue
 
             if count==0:
                 break
             else:
                 continue
 
-    print("Final spouses: ", spouses)
+    #print("Final spouses: ", spouses)
     print("Final children root: ", children_root)
 
     return json.dumps(children_root)
+
 
 
 # get the whole family for the table

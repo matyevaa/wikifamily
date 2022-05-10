@@ -1,6 +1,6 @@
 import React from "react";
 import { ReactComponent as PlusIcon } from "../assets/icon/plus.svg";
-
+import { BsFillPlusCircleFill } from 'react-icons/bs';
 const TreeLabel = ({
   onClick,
   onClick2,
@@ -18,17 +18,15 @@ const TreeLabel = ({
   return (
     <div className="flex items-center">
       <span className="mr-1 capitalize">
-        {name} {last} <br /> {gender} <br /> {dob} <br />-{dod}
+        {name} {last} <br /> {gender} <br /> {dob} - {dod}
       </span>
 
-      {/*button for popup menu. Plus icon inserts "+" into button*/}
       <button
         className="tree_label_btn"
         onClick={onClick}
         type="button"
       >
-        <PlusIcon />
-      {/*button for popup menu for spouse. Plus icon inserts "+" into button*/}
+        <PlusIcon className="plus" />
       </button>
       {spouse && (
         <>
@@ -36,14 +34,13 @@ const TreeLabel = ({
           <span className="ml-2 capitalize ">
             {spouse} {spouseLName} <br /> {spouseGender} <br /> {spouseDOB}{" "}
             <br />-{spouseDOD}
-            {/* {allSpouses.find((v) => v.id === id)?.firstName} */}
           </span>
 
           <button
             className="tree_label_btn"
             onClick={onClick2}
             type="button">
-            <PlusIcon />
+            <PlusIcon className="plus" />
           </button>
         </>
       )}

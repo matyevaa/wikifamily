@@ -5,8 +5,41 @@ body {
   bottom: 0;
 }
 
+.line {
+  width: 5rem;
+  height: 1px;
+  color: blue;
+}
+
+#log:hover {
+  background-color: #f6f6f6 !important;
+  text-decoration: underline;
+
+}
+
+#log {
+  text-decoration: none !important;
+}
+
+.popup_form {
+  background-color: teal;
+  position: absolute !important;
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.add_form {
+  margin: 0px 150px 0px;
+  width: 50%;
+  padding: 15px;
+  background-color: rgb(242, 242, 242, .97);
+  box-shadow: 10px 10px 5px #aaaaaa;
+}
+
 .tree_label_btn {
   background-color: #4c51bf !important;
+  padding: 7px !important;
   display: inline-flex;
   align-items: center;
   border-color: transparent;
@@ -15,12 +48,31 @@ body {
   content: "+";
 }
 
+.plus {
+  width: 10px;
+}
+
 .popup-content {
   position: relative;
   margin: auto;
   pointer-events: auto;
   width: 50%;
   border: solid 1.5px;
+}
+
+.indivTree a:hover {
+  color: rgb(1, 73, 73);
+}
+
+.indivTree a {
+  color: #3366cc;
+  text-decoration: none;
+}
+
+#indivTree {
+  padding: 6px;
+  border-radius: 6px;
+  margin: 10px;
 }
 
 #tree_name {
@@ -313,6 +365,7 @@ li a:hover {
 .rightButton:hover, .leftButton:hover {
   cursor: pointer;
   text-decoration: underline;
+  background-color: none !important;
 }
 
 /* text container */
@@ -435,22 +488,6 @@ li a:hover {
 
 #user_id {
   color: #3366cc;
-}
-
-.indivTree a:hover {
-  color: rgb(1, 73, 73);
-}
-
-.indivTree a {
-  color: #3366cc;
-  text-decoration: none;
-}
-
-#indivTree {
-  /* border: 2px solid #3366cc; */
-  padding: 6px;
-  border-radius: 6px;
-  margin: 10px;
 }
 
 .helpQuestion {
