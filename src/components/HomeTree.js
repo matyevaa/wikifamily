@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import TreeView from "react-expandable-treeview";
 import ModalComponent from "./ModalComponent";
 import TreeLabel from "./TreeLabel";
-import { BsFileEarmarkPerson } from 'react-icons/bs';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { useForm } from "react-hook-form";
@@ -19,6 +18,12 @@ const HomeTree = (props) => {
 
   const [modalFirst, setModalFirst] = useState(false);
 
+  const ref = useRef();
+  const toggleTooltip = () => ref.current.toggle();
+
+  var result_id = [];
+
+  const [selectedIndivId, setSelectedIndivId] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [familyMember, setFamilyMember] = useState(false);
   const [edited, setEdited] = useState(null);
@@ -60,27 +65,29 @@ const HomeTree = (props) => {
       pId: 1,
     },
   ];*/
+
   const items = props.list[0];
   var children_array = [];
   console.log("items inside hometree: ", items);
-  var x=0, y=0;
+  var x=0;
 
-  const traverse = (kids, x, idx) => {
+  const traverse = (kids, b, idx) => {
     //console.log("KIDS ", kids, x);
     if(kids) {
       children_array.push(kids.map( (kid ) => ({
-        id: x = ++x,
+        id: b = ++b,
+        indiv_id: kid.individual_id,
         label: <TreeLabel
-        //  onClick={handleModalFirstShow}
-        //  onClick2={handleEditModalOpen}
+            onClick={toggleTooltip}
             name={kid.first_name}
-            id={x=++x}
+            indiv_id={kid.individual_id}
+            id={b=++b}
             last={kid.last_name}
             dob={kid.birth}
             dod={kid.death}
             gender={kid.gender}
           />,
-        children: kid.children ? traverse(kid.children, x) : null
+        children: kid.children ? traverse(kid.children, b) : null
       })) )
     }
     console.log("CHILDREN ARRAY ", children_array);
@@ -92,27 +99,24 @@ const HomeTree = (props) => {
     id: x,
     label: items ? (
       <TreeLabel
-          onClick={handleModalFirstShow}
-          onClick2={handleEditModalOpen}
+          onClick={toggleTooltip}
+          indiv_id={items.individual_id}
           name={items.first_name}
           id={x}
           last={items.last_name}
           dob={items.birth}
           dod={items.death}
           gender={items.gender}
-          spouse="wife"
-          spouseLName="wife lname"
-          spouseDOB="2022-10-29"
-          spouseDOD="-"
-          spouseGender="f"
       />
-    ) : null,
+    ) : "loading",
+    indiv_id: items ? (items.individual_id) : null,
     children: items ? (items.children.map( (child, idx) => ({
         id: x = ++idx,
+        indiv_id: child.individual_id,
         label: <TreeLabel
-      //    onClick={handleModalFirstShow}
-      //    onClick2={handleEditModalOpen}
+          onClick={toggleTooltip}
           name={child.first_name}
+          indiv_id={child.individual_id}
           id={x=++idx}
           last={child.last_name}
           dob={child.birth}
@@ -329,7 +333,7 @@ const HomeTree = (props) => {
     }
   }, [edited]);
 
-  console.log("nodes", nodes, "edited", edited);
+  //console.log("nodes", nodes, "edited", edited);
 
   /* render all options in popup menu*/
   return (
@@ -493,8 +497,36 @@ const HomeTree = (props) => {
       </ModalComponent>
       <TreeView
         data={nodes}
-        renderNode={({ label, id }) => (
-          <div onClick={() => setSelectedId(id)}>{label}</div>
+        renderNode={({ label, indiv_id, id }) => (
+            <div onClick={() => {setSelectedId(id+1); setSelectedIndivId(indiv_id); toggleTooltip()}}>{label}
+            <Popup ref={ref}>
+              <div className="pop">
+                <ul className="popup_ul">
+                    <div id="centralize">
+
+                      {console.log("INDIV: ", label.props)}
+                      <div className="list_info">
+                        {announcements.map((announcement) => (
+                          <li key={announcement.id}>
+                            <div>
+                              <h3>
+                                <button onClick={() => handleFamilyMemberShow(announcement.id)} type="button">
+                                  {announcement.title}
+                                </button>
+                              </h3>
+                            </div>
+                          </li>
+                        ))}
+                        <p>you clicked a person {selectedId ? selectedId : null}</p>
+                        <p>keys: {label ? (label.props.id === selectedId ? result_id = label.props.indiv_id : "") : null} </p>
+                        <p>props: {result_id}</p>
+                      </div>
+                    </div>
+                </ul>
+              </div>
+            </Popup>
+            </div>
+
         )}
       />
     </div>

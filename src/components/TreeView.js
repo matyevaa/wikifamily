@@ -105,22 +105,22 @@ import HomeTree from "./HomeTree";
 
         {sharingShow(indiv_id)}
         {sharingFunct()}
-          <Popup >
+          <Popup ref={ref}>
             <div className="pop">
               <ul className="person_info">
-                
+
                   <div id="centralize">
                   <div id="jon"></div>
                   <div className="list_info">
-                    <li><span>First Name:</span> {label}</li>
-                    <li><span>Last Name:</span> {last}</li>
+                    <li><span>First Name:</span> </li>
+                    <li><span>Last Name:</span> </li>
                     {/* <li><span>Information:</span> {search(label).info}</li>
                     <li><span>Gender:</span> {search(label).gender}</li>
                     <li><span>Date of Birth:</span> {search(label).birth}</li>
                     <li><span>Date of Death:</span> {search(label).death}</li> */}
                   </div>
                   </div>
-                
+
               </ul>
             </div>
           </Popup>

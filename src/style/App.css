@@ -14,19 +14,17 @@ body {
 #log:hover {
   background-color: #f6f6f6 !important;
   text-decoration: underline;
-
 }
 
 #log {
   text-decoration: none !important;
 }
 
-.popup_form {
-  background-color: teal;
-  position: absolute !important;
-  display: flex;
-  justify-content: center;
-  padding: 3rem;
+.popup-content {
+  background-color: #f3f3f3 !important;
+  width: 25% !important;
+  height: auto !important;
+  box-shadow: 5px 5px 3px #aaaaaa;
 }
 
 .add_form {
@@ -38,7 +36,7 @@ body {
 }
 
 .tree_label_btn {
-  background-color: #4c51bf !important;
+  background-color: #3366CC !important;
   padding: 7px !important;
   display: inline-flex;
   align-items: center;
@@ -46,6 +44,12 @@ body {
   border-radius: 9999px;
   color: white;
   content: "+";
+}
+
+.spouse {
+  background-color: red;
+  width: 5rem;
+
 }
 
 .plus {
@@ -104,7 +108,7 @@ body {
   width: 200px;
 }
 
-.person_info {
+.popup_ul {
   font-size: 18px;
   list-style-type: none;
   letter-spacing: 0.5px;

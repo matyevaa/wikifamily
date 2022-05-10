@@ -30,8 +30,8 @@ const TreeLabel = ({
       </button>
       {spouse && (
         <>
-          <span className="w-[5rem] h-[1px] bg-blue-primary"></span>
-          <span className="ml-2 capitalize ">
+          <span className="line"></span>
+          <span className="spouse">
             {spouse} {spouseLName} <br /> {spouseGender} <br /> {spouseDOB}{" "}
             <br />-{spouseDOD}
           </span>
