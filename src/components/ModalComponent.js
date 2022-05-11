@@ -1,4 +1,3 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
@@ -7,7 +6,8 @@ export default function ModalComponent({ show, onClose, children }) {
     <Transition.Root show={show} as={Fragment}>
       <Dialog
         as='div'
-        className="popup_form" onClose={onClose}
+        className='fixed z-10 inset-0 overflow-y-auto'
+        onClose={onClose}
       >
         <div className='flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0'>
           <Transition.Child
@@ -22,7 +22,6 @@ export default function ModalComponent({ show, onClose, children }) {
             <Dialog.Overlay className='fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity' />
           </Transition.Child>
 
-          {/* This element is to trick the browser into centering the modal contents. */}
           <span
             className='hidden sm:inline-block sm:align-middle sm:h-screen'
             aria-hidden='true'

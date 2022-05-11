@@ -1,6 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
   margin: 0;
-  background: url('./tree.png') no-repeat center 70px fixed;
+  background: url('./style/tree.png') no-repeat center 70px fixed;
   /* background-size: contain; */
   background-size: 110% 100%;
   /* background-position: fixed top; */

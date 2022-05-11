@@ -38,6 +38,8 @@ const HomeTree = (props) => {
 
   const [selectedIndivId, setSelectedIndivId] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [selectedData, setSelectedData] = useState(null);
+
   const [familyMember, setFamilyMember] = useState(false);
   const [edited, setEdited] = useState(null);
   const [typeId, setTypeId] = useState(null);
@@ -52,32 +54,6 @@ const HomeTree = (props) => {
   };
 
   const handleFamilyMemberClose = () => setFamilyMember(false);
-
-  /*handle Modal first show is to show popup menu. */
-  /*const data = [
-    {
-      id: 0,
-      label: (
-        <TreeLabel
-          onClick={handleModalFirstShow}
-          onClick2={handleEditModalOpen}
-          name="A "
-          id={0}
-          last="Father"
-          dob="2022-04-05"
-          dod="2022-04-05"
-          gender="male"
-        />
-      ),
-      children: [],
-      firstName: "A",
-      lastName: "father",
-      dob: "2022-04-05",
-      dod: "2022-04-05",
-      gender: "male",
-      pId: 1,
-    },
-  ];*/
 
   const items = props.list[0];
   var children_array = [];
@@ -107,12 +83,43 @@ const HomeTree = (props) => {
     return children_array.reverse()[0];
   };
 
+    /*handle Modal first show is to show popup menu. */
+  /*  
+  const data = [
+    {
+      id: 0,
+      label: (
+        <TreeLabel
+          onClick={handleModalFirstShow}
+          onClick2={handleEditModalOpen}
+          name="A "
+          id={0}
+          last="Father"
+          dob="2022-04-05"
+          dod="2022-04-05"
+          gender="male"
+        />
+      ),
+      children: [],
+      firstName: "A",
+      lastName: "father",
+      dob: "2022-04-05",
+      dod: "2022-04-05",
+      gender: "male",
+      pId: 1,
+      spouse: null,
+    },
+  ];
+*/
+  
   const data = [
     {
     id: x,
     label: items ? (
       <TreeLabel
-          onClick={toggleTooltip}
+          //onClick={toggleTooltip}
+          onClick={handleModalFirstShow}
+          onClick2={handleEditModalOpen}
           indiv_id={items.individual_id}
           name={items.first_name}
           id={x}
@@ -127,7 +134,9 @@ const HomeTree = (props) => {
         id: x = ++idx,
         indiv_id: child.individual_id,
         label: <TreeLabel
-          onClick={toggleTooltip}
+          //onClick={toggleTooltip}
+          onClick={handleModalFirstShow}
+          onClick2={handleEditModalOpen}
           name={child.first_name}
           indiv_id={child.individual_id}
           id={x=++idx}
@@ -139,10 +148,9 @@ const HomeTree = (props) => {
         children: child.children ? traverse(child.children, x, idx) : null
       })) ) : null
   }
-]
+];
 
   const [nodes, setNodes] = useState(data);
-
 
   function remove(arr, id) {
     console.log("in remove. array and selected id ", arr, id);
@@ -160,11 +168,11 @@ const HomeTree = (props) => {
       o.id === id
         ? {
             ...o,
-            spouse: items?.firstName,
-            spouseLName: items?.lastName,
-            spouseDOB: items?.dateOfBirth,
-            spouseDOD: items?.dateOfDeath,
-            spouseGender: items?.gender,
+            spouse: data?.firstName,  //items
+            spouseLName: data?.lastName, //items
+            spouseDOB: data?.dateOfBirth, //items
+            spouseDOD: data?.dateOfDeath, //items
+            spouseGender: data?.gender, //items
             spouseId: o.id,
             label: (
               <TreeLabel
@@ -193,7 +201,7 @@ const HomeTree = (props) => {
         ? {
             ...o,
             firstName: data?.firstName,
-            lastname: data?.lastName,
+            lastName: data?.lastName,
             dob: data?.dateOfBirth,
             dod: data?.dateOfDeath,
             gender: data?.gender,
@@ -254,40 +262,111 @@ const HomeTree = (props) => {
 
   const handleFamilyMemberShow = (id, result_id) => {
     console.log("in handle modal, result_id is: ", result_id);
+    reset({});
     setTypeId(id);
     if (id !== 3) {
+      if (id === 4) {
+        reset({
+          ...selectedData,
+          dateOfBirth: selectedData.dob,
+          dateOfDeath: selectedData.dod,
+        });
+      }
+
+      if (id === 5) {
+        reset({
+          ...selectedData,
+          firstName: selectedData?.spouse,
+          lastName: selectedData?.spouseLName,
+          dateOfBirth: selectedData?.spouseDOB,
+          dateOfDeath: selectedData?.spouseDOD,
+          gender: selectedData?.spouseGender,
+        });
+      }
+
       setModalFirst(false);
       setFamilyMember(true);
-    }
-    /* if remove person is clicked */
+
+    } 
+  
+  /* if remove person is clicked */
     else {
       const removed = remove(nodes, selectedId);
       setNodes(removed);
       delData(result_id);
-      //setModalFirst(false);
+      setModalFirst(false);
       console.log("in remove. we deleted the result id.");
       console.log("in remove. nodes are: ", nodes);
     }
   };
 
-  const announcements = [
-    {
-      id: 1,
-      title: "Add Child",
-    },
-    {
-      id: 2,
-      title: "Add Spouse",
-    },
-    {
-      id: 3,
-      title: "Remove Person",
-    },
-    {
-      id: 4,
-      title: "Edit Person",
-    },
-  ];
+  const announcements = () => {
+    if (selectedId === 0) {
+      if (selectedData?.spouse === null) {
+        return [
+          {
+            id: 1,
+            title: "Add Child",
+          },
+          {
+            id: 2,
+            title: "Add Spouse",
+          },
+
+          {
+            id: 4,
+            title: "Edit Person",
+          },
+        ];
+      } else {
+        return [
+          {
+            id: 1,
+            title: "Add Child",
+          },
+          {
+            id: 4,
+            title: "Edit Person",
+          },
+        ];
+      }
+    } else if (selectedData?.spouse === null) {
+      return [
+        {
+          id: 1,
+          title: "Add Child",
+        },
+        {
+          id: 2,
+          title: "Add Spouse",
+        },
+        {
+          id: 3,
+          title: "Remove Person",
+        },
+        {
+          id: 4,
+          title: "Edit Person",
+        },
+      ];
+    } else {
+      return [
+        {
+          id: 1,
+          title: "Add Child",
+        },
+
+        {
+          id: 3,
+          title: "Remove Person",
+        },
+        {
+          id: 4,
+          title: "Edit Person",
+        },
+      ];
+    }
+  };
 
   const update = (array, id, object) =>
     array.map((o) =>
@@ -295,6 +374,8 @@ const HomeTree = (props) => {
         ? { ...o, children: [...o.children, { ...object, pId: o?.id }] }
         : { ...o, children: update(o.children, id, object) }
     );
+
+  console.log("selectedData", selectedData);
 
   const onSubmit = (data1) => {
     let uniqueId = uuidv4();
@@ -341,6 +422,36 @@ const HomeTree = (props) => {
     reset();
   };
 
+  const removeSpouse = (array, id) => {
+    let editiedSpouse = array.map((o) =>
+      o.id === id
+        ? {
+            ...o,
+            spouse: null,
+            spouseLName: null,
+            spouseDOB: null,
+            spouseDOD: null,
+            spouseGender: null,
+            spouseId: null,
+            label: (
+              <TreeLabel
+                onClick={handleModalFirstShow}
+                onClick2={handleEditModalOpen}
+                name={o?.firstName}
+                last={o?.lastName}
+                dob={o?.dob}
+                dod={o?.dod}
+                gender={o?.gender}
+              />
+            ),
+          }
+        : { ...o, children: editNodeSpouse(o.children, id, data) }
+    );
+
+    setNodes(editiedSpouse);
+    handleEditModalClose();
+  };
+
   useEffect(() => {
     if (edited !== null) {
       setTimeout(() => {
@@ -349,23 +460,23 @@ const HomeTree = (props) => {
     }
   }, [edited]);
 
-  //console.log("nodes", nodes, "edited", edited);
 
   /* render all options in popup menu*/
+  //className="popup_form"
   return (
     <div>
-      <ModalComponent show={modalFirst} className="popup_form" onClose={handleModalFirstClose}>
+      <ModalComponent show={modalFirst} onClose={handleModalFirstClose}> 
         <div>
-          <ul>
-            {announcements.map((announcement) => (
+          <ul className="-my-5 divide-y divide-gray-200">
+            {announcements().map((announcement) => (
               <li key={announcement.id} className="py-5">
-                <div>
-                  <h3>
+                <div className="relative p-1 rounded-sm">
+                  <h3 className="text-sm font-bold text-gray-800">
                     <button
                       onClick={() => handleFamilyMemberShow(announcement.id)}
                       type="button"
+                      className=" hover:text-indigo-500 focus:outline-none font-bold"
                     >
-                      {/* Extend touch target to entire panel */}
                       <span className="absolute inset-0" aria-hidden="true" />
                       {announcement.title}
                     </button>
@@ -377,7 +488,7 @@ const HomeTree = (props) => {
         </div>
       </ModalComponent>
 
-      {/*popup menu options styling*/}
+      {/*popup menu options styling*/}          
       <ModalComponent show={editSpouse} onClose={handleEditModalClose}>
         <div>
           <ul className="-my-5 divide-y divide-gray-200">
@@ -389,9 +500,23 @@ const HomeTree = (props) => {
                     type="button"
                     className=" hover:text-indigo-500 focus:outline-none font-bold"
                   >
-                    {/* Extend touch target to entire panel */}
                     <span className="absolute inset-0" aria-hidden="true" />
                     Edit Spouse
+                  </button>
+                </h3>
+              </div>
+            </li>
+            <li className="py-5">
+              <div className="relative p-1 rounded-sm">
+                <h3 className="text-sm font-bold text-gray-800">
+                  <button
+                    onClick={() => removeSpouse(nodes, selectedId)}
+                    type="button"
+                    className=" hover:text-indigo-500 focus:outline-none font-bold"
+                  >
+                    
+                    <span className="absolute inset-0" aria-hidden="true" />
+                    Remove Spouse
                   </button>
                 </h3>
               </div>
@@ -400,11 +525,13 @@ const HomeTree = (props) => {
         </div>
       </ModalComponent>
 
-      {/*input fields when user selects options */}
+      {/*input fields when user selects options */}   
+      {/*className="add_form"*/}
+
       <ModalComponent show={familyMember} onClose={handleFamilyMemberClose}>
-        <form className="add_form" noValidate onSubmit={handleSubmit(onSubmit)}>
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <h3 className="mb-5 text-lg leading-6 font-medium text-gray-900">
-            Add a Child
+            Add/Edit Family Member
           </h3>
           <ul className="-my-3">
             <li className="py-3">
@@ -503,7 +630,7 @@ const HomeTree = (props) => {
           <div className="mt-5 sm:mt-6">
             <button
               type="submit"
-              onClick={handleFamilyMemberClose}
+              // onClick={handleFamilyMemberClose}
               className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
             >
               Save
@@ -511,6 +638,25 @@ const HomeTree = (props) => {
           </div>
         </form>
       </ModalComponent>
+      <TreeView
+        data={nodes}
+        renderNode={(data) => (
+          <div
+            onClick={() => {
+              setSelectedId(data.id);
+              setSelectedData(data);
+              console.log("nodeData", data);
+            }}
+          >
+            {data.label}
+          </div>
+        )}
+      />
+    </div>
+  );
+};
+
+/*
       <TreeView
         data={nodes}
         renderNode={({ label, indiv_id, id }) => (
@@ -547,5 +693,7 @@ const HomeTree = (props) => {
     </div>
   );
 };
+
+*/
 
 export default HomeTree;
