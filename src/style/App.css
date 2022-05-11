@@ -352,6 +352,10 @@ li a:hover {
   background-color: #006666;
 }
 
+#log_gmail:hover {
+  background-color: #f3f3f3 !important;
+}
+
 #log_gmail {
   float: right;
   cursor: pointer !important;
