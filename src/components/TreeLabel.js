@@ -24,7 +24,7 @@ const TreeLabel = ({
       {/*button for popup menu. Plus icon inserts "+" into button*/}
       <button
         onClick={onClick}
-        type="button"
+        //type="button"
         className="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
         <PlusIcon />
@@ -40,7 +40,7 @@ const TreeLabel = ({
 
           <button
             onClick={onClick2}
-            type="button"
+            //type="button"
             className="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <PlusIcon />
