@@ -5,6 +5,10 @@ body {
   bottom: 0;
 }
 
+label {
+  color: black;
+}
+
 .line {
   width: 5rem;
   height: 1px;
@@ -146,18 +150,22 @@ body {
   cursor: pointer;
 }
 
-#btn {
+#btn, .add_btn {
   background-color: teal;
   border: none;
   color: white;
   padding: 12px;
   margin: 12px 0;
   box-shadow: 0 1px 6px #ccc;
-  width: 100%;
+  width: auto;
   border-radius: 6px;
   font-size: 18px;
   text-decoration: none;
   font-family: sans-serif;
+}
+
+.add_btn:hover {
+  text-decoration: underline !important;
 }
 
 .label_text {
