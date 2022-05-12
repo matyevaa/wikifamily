@@ -84,7 +84,7 @@ const HomeTree = (props) => {
   };
 
     /*handle Modal first show is to show popup menu. */
-  /*  
+  /*
   const data = [
     {
       id: 0,
@@ -474,7 +474,7 @@ const HomeTree = (props) => {
                   <h3 className="text-sm font-bold text-gray-800">
                     <button
                       onClick={() => handleFamilyMemberShow(announcement.id)}
-                      type="button"
+                      //type="button"
                       className=" hover:text-indigo-500 focus:outline-none font-bold"
                     >
                       <span className="absolute inset-0" aria-hidden="true" />
@@ -497,7 +497,7 @@ const HomeTree = (props) => {
                 <h3 className="text-sm font-bold text-gray-800">
                   <button
                     onClick={() => handleFamilyMemberShow(5)}
-                    type="button"
+                    //type="button"
                     className=" hover:text-indigo-500 focus:outline-none font-bold"
                   >
                     <span className="absolute inset-0" aria-hidden="true" />
@@ -511,7 +511,7 @@ const HomeTree = (props) => {
                 <h3 className="text-sm font-bold text-gray-800">
                   <button
                     onClick={() => removeSpouse(nodes, selectedId)}
-                    type="button"
+                    //type="button"
                     className=" hover:text-indigo-500 focus:outline-none font-bold"
                   >
                     
