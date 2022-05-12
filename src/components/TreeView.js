@@ -101,7 +101,7 @@ import HomeTree from "./HomeTree";
    return (
 
       <TreeView className="tree_item" data={data} renderNode={({label,indiv_id, last}) =>
-        <div className="test text">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
+        <div className="tree_text">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
 
         {sharingShow(indiv_id)}
         {sharingFunct()}

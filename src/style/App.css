@@ -11,6 +11,10 @@ body {
   color: blue;
 }
 
+.btn_operation:hover {
+    text-decoration: underline !important;
+}
+
 #log:hover {
   background-color: #f6f6f6 !important;
   text-decoration: underline;
@@ -152,6 +156,7 @@ body {
   width: 100%;
   border-radius: 6px;
   font-size: 18px;
+  text-decoration: none;
   font-family: sans-serif;
 }
 
@@ -223,12 +228,14 @@ body {
 .tree_options {
   display: inline-block;
   padding: 10px;
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
   font-family: sans-serif;
 }
 
 #dashboard {
   font-family: sans-serif;
+  font-weight: bold;
 }
 
 #tree_view {
@@ -248,6 +255,10 @@ body {
 
 .collapsible {
   padding-left: 1rem;
+}
+
+.indiv_info {
+  color: black !important;
 }
 
 .tree_item {
@@ -350,6 +361,7 @@ li a:hover {
 
 #login_btn:hover {
   background-color: #006666;
+  text-decoration: underline;
 }
 
 #log_gmail:hover {
@@ -419,6 +431,7 @@ li a:hover {
   margin-bottom: -5px;
   color: black;
   font-family: 'Pristina';
+  font-weight: bold;
 }
 
 /* Login container */
@@ -465,11 +478,6 @@ li a:hover {
 }
 .btns:hover {
   background-color: #009999;
-}
-
-/* CRUD person button */
-#add_btn {
-  text-decoration: none;
 }
 
 .add_tree_btn {
