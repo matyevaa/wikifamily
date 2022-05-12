@@ -9,6 +9,10 @@ label {
   color: black;
 }
 
+input {
+  color: black;
+}
+
 .line {
   width: 5rem;
   height: 1px;
