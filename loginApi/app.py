@@ -1,6 +1,10 @@
-# from crypt import methods
-from re import template
-from flask import Flask, render_template, url_for, redirect, flash, make_response, request
+################################################################################
+# WikiFamily Capstone 2021-2022
+# 
+# Third Party Login API
+################################################################################
+
+from flask import Flask, url_for, redirect, request
 from facepy import SignedRequest
 import os
 from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
@@ -14,15 +18,12 @@ from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStor
 from sqlalchemy.orm.exc import NoResultFound
 
 import json
-import hashlib
 from flask_cors import CORS, cross_origin
-
-from flask.helpers import send_from_directory
 
 app = Flask(__name__)
 cors = CORS(app)
-# app.config['CORS_HEADERS'] = 'Content-Type'
 
+# Python Flask secret key
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "scrfanfaklfetkey")
 
 # Facebook API Data
@@ -41,73 +42,112 @@ GOOGLE_CLIENT_SECRET=os.environ.get("GOOGLE_CLIENT_SECRET")
 # set to 1 while still in development or else "insecure http message"
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# URI for DB
 URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://wikiNew:wikipassword@localhost/newwikifamily_db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://b2f8725312304e:0c26bf48@us-cdbr-east-05.cleardb.net/heroku_688d3d7a3cbb111'
+# updting timeout for DB
 app.config['SQLALCHEMY_POOL_RECYCLE'] = 299
 app.config['SQLALCHEMY_POOL_TIMEOUT'] = 20
-# mysql://b2f8725312304e:0c26bf48@us-cdbr-east-05.cleardb.net/heroku_688d3d7a3cbb111?reconnect=true
 
-# for Facebook
+# FOR THIRD PARTY LOGIN GETS --email, user id, and name
+# for Facebook -- setting client ID and client secret for FB login
 facebook_blueprint = make_facebook_blueprint(client_id="1647653595405093", client_secret="7bad27c3dc273670e94b219ebd5accb6")
 app.register_blueprint(facebook_blueprint, url_prefix="/auth/facebook/wikifam", scope=["id","name","email"])
-# for Google
+
+# for Google -- setting client ID and client secret for Google login
 google_blueprint = make_google_blueprint(client_id="829398755356-9fsjod7oisuf8sn0rihoj30fk76mcfko.apps.googleusercontent.com",client_secret="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", scope=['https://www.googleapis.com/auth/userinfo.email', 'openid', 'https://www.googleapis.com/auth/userinfo.profile'])
 app.register_blueprint(google_blueprint,url_prefix="/auth")
 
-
+# setting DB
 db = SQLAlchemy(app)
 
+################################################################################
+# class for storing user
+#   ID    -- ID associated with FB/ Google/ email login
+#   name  -- user's full name
+#   email -- email associated with FB/Google/email account
+#         -- can have accounts with the same mail but not same ID
+################################################################################
 class User(UserMixin, db.Model):
     id = db.Column(db.String(250), primary_key=True)
     name = db.Column(db.String(250), unique=False)
     email = db.Column(db.String(250), unique=False)
 
+################################################################################
+# class for storing user authentication info
+#   user_id -- idx in the DB
+#   user    -- stores oauth token and expiratioin date
+################################################################################
 class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.String(250), db.ForeignKey(User.id), nullable=False)
     user = db.relationship(User)
 
+# helps with sessions and keeping users logged in
 login_manager = LoginManager(app)
 
+################################################################################
+# description:  Returns the user's full information given their user ID
+# input:        user_id -- the user id associated with Google/ FB of the user 
+# return:       User -- class User that stores the user's name, id, email
+################################################################################
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get((user_id))
 
-# For Facebook
+# FOR FACEBOOK LOGIN
+
+# initiating the blueprint for FB
 facebook_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user)
 
+################################################################################
+# Description:  Redirects the user to the Facebook login page
+# 
+# input:        NONE
+# 
+# return:       redirects user to FB login page
+################################################################################
 @app.route('/facebook/login')
-# @cross_origin()
 def newLogin():
     return redirect(url_for('facebook.login'))
 
+################################################################################
+# Description:  Only enters function if a user is logged in
+# 
+# input:        blueprint -- facebook blueprint
+#               token     -- user authorization token
+# 
+# return:       False -- prevents Flask Dance from automatically saving Oauth token
+################################################################################
 @oauth_authorized.connect_via(facebook_blueprint)
 def facebookLoggedIn(blueprint, token):
+    # ensuring that user is logged in
     if not token:
         print("Failed to log in with FB")
         return False
 
+    # getting users ID, name, email
     accInfo = blueprint.session.get('/me?fields=id,name,email')
-
-    print("person info is: ")
-    print(accInfo.json())
 
     # authorization went OK, no errors
     if not accInfo.ok:
         return False
 
+    # parses for users ID
     accInfoJson = accInfo.json()
     user_id = accInfoJson["id"]
 
-    # find auth token in DBor create
+    # tries to find auth token in DB
     query = OAuth.query.filter_by(provider=blueprint.name, user_id=user_id)
 
+    # if Oauth token existed set it to oauth, otherwise create it
     try:
         oauth = query.one()
-        print(oauth)
     except NoResultFound:
         oauth = OAuth(provider=blueprint.name, user_id=user_id, token=token)
 
+    # if Oauth existed, log the user in // otherwise create the user and insert
+    # to the DB
     if oauth.user:
         login_user(oauth.user)
 
@@ -129,44 +169,59 @@ def facebookLoggedIn(blueprint, token):
 def facebook_error(blueprint, message, response):
     print("error oauth")
 
-# For Google
+# FOR GOOGLE LOGIN
+
+# initiating blueprint for Google login
 google_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user)
 
+################################################################################
+# Description:  Redirects the user to the Google login page
+# 
+# input:        NONE
+# 
+# return:       redirects user to Google login page
+################################################################################
 @app.route('/google/login')
 def newLoginGoogle():
     return redirect(url_for('google.login'))
 
+################################################################################
+# Description:  Only enters function if a user is logged in
+# 
+# input:        blueprint -- Google blueprint
+#               token     -- user authorization token
+# 
+# return:       False -- prevents Flask Dance from automatically saving Oauth token
+################################################################################
 @oauth_authorized.connect_via(google_blueprint)
 def googleLoggedIn(blueprint, token):
-
-    if not blueprint.authorized: 
-        return redirect(url_for("google.login"))
+    # ensuring that user is logged in
     if not token:
         print("Failed to log in with Google")
         return False
 
+    # getting name,id,email from Google login
     accInfo = blueprint.session.get('/oauth2/v1/userinfo')
-
-    print("person info is: ")
-    print(accInfo.json())
 
     # authorization went OK, no errors
     if not accInfo.ok:
         return False
 
+    # parsing for user ID
     accInfoJson = accInfo.json()
     user_id = accInfoJson["id"]
 
-    # find auth token in DBor create
+    # try to find Google logged in user in DB
     query = OAuth.query.filter_by(provider=blueprint.name, user_id=user_id)
 
-    print(query)
-
+    # if Oauth token existed set it to oauth, otherwise create it
     try:
         oauth = query.one()
     except NoResultFound:
         oauth = OAuth(provider=blueprint.name, user_id=accInfoJson["id"], token=token)
 
+    # if Oauth existed, log the user in // otherwise create the user and insert
+    # to the DB
     if oauth.user:
         login_user(oauth.user)
 
@@ -188,17 +243,15 @@ def googleLoggedIn(blueprint, token):
 def google_error(blueprint, message, response):
     print("error oauth")
 
-# @login_required
-@app.route("/")
-def help():
-    stringId = str(current_user.id)
-    return redirect('http://localhost:3005/creator=' + stringId + '/works')
-
-# @app.route("/")
-# def idk():
-#     # return redirect('http://localhost:3005')
-#     return render_template('temp.html')
-
+################################################################################
+# Description:  Using Flask dance sessions confirming whether or not a user is
+#               logged in
+# 
+# input:        NONE
+# 
+# return:       False -- There was no user logged in
+#               True  -- User was logged in
+################################################################################
 @app.route("/api2/isLoggedIn", methods=['GET','POST'])
 def IsLoggedIn():
     if current_user.is_authenticated:
@@ -208,6 +261,18 @@ def IsLoggedIn():
         print("false")
         return 'false'
 
+################################################################################
+# Description:  Returns the logged in users information otherwise returns dummy
+#               not logged in data
+# 
+# input:        NONE
+# 
+# return:       If logged in  -- returns email, id, name of logged in user in json
+#                               json format 
+#               not logged in -- returns dummy data in json format
+#               
+#               json format: [{"name": [NAME], "id": [ID], "email": [EMAIL]}]
+################################################################################
 @app.route("/api2/info", methods=['GET','POST'])
 def idx():
     userInfo = []
@@ -219,6 +284,13 @@ def idx():
     
     return json.dumps(userInfo)
 
+################################################################################
+# Description:  Logs out the user 
+# 
+# input:        NONE
+# 
+# return:       messaged that user was logged out
+################################################################################
 @app.route("/api2/logout")
 @login_required
 def logout():
@@ -226,6 +298,13 @@ def logout():
 
     return 'loggedOut'
 
+################################################################################
+# Description:  Returns user information (name, id, email) given user ID
+# 
+# input:        id -- the ID associated with Google/FB
+# 
+# return:       User data in json format
+################################################################################
 @app.route("/api2/getInfo/<id>")
 @cross_origin(supports_credentials=True)
 def getName(id):
@@ -240,11 +319,13 @@ def getName(id):
 
     return json.dumps(userInfo)
 
-
-# def parseSignedReq(signedReq):
-#     signedData = SignedRequest.parse(signedReq, "7bad27c3dc273670e94b219ebd5accb6")
-#     return signedData
-
+################################################################################
+# Description:  FB callback url to remove user's account association with Wikifam 
+# 
+# input:        request -- FB json request to remove specific user from DB
+# 
+# return:       NONE
+################################################################################
 @app.route("/api2/deleteCallback", methods=['POST'])
 def dataDelete(request, data):
     # will be called when the user wants to remove FB login info from our DB
@@ -275,6 +356,13 @@ def dataDelete(request, data):
     return {
         'url': "http://localhost:3000/deletionStat/{confirmation_code}", 'confirmation_code': responseCode}
 
+################################################################################
+# Description:  Differentiates bt successful user data deleted or failure 
+# 
+# input:        reponse -- callback url response
+# 
+# return:       message whether user data was deleted or not
+################################################################################
 @app.route("/deletionStat/<response>")
 def deleteStat(response):
     if (response == 200):
@@ -282,35 +370,59 @@ def deleteStat(response):
     else:
         return "was unable to delete user data"
 
+################################################################################
+# Description:  Checks whether an email/ID exists in the DB. Email prefered for
+#               Google and email login. ID prefered for Facebook login.
+# 
+# input:        email/ id -- in a request from from frontend 
+# 
+# return:       json list -- input existed   [True, user's ID]
+#                         -- input not exist [False]
+################################################################################
 @app.route("/api2/emailExist", methods=['POST'])
 @cross_origin(supports_credentials=True)
 def checkExist():
-    # msg = ''
+
     if request.method=='POST':
         json_data = []
-        print("share individuals")
         theform = request.get_json(force=True)
         
+        # parses for email
         c = theform['email_share']
 
+        # prints email to ensure correct email received
         print(c)
 
+        # if input was all digits then assumes an ID was sent
         if(c.isdigit() == True):
             print("is only decimal")
+
+            # queries for user ID sets user to True or False
             user = User.query.filter_by(id=c).first() is not None
             print(user)
+
+            # inserts true/false to list
             json_data.append(user)
+
+            # if user existed, finds ID and adds it to the list
             if (user == True):
                 user = User.query.filter_by(id=c).first()
                 user = user.id
                 print(user)
                 json_data.append(user)
 
+        # otherwise assumes input was an email
         else:
             print("is string")
+
+            # queries for email and sets user to True || False
             user = User.query.filter_by(email=c).first() is not None
             print(user)
+
+            # adds True/False to list
             json_data.append(user)
+
+            # if user existed gets user ID and adds it to the list
             if (user == True):
                 user = User.query.filter_by(email=c).first()
                 user = user.id
@@ -321,14 +433,25 @@ def checkExist():
 
     return json.dumps(json_data)
 
+################################################################################
+# Description:  If the user logged in with the WikiFamily email login, checks
+#               whether the user id exists in the DB if not then it adds the User.
+# 
+# input:        id -- user's id created with Oauth for react
+#               email -- email user used to login
+#               name -- Oauth uses the email without @COMAPNY.com as user's name 
+# 
+# return:       NONE
+################################################################################
 @app.route("/api2/addEmailLogin/<id>/<email>/<name>")
 def addFromEmailLogin(id, email,name):
 
+    # queries for id in DB and sets user to True/False
     user = User.query.filter_by(id=id).first() is not None
     print(user)
 
     # if the user existed then do nothing 
-
+    # otherwise is the user did not exist add the user to the DB
     if (user == False): # add the user to the db
         user = User(name=name, id=id, email=email)
             
