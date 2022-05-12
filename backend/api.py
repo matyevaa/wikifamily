@@ -1,3 +1,8 @@
+################################################################################
+# WikiFamily Capstone 2021-2022
+# 
+# Family Tree CRUD API
+################################################################################
 from asyncio.windows_events import NULL
 from hashlib import new
 import re
@@ -16,6 +21,15 @@ import pymysql
 app = Flask(__name__)
 cors = CORS(app)
 
+################################################################################
+# Description:  Used to help prevent SQL server DB disconnected error. Used to open
+#               connection to DB when using specific definitions and closes the
+#               connection when it is no longer being used.
+# 
+# input:        NONE
+# 
+# return:       tuple -- (connection to DB, cursor)
+################################################################################
 def connect():
     cnx = mysql.connector.connect(
         host = 'us-cdbr-east-05.cleardb.net',
@@ -26,9 +40,17 @@ def connect():
     cursor = cnx.cursor()
     return (cnx, cursor)
 
+################################################################################
+# Description:  NONE
+# 
+# input:        NONE
+# 
+# return:       NONE
+################################################################################
 @app.route('/api1/create/<id>', methods=['GET', 'DELETE', 'PUT'])
 def get_family(id):
     print("get children of the root individual (parent is NULL)")
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -143,35 +165,52 @@ def get_family(id):
     return json.dumps(children_root)
 
 
-
-# get the whole family for the table
+################################################################################
+# Description:  gets the whole family for the table given a family ID
+# 
+# input:        id -- family tree ID
+# 
+# return:       json_data -- list of individuals who exist in the tree, ordered
+#                            by parent
+################################################################################
 @app.route('/api1/create-family/<id>', methods=['GET', 'PUT', 'DELETE'])
 def get_whole_family(id):
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    print("HERE ")
+    # queries for individuals in tree
     cursor.execute("select * from individual where FIND_IN_SET(%s, family_ids) order by parent",(id,))
     row_headers = [x[0] for x in cursor.description]
     data = cursor.fetchall()
     json_data = []
+
+    # stores individuals in list format
     for result in data:
         json_data.append(dict(zip(row_headers, result)))
 
     return json.dumps(json_data)
 
-# FUNCTS GET TREE INFO
-# get list of tree ids, need add <userId> later
+################################################################################
+# Description:  gets list of trees a user is the creator of given ID
+# 
+# input:        id -- User id
+# 
+# return:       json_data -- list of trees user ID is creator of
+################################################################################
 @app.route('/api1/listTrees/<id>', methods=['GET'])
 def getFamilies(id):
     if id != NULL:
+        # opens DB connection
         dbInfo = connect()
         cursor = dbInfo[1]
         cnx = dbInfo[0]
 
+        # queries for the trees a user created
         cursor.execute("SELECT * FROM family WHERE owner_id = %s", (id,))
 
+        # puts the created trees in list format
         row_headers = [x[0] for x in cursor.description]
         data = cursor.fetchall()
         json_data = []
@@ -180,17 +219,26 @@ def getFamilies(id):
 
         print(json_data)
 
+        # closes DB connections
         cursor.close()
         cnx.close()
     return json.dumps(json_data)
 
-# get name of tree from specific tree id, need to add userId later
+################################################################################
+# Description:  Given a family tree ID, queries for the family trees name
+# 
+# input:        id -- tree id
+# 
+# return:       json_data -- name of the family tree
+################################################################################
 @app.route('/api1/getTreeName/<id>', methods=['GET'])
 def getFamilyName(id):
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
+    # queries for the tree name
     cursor.execute("SELECT family_name FROM family WHERE family_id = %s", (id,))
 
     row_headers = [x[0] for x in cursor.description]
@@ -201,20 +249,33 @@ def getFamilyName(id):
 
     print(json_data)
 
+    # # closes DB connections
     # cursor.close()
     # cnx.close()
     return json.dumps(json_data)
 
+################################################################################
+# Description:  Adds a user given information received from a form from frontend.
+#               If a person's parent ID is not speceified sets it to 0. 
+#               Before adds a person to DB queries for shared_from in family 
+#               table from DB to identify the family trees the new person should
+#               exist in and sets family_ids to the query result.
+# 
+# input:        treeId -- current treeID to add user to
+# 
+# return:       redirects to get_whole_family function
+################################################################################
 @app.route('/api1/createadd/<treeId>', methods=['GET','POST'])
 @cross_origin(supports_credentials=True)
 def add_person_w_treeID(treeId):
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    print("/create GET POST")
     msg = ''
     if request.method=='POST':
+        # parse for new individuals data
         theform = request.get_json(force=True)
         fn = theform['first_name']
         ls = theform['last_name']
@@ -231,14 +292,17 @@ def add_person_w_treeID(treeId):
 
         cursor.execute('SELECT * FROM individual WHERE first_name = %s', (fn,))
         result = cursor.fetchone()
+
         if result:
             msg = 'Such a person already exists in your family!'
         elif result is None:
-            # check if the tree was shared
+            # check if the current tree was shared from another tree
            cursor.execute("select shared_from from family where family_id = %s;", (fid,))
            listIds = list(cursor.fetchall())
            print(listIds)
 
+            #if the current tree is a shared tree concat the treed it should exist in to the curr tree var fid 
+            # fid will be in form ["ID,ID,ID"]
            if (listIds != ""):
                print("added new person list of ids is: ")
                print(listIds)
@@ -248,28 +312,38 @@ def add_person_w_treeID(treeId):
                    if(id[0] != None):
                        fid += "," + id[0]
 
-
+        # insert user to DB
         cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,fid))
         cnx.commit()
         msg = "Successfully added a person!"
     else:
         msg = "Please fill out the form."
     print("Message: ", msg)
+    # closes DB connections
     cursor.close()
     cnx.close()
     return redirect(url_for('get_whole_family', id=treeId))
 
+################################################################################
+# Description:  If individual ID is not 0 then delete from DB, if 0 then it is 
+#               Jane Doe (dummy data) and deletes Jane Doe from that specific tree
+# 
+# input:        individual_id -- ID to delete from DB
+#               treeId        -- current tree ID to delete individual from
+# 
+# return:       redirects to get_whole_family function
+################################################################################
 @app.route('/api1/delete/<individual_id>/<treeId>', methods=['DELETE'])
 def delete_person_w_treeID(individual_id, treeId):
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    print("/delete/id/<treeId> DELETE")
     msg = ''
     id = individual_id
 
-    # if id == 0 #jane doe update jane doe to remove curr treeId from family_ids
+    # if id == 0 #jane doe. update jane doe to remove curr treeId from family_ids
     print("id is" + str(id))
     if int(id) == 0 or str(id) == "0":
         cursor.execute('SELECT family_ids FROM individual WHERE individual_id = %s', (id,))
@@ -281,22 +355,29 @@ def delete_person_w_treeID(individual_id, treeId):
         # newFamIds = str(ids[0])
 
         ogIds = []
-        # i = 0
         temp = ""
-        # get new set of family_ids
+        # get new set of family_ids char by char as ids is a string
         for char in ids[0][0]:
+            # if "," then temp is a complete family ID string
             if char == ",":
+                # if its not the current tree we want to delete from then add it
+                # to the final tree list
                 if temp != str(treeId):
                     ogIds.append(temp)
+                
+                # reset temp
                 temp = ""
 
+            # otherwise is a number and add it to temp which will eventually 
+            # be a full tree ID
             else:
                 temp += char
 
+        # list of tree ids Jane Doe exists in, in format ["#","#","#"]
         print(ogIds)
 
-
-
+        # loop through list of tree IDs Jane should exist in and put it in 
+        # string format "#,#,#"
         for id in ogIds:
             if id == "0":
                 print("add first id")
@@ -304,27 +385,38 @@ def delete_person_w_treeID(individual_id, treeId):
             else:
                 finalId += "," + str(id)
 
-        print("final to insert in jane doe " + str(finalId))
+        print("final IDS to insert in jane doe's family_ids " + str(finalId))
 
+        # update Jane does family trees they should exist in
         query='UPDATE individual SET family_ids = %s WHERE individual_id = 0;'
         data = ((str(finalId)),)
 
         cursor.execute(query, data)
         cnx.commit()
     else:
-
+        # was not jane doe and delete from DB
         cursor.execute('DELETE FROM individual WHERE individual_id = %s', (id,))
         cnx.commit()
         msg = "Successfully deleted person!"
         print(msg)
         print("Person id is %s ", id)
 
+    # closes DB connections
     cursor.close()
     cnx.close()
     return redirect(url_for('get_whole_family', id=treeId))
 
+################################################################################
+# Description:  Edits an individual given the individual ID and family tree
+# 
+# input:        individual_id -- ID of individual to edit
+#               treeId -- ID of the current tree
+# 
+# return:       redirects to get_whole_family function
+################################################################################
 @app.route('/api1/edit/<individual_id>/<treeId>', methods=['PUT', 'PATCH'])
 def edit_person_w_treeID(individual_id, treeId):
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -355,12 +447,21 @@ def edit_person_w_treeID(individual_id, treeId):
     cnx.commit()
     msg = "Successfully updated person!"
     print(msg)
+    # closes DB connections
     cursor.close()
     cnx.close()
     # return redirect(url_for('get_whole_family', id=treeId))
     return redirect(url_for('get_whole_family', id=treeId))
 
+################################################################################
+# Description:  NONE
+# 
+# input:        NONE
+# 
+# return:       NONE
+################################################################################
 def returnSharedTreeID(name, collaborator):
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -375,13 +476,22 @@ def returnSharedTreeID(name, collaborator):
     totTrees = len(newTree)
 
     print(newTree)
+    # closes DB connections
     cursor.close()
     cnx.close()
 
     return newTree[totTrees-1]
 
+################################################################################
+# Description:  NONE
+# 
+# input:        NONE
+# 
+# return:       NONE
+################################################################################
 @app.route('/api1/createTree', methods=['POST'])
 def create_empty_tree():
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -416,11 +526,19 @@ def create_empty_tree():
 
     cnx.commit()
 
+    # closes DB connections
     cursor.close()
     cnx.close()
 
     return "200"
 
+################################################################################
+# Description:  NONE
+# 
+# input:        NONE
+# 
+# return:       NONE
+################################################################################
 # when enters the email has already been checked that it exists
 @app.route('/api2/share/<startingID>/<treeid>/<name>/<collaborator>', methods=['POST', 'GET'])
 @cross_origin(supports_credentials=True)
@@ -448,7 +566,15 @@ def shareWithUser(startingID,treeid, name, collaborator):
 
     return "200"
 
+################################################################################
+# Description:  NONE
+# 
+# input:        NONE
+# 
+# return:       NONE
+################################################################################
 def createEmptySharedTree(name, collaborator, ogTreeId, rootID):
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -466,9 +592,17 @@ def createEmptySharedTree(name, collaborator, ogTreeId, rootID):
     cnx.commit()
 
 
+    # closes DB connections
     cursor.close()
     cnx.close()
 
+################################################################################
+# Description:  NONE
+# 
+# input:        NONE
+# 
+# return:       NONE
+################################################################################
 def addTreeIds(listIndividuals, addTree, ogTree):
     print("add tree ids param")
     i = 0
@@ -479,8 +613,16 @@ def addTreeIds(listIndividuals, addTree, ogTree):
         print(indivs)
         i += 1
 
+################################################################################
+# Description:  NONE
+# 
+# input:        NONE
+# 
+# return:       NONE
+################################################################################
 def indivEditTrees(id, treeid):
     print(treeid, id)
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -490,11 +632,20 @@ def indivEditTrees(id, treeid):
 
     cursor.execute(query, data)
     cnx.commit()
+    # closes DB connections
     cursor.close()
     cnx.close()
 
+################################################################################
+# Description:  NONE
+# 
+# input:        NONE
+# 
+# return:       NONE
+################################################################################
 @app.route('/api1/getInfo/<id>', methods=['GET'])
 def getUserInfo(id):
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -506,13 +657,22 @@ def getUserInfo(id):
 
     print(individuals)
 
+    # # closes DB connections
     # cursor.close()
     # cnx.close()
     return json.dumps(individuals)
 
+################################################################################
+# Description:  NONE
+# 
+# input:        NONE
+# 
+# return:       NONE
+################################################################################
 @app.route('/api1/testShareIndiv/<id>/<treeId>')
 def newTreeShare(id, treeId):
     print("(root will be %s)", id)
+    # opens DB connection
     dbInfo = connect()
     cursor = dbInfo[1]
     cnx = dbInfo[0]
@@ -604,7 +764,6 @@ def newTreeShare(id, treeId):
     print("DATAS3 outside of the for loop: ", datas3)
 
     # removes the first name of root, individual_id, {},  [], , , : , ',  , from text
-
     new0 = str(children_root).replace(root_node[0]['first_name'], "")
     new = str(new0).replace(", 'first_name'", "")
     new2 = str(new).replace("individual_id", "")
