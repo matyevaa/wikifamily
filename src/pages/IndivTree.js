@@ -107,17 +107,17 @@ const IndivTree = (treeId) => {
     }
     else {
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
-          <p>To share an individual first enter the email or ID of your chosen collaborator and click 'Verify Collaborator'. This will verify whether
+          <p className='text'>To share an individual first enter the email or ID of your chosen collaborator and click 'Verify Collaborator'. This will verify whether
             the collaborator is registered with WikiFamily.
             If sharing individuals through the table, click on the id of the individual you want to share. If you are using the tree list format click on
             the '...' under the users name. After choosing an individual to share click 'Share tree'. This will create a tree for your collaborator to edit,
             delete, and add individuals. Note that sharing an individual will share that individual and any descendants they may have.
           </p>
-          <p>Collaborators that registered with WikiFamily through Google and Email please use your email. Facebook users please enter your user ID
+          <p className='text'>Collaborators that registered with WikiFamily through Google and Email please use your email. Facebook users please enter your user ID
             found in your Works page.</p>
 
             <div>
-              <label>Collaborator's email or user ID</label>
+              <label className='text'>Collaborator's email or user ID</label>
               <input ref={parentRef} type="text" placeholder="Enter email or ID of collaborator" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
             </div>
 
@@ -144,7 +144,7 @@ const IndivTree = (treeId) => {
         return <button className="add_btn" type="submit" onClick={()=>{setexecuteListShare(true); collaboratorEditing(collabID)}}>Share Tree</button>
     }
     else {
-      return <button className="add_btn" type="submit">Verify Collaborator</button>
+      return <button className="btn add_btn " type="submit">Verify Collaborator</button>
     }
   }
 
@@ -223,8 +223,8 @@ const IndivTree = (treeId) => {
 
       <div className="tree_center">
         <div class="tree_options">
-          <h3 id="tree_view" onClick={() => { setShowView(showView => !showView); setShowGraph(false) } }>Tree View</h3>
-          <h3 id="tree_graph" onClick={() => { setShowGraph(showGraph => !showGraph); setShowView(false) } }>Tree Graph</h3>
+          <h3 id="tree_view" className='text' onClick={() => { setShowView(showView => !showView); setShowGraph(false) } }>Tree View</h3>
+          <h3 id="tree_graph" className='text' onClick={() => { setShowGraph(showGraph => !showGraph); setShowView(false) } }>Tree Graph</h3>
         </div>
       </div>
 
@@ -236,9 +236,9 @@ const IndivTree = (treeId) => {
 
 
       <div className="class_btn">
-        <h3 id="dashboard">Family Individuals Dashboard</h3>
+        <h3 id="dashboard" className='text'>Family Individuals Dashboard</h3>
         <div clasName="dash_tools">
-          <Link to={addLink} id="btn" className="btns" id="add_btn">Add Person</Link>
+          <Link to={addLink} id="btn add_btn" className="btns">Add Person</Link>
           <button id="shareBtn" onClick={() => {changeConditon();}}>Share Individuals</button>
           {sharingConditionShow()}
         </div>
@@ -262,7 +262,7 @@ const IndivTree = (treeId) => {
         <tbody>
 
        {dataFamily.map((item, idx) => (
-          <tr key={idx}>
+          <tr key={idx} className="text">
             {/* <td>{item.individual_id}</td> */}
             {shareContShow(item)}
             <td>{item.first_name}</td>
@@ -281,7 +281,7 @@ const IndivTree = (treeId) => {
         ))}
         </tbody>
        </table>
-       <h3 id="family_size">Family size is: {dataFamily.length}</h3>
+       <h3 className='text' id="family_size">Family size is: {dataFamily.length}</h3>
     </div>
     </div>
   );

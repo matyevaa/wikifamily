@@ -36,7 +36,7 @@ class Help extends React.Component{
           {/* <p className="description text"></p> */}
 
           <br></br><br></br>
-          <ul>
+          <ul className='text'>
             <li id="sharingDo?" className='description helpQuestion'><strong>What does share individua(s) do?</strong></li>
               <p className='description '>Sharing an individual will allow users to take a selected 
                 individual and find their descendants to share with a collaborator 

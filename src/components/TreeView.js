@@ -66,7 +66,7 @@ import HomeTree from "./HomeTree";
 
     const sharingShow = (indiv_id) => {
       if (wantShare == true) {
-        return <div id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id)}}>...</div>
+        return <div className='text' id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id)}}>...</div>
       }
     }
 
@@ -101,7 +101,7 @@ import HomeTree from "./HomeTree";
    return (
 
       <TreeView className="tree_item" data={data} renderNode={({label,indiv_id, last}) =>
-        <div className="test">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
+        <div className="test text">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
 
         {sharingShow(indiv_id)}
         {sharingFunct()}
