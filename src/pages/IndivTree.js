@@ -141,7 +141,10 @@ const IndivTree = (treeId) => {
 
   const buttonShow = () => {
     if (collaboratorExist == true) {
-        return <button className="add_btn" type="submit" onClick={()=>{setexecuteListShare(true); collaboratorEditing(collabID)}}>Share Tree</button>
+        return <div>
+          <button className="add_btn" type="submit" onClick={()=>{setexecuteListShare(true); collaboratorEditing(collabID)}}>Share Tree</button>
+          <button className="add_btn" type="submit" onClick={()=>{setsharingInfo([]); setcollaboratorExist(false)}}>Restart sharing individual</button>
+          </div>
     }
     else {
       return <button className="btn add_btn " type="submit">Verify Collaborator</button>
@@ -222,7 +225,7 @@ const IndivTree = (treeId) => {
       <h1 className="subtopic text"><span id="tree_name">{treeName['family_name']}</span> Family Tree</h1>
 
       <div className="tree_center">
-        <div class="tree_options">
+        <div className="tree_options">
           <h3 id="tree_view" className='text' onClick={() => { setShowView(showView => !showView); setShowGraph(false) } }>Tree View</h3>
           <h3 id="tree_graph" className='text' onClick={() => { setShowGraph(showGraph => !showGraph); setShowView(false) } }>Tree Graph</h3>
         </div>
@@ -237,7 +240,7 @@ const IndivTree = (treeId) => {
 
       <div className="class_btn">
         <h3 id="dashboard" className='text'>Family Individuals Dashboard</h3>
-        <div clasName="dash_tools">
+        <div className="dash_tools">
           <Link to={addLink} id="btn add_btn" className="btns">Add Person</Link>
           <button id="shareBtn" onClick={() => {changeConditon();}}>Share Individuals</button>
           {sharingConditionShow()}

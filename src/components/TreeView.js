@@ -18,7 +18,7 @@ import HomeTree from "./HomeTree";
    var children_array = [];
 
    useEffect(() => {
-    testSharing()
+    // testSharing()
   }, []);
 
    console.log("props for treeview ", props);
@@ -42,15 +42,17 @@ import HomeTree from "./HomeTree";
       return children_array.reverse()[0];
     };
 
-    const testSharing = (id) => {
+    /* const testSharing = (id) => {
       console.log(id)
       setidtoshare(id)
+      // console.log("clicked on TREEVIEW for share")
       console.log(idtoshare + " "+ id + " and sharing condition is " + wantShare + " with ID ", collabID[3])
       settreeviewShare(true)
     }
 
     const sharingFunct = () => {
       console.log("in treeView " + collabID[0] + " " + idtoshare + " " + treeviewShare)
+
       if (collabID[0] == true && idtoshare != undefined && treeviewShare == true) {
         const result = axios.post (`http://localhost:5000/api2/share/${idtoshare}/${collabID[1]}/${collabID[2]}/${collabID[3]}`, {
           method:'POST',
@@ -68,7 +70,7 @@ import HomeTree from "./HomeTree";
       if (wantShare == true) {
         return <div className='text' id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id)}}>...</div>
       }
-    }
+    } */
 
     // would need to add parent id to items for sharing function
 
@@ -103,9 +105,9 @@ import HomeTree from "./HomeTree";
       <TreeView className="tree_item" data={data} renderNode={({label,indiv_id, last}) =>
         <div className="test text">{label} <BsFileEarmarkPerson onClick={toggleTooltip}/>
 
-        {sharingShow(indiv_id)}
-        {sharingFunct()}
-          <Popup ref={ref}>
+        {/* {sharingShow(indiv_id)}
+        {sharingFunct()} */}
+          {/*<Popup ref={ref}>
             <div className="pop">
               <ul className="person_info">
 
@@ -114,16 +116,16 @@ import HomeTree from "./HomeTree";
                   <div className="list_info">
                     <li><span>First Name:</span> </li>
                     <li><span>Last Name:</span> </li>
-                    {/* <li><span>Information:</span> {search(label).info}</li>
+                     <li><span>Information:</span> {search(label).info}</li>
                     <li><span>Gender:</span> {search(label).gender}</li>
                     <li><span>Date of Birth:</span> {search(label).birth}</li>
-                    <li><span>Date of Death:</span> {search(label).death}</li> */}
+                    <li><span>Date of Death:</span> {search(label).death}</li> 
                   </div>
                   </div>
 
               </ul>
             </div>
-          </Popup>
+          </Popup>*/}
         </div> }/>
   )
  }
@@ -134,16 +136,16 @@ import HomeTree from "./HomeTree";
      <div>
 
      {!list?.length ? null :
-       <HomeTree list={list} treeId={treeId}/>
+       <HomeTree list={list} treeId={treeId} share={share} collab={collab}/>
       }
 
-    {!list?.length ? null :
+    {/* {!list?.length ? null :
     <div>{list.map(f =>
       <div>
       <TreeItem key={f.individual_id} item={f} family={family} share={share} collab={collab}/>
     </div>)}
     </div>
-    }
+    } */}
 
     </div>
   )

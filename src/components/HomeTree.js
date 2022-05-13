@@ -17,6 +17,18 @@ const HomeTree = (props) => {
     formState: { errors },
   } = useForm();
 
+  // console.log("HomeTree: ", props)
+  console.log("HomeTree: Sharing boolean ", props.share)
+  console.log("HomeTree: collab info ", props.collab)
+  // console.log("HomeTree: share boolean ", props.share.match.params.share)
+
+  // FOR SHARING VARS START
+  var wantShare = props.share;
+  var collabID = props.collab;
+  const [treeviewShare, settreeviewShare] = useState(false);
+  const [idtoshare, setidtoshare] = useState("");
+  // SHARING VARS END
+
   console.log("tree id: ", props.treeId.match.params.treeId);
   const treeIdentif = props.treeId.match.params.treeId;
 
@@ -115,6 +127,7 @@ const HomeTree = (props) => {
   const data = [
     {
     id: x,
+    indiv_id: items.individual_id,
     label: items ? (
       <TreeLabel
           //onClick={toggleTooltip}
@@ -453,6 +466,7 @@ const HomeTree = (props) => {
   };
 
   useEffect(() => {
+    testSharing()
     if (edited !== null) {
       setTimeout(() => {
         setNodes(edited);
@@ -460,6 +474,36 @@ const HomeTree = (props) => {
     }
   }, [edited]);
 
+  // FOR SHARING FUNCT
+  const testSharing = (id) => {
+    console.log(id)
+    setidtoshare(id)
+    console.log("clicked on HOMETREE for share")
+    console.log("HOMETREE " , idtoshare + " "+ id + " and sharing condition is " + wantShare + " with ID ", collabID[3])
+    settreeviewShare(true)
+  }
+
+  const sharingShow = (indiv_id) => {
+    if (wantShare == true) {
+      return <div className='text' id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id);}}>...</div>
+    }
+  }
+
+  const sharingFunct = () => {
+    console.log("in HomeTree " + collabID[0] + " " + idtoshare + " " + treeviewShare)
+
+    if (collabID[0] == true && idtoshare != undefined && treeviewShare == true) {
+      const result = axios.post (`http://localhost:5000/api2/share/${idtoshare}/${collabID[1]}/${collabID[2]}/${collabID[3]}`, {
+        method:'POST',
+      headers: { 'Content-Type': 'application/json'},
+    });
+
+    console.log("created tree with treelist")
+    console.log(result)
+    settreeviewShare(false)
+    collabID[0] = false
+  }
+  }
 
   /* render all options in popup menu*/
   //className="popup_form"
@@ -649,6 +693,9 @@ const HomeTree = (props) => {
             }}
           >
             {data.label}
+            
+            {sharingShow(data.indiv_id)}
+            {sharingFunct()}
           </div>
         )}
       />
