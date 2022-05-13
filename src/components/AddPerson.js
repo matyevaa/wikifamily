@@ -42,7 +42,7 @@ const AddPerson = (tree_id) => {
       family_id: tree,
       parent: parent,
     });
-    
+
     // history.push("/create");
     history.push(link);
   }
@@ -120,7 +120,7 @@ const AddPerson = (tree_id) => {
           <input ref={parentRef} type="text" placeholder="Parent ID" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
         </div>
 
-          <button className="add_btn" type="submit"  onClick={handleAddPerson}>Add Person</button>
+          <button className="add_btn" type="submit" onClick={handleAddPerson}>Add Person</button>
       </form>
     </div>
   );

@@ -123,7 +123,7 @@ const HomeTree = (props) => {
     },
   ];
 */
-  
+
   const data = [
     {
     id: x,
@@ -300,8 +300,8 @@ const HomeTree = (props) => {
       setModalFirst(false);
       setFamilyMember(true);
 
-    } 
-  
+    }
+
   /* if remove person is clicked */
     else {
       const removed = remove(nodes, selectedId);
@@ -509,17 +509,16 @@ const HomeTree = (props) => {
   //className="popup_form"
   return (
     <div>
-      <ModalComponent show={modalFirst} onClose={handleModalFirstClose}> 
+      <ModalComponent show={modalFirst} onClose={handleModalFirstClose}>
         <div>
           <ul className="-my-5 divide-y divide-gray-200">
             {announcements().map((announcement) => (
               <li key={announcement.id} className="py-5">
                 <div className="relative p-1 rounded-sm">
                   <h3 className="text-sm font-bold text-gray-800">
-                    <button
+                    <button className="btn_operation"
                       onClick={() => handleFamilyMemberShow(announcement.id)}
                       //type="button"
-                      className=" hover:text-indigo-500 focus:outline-none font-bold"
                     >
                       <span className="absolute inset-0" aria-hidden="true" />
                       {announcement.title}
@@ -532,7 +531,7 @@ const HomeTree = (props) => {
         </div>
       </ModalComponent>
 
-      {/*popup menu options styling*/}          
+      {/*popup menu options styling*/}
       <ModalComponent show={editSpouse} onClose={handleEditModalClose}>
         <div>
           <ul className="-my-5 divide-y divide-gray-200">
@@ -558,7 +557,7 @@ const HomeTree = (props) => {
                     //type="button"
                     className=" hover:text-indigo-500 focus:outline-none font-bold"
                   >
-                    
+
                     <span className="absolute inset-0" aria-hidden="true" />
                     Remove Spouse
                   </button>
@@ -569,7 +568,7 @@ const HomeTree = (props) => {
         </div>
       </ModalComponent>
 
-      {/*input fields when user selects options */}   
+      {/*input fields when user selects options */}
       {/*className="add_form"*/}
 
       <ModalComponent show={familyMember} onClose={handleFamilyMemberClose}>
