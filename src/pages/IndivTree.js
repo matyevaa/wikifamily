@@ -25,12 +25,10 @@ const IndivTree = (treeId) => {
 
   const treeIdentif = treeId.match.params.treeId;
 
-  // adding from /create
   const [dataDB, setData] = useState([]);
   const [dataFamily, setDataFamily] = useState([]);
 
   let addLink = "/add/" + treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
-  // end add from /create
 
   useEffect(() => {
     getFamilyName(treeIdentif);
@@ -82,12 +80,10 @@ const IndivTree = (treeId) => {
 
   // sharing individuals// sets starting and end points, end points can be changed if keep clicking
   const sharingStartEnd = (id) => {
-    // if (shareStart == "") {
       setShareStart(id)
       console.log("startingid: " + id)
       setisTableShare(true)
       console.log("will do table share...")
-    // }
   }
 
   // whether it has share indiv showing or not
@@ -184,10 +180,6 @@ const IndivTree = (treeId) => {
 
       // // for table sharing
       console.log(isTableShare)
-      // if (isTableShare == true) {
-      //   console.log("doing table share")
-      //   collaboratorEditing(id);
-      // }
     }
     else {
       console.log("user did not exist")
@@ -217,6 +209,16 @@ const IndivTree = (treeId) => {
     setisTableShare(false)
   }
 
+  // option to delete curr tree
+  const delTree = () => {
+    if (window.confirm("Deleting this tree will also delete all data related to the current tree. Are you sure you want to delete this tree?")) {
+      console.log("DELETE THE TREE")
+    }
+    else {
+      console.log("Do not delete tree")
+    }
+  }
+
   const parentRef = useRef()
 
   return(
@@ -232,11 +234,9 @@ const IndivTree = (treeId) => {
       </div>
 
       { showView ? <TreeList list={dataDB} treeId={treeId} family={dataFamily} share={wantShare} collab={sharingInfo}/> : null }
-      {/* {console.log(collabID)} */}
       { showGraph ? <Tree dataDB={dataDB}/> : null }
 
       {dataDB ? console.log("api: ", dataDB) : console.log("no api")}
-
 
       <div className="class_btn">
         <h3 id="dashboard" className='text'>Family Individuals Dashboard</h3>
@@ -266,7 +266,6 @@ const IndivTree = (treeId) => {
 
        {dataFamily.map((item, idx) => (
           <tr key={idx} className="text">
-            {/* <td>{item.individual_id}</td> */}
             {shareContShow(item)}
             <td>{item.first_name}</td>
             <td>{item.last_name}</td>
@@ -285,6 +284,8 @@ const IndivTree = (treeId) => {
         </tbody>
        </table>
        <h3 className='text' id="family_size">Family size is: {dataFamily.length}</h3>
+       <br></br><bt></bt>
+       {/* <button className="add_tree_btn" onClick={() => {delTree();}}>Delete tree</button> */}
     </div>
     </div>
   );

@@ -784,5 +784,24 @@ def newTreeShare(id, treeId):
     # ret in string form
     return new10
 
+@app.route('/api1/deleteTree/<id>', methods=['GET', 'POST'])
+def getUserInfo(id):
+    # opens DB connection
+    dbInfo = connect()
+    cursor = dbInfo[1]
+    cnx = dbInfo[0]
+
+    cursor.execute("SELECT first_name, last_name, info, gender, birth, death, parent FROM individual WHERE individual_id = %s", (id,))
+
+    # row_headers = [x[0] for x in cursor.description]
+    individuals = list(cursor.fetchall())
+
+    print(individuals)
+
+    # # closes DB connections
+    # cursor.close()
+    # cnx.close()
+    return json.dumps(individuals)
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

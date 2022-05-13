@@ -40,31 +40,18 @@ const Works = (userId) => {
       setShareEnd(id)
       console.log("end: " + id)
     }
-    // setShareSE([shareSE +","+ id])
-    // console.log(shareSE)
   }
 
 
   const findingUserId = () => {
-
-    // console.log("pathname: " + userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6))
-
     let temp = userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6)
     console.log("temp " + temp.toString())
     console.log("temp " + temp)
 
-    // if (finalID != undefined) { // user id passed in
-    if (temp != null && JSON.parse(localStorage.getItem("loginVersion") != '"oauth"')) { // ch "null" for heroku version
+    if (temp != null && JSON.parse(localStorage.getItem("loginVersion") != '"oauth"')) {
       console.log("What gonna put in localstorage n was third" + temp)
       localStorage.setItem("userId", JSON.stringify(temp))
     }
-    // else { // user id not passed in
-    //   console.log("link for creator id was null")
-    //   let saved = JSON.parse(localStorage.getItem("userId"))
-    //   finalID = saved
-    //   console.log("will put in " + saved)
-    //   window.location.href="http://localhost:3005/creator=" + saved + "/works"
-    // }
 
     // if used the api to llogin
     if (JSON.parse(localStorage.getItem("loginVersion") != '"oauth"')) {
@@ -103,12 +90,14 @@ const Works = (userId) => {
     }
     else{
       return <div>
-      {dataDB_trees.map((item, idx) => (
-        <tr key={idx}>
-          <div id='indivTree'><td className="description text indivTree"><a href= { createIndivTreeLinks(item.family_id) }>{item.family_name}</a></td></div>
-          
-        </tr>
-      ))}</div>
+                {dataDB_trees.map((item, idx) => (
+                  <tr key={idx}>
+                    <div id='indivTree'>
+                      <td className="description text indivTree"><a href= { createIndivTreeLinks(item.family_id) }>{item.family_name}</a></td>
+                      </div>
+                  </tr>
+                ))}
+              </div>
     }
   }
 
