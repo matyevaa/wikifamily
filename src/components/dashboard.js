@@ -1,6 +1,14 @@
 import React from "react";
 import { useUserContext } from "../context/userContext";
 
+// ################################################################################
+// Description:  When logging in with Oauth sets user's name, email, and ID in the
+//               local storage to later access for navbar/works purposes
+// 
+// input:        NONE
+// 
+// return:       NONE
+// ################################################################################
 const Dashboard = () => {
   const { user, logoutUser } = useUserContext();
 

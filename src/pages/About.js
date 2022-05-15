@@ -1,6 +1,12 @@
 import React from 'react';
 
-
+// ################################################################################
+// Description:  Content pertaining WikiFamily and its creation
+// 
+// input:        NONE
+// 
+// return:       Content about WikiFamily and the developers
+// ################################################################################
 const About = ({
 }) => {
   return(

@@ -11,11 +11,17 @@ const styles = {
   textAlign: "center"
 };
 
+// ################################################################################
+// Description:  Lists a user's trees and allows users to create new trees
+// 
+// input:        userId -- the current user
+// 
+// return:       trees owned by the current user 
+// ################################################################################
 const Works = (userId) => {
 
   const [userIdT, setUserIdT] = useState("");
   const [id, setid] = useState("");
-
   const [dataDB_trees, setData_trees] = useState([]);
   const [shareStart, setShareStart] = useState("");
   const [shareEnd, setShareEnd] = useState("");
@@ -30,19 +36,7 @@ const Works = (userId) => {
     getFamilyTrees(saved);
   }, []);
 
-  const sharingStartEnd = (id) => {
-    console.log("individual id chosen is: ", id);
-    if (shareStart == "") {
-      setShareStart(id)
-      console.log("start: " + id)
-    }
-    else {
-      setShareEnd(id)
-      console.log("end: " + id)
-    }
-  }
-
-
+  // find the user ID and set it to the localstorage 
   const findingUserId = () => {
     let temp = userId.location['pathname'].slice(9,(userId.location['pathname']).length - 6)
     console.log("temp " + temp.toString())
@@ -66,14 +60,12 @@ const Works = (userId) => {
     }
   }
 
+  // creates link for the specific family tree
   const createIndivTreeLinks = (treeId) => {
-    // would call getFamilyTrees(userId) (get all family tree ids for this specific user)
-    // parse through them to get the id/description
-
     return "http://localhost:3005/treeId=" + treeId + "/create"
-
   }
 
+  // gets list of all the family trees that belong to the current user
   const getFamilyTrees = async(user_id) => {
     const result = await axios ('http://localhost:5000/api1/listTrees/' + user_id, {
       headers: { 'Content-Type': 'application/json'}
@@ -84,6 +76,7 @@ const Works = (userId) => {
     console.log(dataDB_trees);
   };
 
+  // if there are no trees output msg to user otherwise list the trees
   const treesOutput = () => {
     if (dataDB_trees == "" || dataDB_trees == null) {
       return <p className="description text">No Trees</p>
@@ -101,7 +94,7 @@ const Works = (userId) => {
     }
   }
 
-    // ch bt true and false
+    // ch bt true and false for wanting to see a user's user ID
     const changeConditon = () => {
       if (wantShare == false) {
           setWantShare(true)
@@ -111,11 +104,11 @@ const Works = (userId) => {
       }
     }
 
+    // whether or not to show the users ID
     const userIdconditionShow = () => {
       if (wantShare == false || wantShare == undefined) {
         // dont show anything
       }
-
       else {
         return <div>
           <p id="user_id" className='text btn_center'>{JSON.parse(localStorage.getItem("userId"))}</p>

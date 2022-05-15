@@ -4,8 +4,14 @@ import axios from 'axios';
 import { useParams, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
-
-const EditPerson = (props, treeId) => {
+// ################################################################################
+// # Description:  Form and API call to edit an individual given their ID
+// # 
+// # input:        props -- holds the id of the indivdual being edited
+// # 
+// # return:       edit form
+// ################################################################################
+const EditPerson = (props) => {
   const [dataDB, setData] = useState([]);
   const [first_name, setFirst_name] = useState("");
   const [last_name, setLast_name] = useState("");
@@ -16,8 +22,6 @@ const EditPerson = (props, treeId) => {
   const [family_id, setFamily_id] = useState("");
   const [parent, setParent] = useState("");
 
-  const [allowEdit, setallowEdit] = useState(false);
-
   const individual_id = props.match.params.id;
   const tree_id = props.match.params.treeId;
 
@@ -25,10 +29,10 @@ const EditPerson = (props, treeId) => {
 
   const history = useHistory();
 
-  // console.log("pathname: " + treeId.location)
-  // let treeID = treeId.location['pathname'].slice(5,(treeId.location['pathname']).length)
+  // Link for the specific tree view
   let link = "/treeID="+ tree_id +"/create"
 
+  // API call to edit an individual
   const handleFormSubmit = async(e) => {
     e.preventDefault();
     await axios.put(`http://localhost:5000/api1/edit/${individual_id}/${tree_id}`, {
@@ -43,7 +47,7 @@ const EditPerson = (props, treeId) => {
       family_id: family_id,
       parent: parent
     });
-    // history.push("/create");
+    
     history.push(link);
   }
 
@@ -59,6 +63,7 @@ const EditPerson = (props, treeId) => {
     getPersonById();
   }, []);
 
+  // gets a users data given their ID for default values when editing
   const getPersonById = async() => {
     console.log("ind id: ", individual_id);
     const result = await axios (`http://localhost:5000/api1/getInfo/${individual_id}`, {
@@ -81,9 +86,6 @@ const EditPerson = (props, treeId) => {
     .catch(err => console.log(err));
   };
   console.log("Get Person By Id:", dataDB);
-
-
-//{...register('first_name')}
 
   return (
     <div>

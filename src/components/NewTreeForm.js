@@ -4,7 +4,13 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 //import FamilyTree from './FamilyTree';
 
-
+// ################################################################################
+// Description:  Form and API call for creating a new tree for a user
+// 
+// input:        NONE
+// 
+// return:       Form for new tree
+// ################################################################################
 const NewTreeForm = () => {
   const [parent, setParent] = useState("");
   let userId = JSON.parse(localStorage.getItem("userId"))
@@ -13,26 +19,20 @@ const NewTreeForm = () => {
   const history_ = useHistory();
 const [treeElements, updateTree] = useState([])
 
+  // API call for creating a new tree
   const createEmpty = async(e) => {
-
     console.log(userId + parent)
 
-    localStorage.setItem("familyname", JSON.stringify(parent))
     e.preventDefault();
     await axios.post('http://localhost:5000/api1/createTree', {
       method:'POST',
       headers: { 'Content-Type': 'application/json'},
-      user_id: userId,
-      parent: parent,
+      user_id: userId, // user ID
+      parent: parent,   // Tree name
     });
-    // .then(window.location.href="http://localhost:3005/creator=" + userId +"/works")
-    // .catch(err => console.log(err));
-    //then
-    //error
     
-    // history_.push(link);
+    // redirects user back to their works page
     window.location.href="http://localhost:3005/creator=" + userId +"/works"
-    
   }
 
 
@@ -60,9 +60,6 @@ const [treeElements, updateTree] = useState([])
           <label>Family Tree Name</label>
           <input ref={parentRef} type="text" placeholder="Enter a family tree name..." name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
         </div>
-
-        {/* added code to line 135 */}
-
           <button className="add_btn" type="submit"  onClick={handleAddPerson}>Create Tree</button>
       </form>
     </div>

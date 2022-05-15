@@ -6,39 +6,15 @@ import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-butto
 import { useAuth0 } from '@auth0/auth0-react';
 import LoginButton from '../components/LoginButton';
 
-
-
-
-
+// ################################################################################
+// Description:  lets users do Google, FB, or email login 
+// 
+// input:        NONE
+// 
+// return:       Buttons for google, email, or FB login
+// ################################################################################
 const Login = () => {
   const { loginWithRedirect , isAuthenticated } = useAuth0();
-
-  useEffect(() => {
-    // checkLogin();
-  }, []);
-
-  const checkLogin = async() => {
-    const result = await axios ('/api2/login', {
-      mode: "no-cors",
-      headers: { 'Content-Type': 'application/json'}
-    })
-    .catch(err => console.log(err));
-    console.log(result);
-  };
-
-  const facebookLogout = async() => {
-    const result = await axios ('/api2/logout', {
-      mode: "cors",
-      headers: { 'Content-Type': 'application/json'}
-    })
-    .catch(err => console.log(err));
-    console.log(result);
-  };
-
-  // Can use this with the sign up
-  // <FacebookLoginButton onClick={() => alert("Hello")}>
-  // <span>Custom text</span>
-  // </FacebookLoginButton>
 
   return (
 
@@ -61,9 +37,6 @@ const Login = () => {
       <h2 className='loginTxt'>or</h2>
 
       <div className='loginButton emailContainer'>
-      {/* <button onClick={() => {loginWithRedirect()}}>
-        Log in with Email
-      </button> */}
         <center><LoginButton/></center>
       </div>
     </div>

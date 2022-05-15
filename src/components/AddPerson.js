@@ -1,9 +1,14 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
-//import FamilyTree from './FamilyTree';
 
-
+// ################################################################################
+// Description:  Form and API call for adding a new individual to the DB
+// 
+// input:        tree_id -- the current tree ID to add a new individual
+// 
+// return:       add new person form
+// ################################################################################
 const AddPerson = (tree_id) => {
   const [first_name, setFirst_name] = useState("");
   const [last_name, setLast_name] = useState("");
@@ -13,19 +18,17 @@ const AddPerson = (tree_id) => {
   const [death, setDeath] = useState("");
   const [family_id, setFamily_id] = useState("");
   const [parent, setParent] = useState("");
-
   const [treeElements, updateTree] = useState([])
 
+  // current tree ID
   const tree = tree_id.match.params.id;
 
   const history = useHistory();
 
-  // get current tree id
-  // console.log("pathname: " + tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length))
-  // let treeID = tree_id.location['pathname'].slice(5,(tree_id.location['pathname']).length)
   let link = "/treeID="+ tree +"/create"
   // let link = "/treeID="+ tree_id +"/create"
 
+  // Will add a new individual to the DB
   const savePerson = async(e) => {
     e.preventDefault();
     let getLink = "http://localhost:5000/api1/createadd/" + tree
@@ -38,12 +41,10 @@ const AddPerson = (tree_id) => {
       gender: gender,
       birth: birth,
       death: death,
-      // family_id: family_id,
       family_id: tree,
       parent: parent,
     });
 
-    // history.push("/create");
     history.push(link);
   }
 

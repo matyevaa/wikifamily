@@ -1,13 +1,18 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
+// ################################################################################
+// Description:  Handles oauth login for user 
+// 
+// input:        tree_id -- the current tree ID to add a new individual
+// 
+// return:       renders login button
+// ################################################################################
 const LoginButton = () => {
   const { loginWithRedirect , isAuthenticated } = useAuth0();
 
+  // will help to differentiate bt third party and oauth login for navbar
   const setLoginVersion =() => {
-    // localStorage.setItem("userId", JSON.stringify("oauth_noId"))
-    //     localStorage.setItem("userName", JSON.stringify("oauth_noName"))
-    //     localStorage.setItem("userEmail", JSON.stringify("oauth_noEmail"))
     localStorage.setItem("loginVersion", JSON.stringify("oauth"))
 
   }

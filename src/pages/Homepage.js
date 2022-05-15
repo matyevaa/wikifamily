@@ -6,6 +6,13 @@ import React from 'react';
  * Use this template to create other pages.
 */
 
+// ################################################################################
+// Description:  Homepage for WikiFamily -- features and background info abt website
+// 
+// input:        NONE
+// 
+// return:       WikiFamily tree creation info/ features
+// ################################################################################
 const Homepage = ({
 }) => {
   return(

@@ -9,7 +9,14 @@ import treeViewExpanding from '../style/treeViewExpanding.png'; // with import
 import preExpand from '../style/preExpand.png'; // with import
 import postExpand from '../style/postExpand.png'; // with import
 
-
+// ################################################################################
+// Description:  Frequently asked questions or guidance with dificulties creating
+//               a family tree
+// 
+// input:        NONE
+// 
+// return:       Q&A for family trees and a demo of how to create trees
+// ################################################################################
 class Help extends React.Component{
   render () {
     return(

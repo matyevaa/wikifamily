@@ -9,6 +9,14 @@ import LogoutButton from './LogoutButton';
  * depending on the screen size, the nav bar options and login btns turns into
  * hamburger menu (without logo though) */
 
+// ################################################################################
+// Description:  Navbar for the different pages users have access to 
+//               if logged in -- shows works page
+// 
+// input:        props
+// 
+// return:       renders navbar 
+// ################################################################################
 function Navbar(props) {
   const [dataDB, setData] = useState(false);
   const [userInfo, setUserInfo] = useState([""]);
@@ -18,13 +26,11 @@ function Navbar(props) {
     user
   } = useAuth0();
 
-
-  //need to add the useEffect here
   useEffect(() => {
     getUserInfoLocal()
-    // getInfo()
   }, []);
 
+    // differentiate between email login or third party
     const getUserInfoLocal = () => {
     let tempId = JSON.parse(localStorage.getItem("userId"))
     let loginVersion = JSON.parse(localStorage.getItem("loginVersion"))
@@ -35,6 +41,8 @@ function Navbar(props) {
         setData(true)
       }
 
+      // if it was a third party login call for the API funct and set the
+      // values in the localstorage 
       if (loginVersion == "thirdParty" && userInfo == "") {
         getInfo()
 
@@ -43,16 +51,19 @@ function Navbar(props) {
         tempId = JSON.parse(localStorage.getItem("userId"))
       }
       else if (loginVersion == "oauth") {
+        // otherwise it was email login and get info from localstorage
             console.log("was oauth login")
             tempName = JSON.parse(localStorage.getItem("userName"))
             tempId = JSON.parse(localStorage.getItem("userId"))
             tempEmail = JSON.parse(localStorage.getItem("userEmail"))
       }
 
+      // sets user info 
       let temp = [tempName, tempEmail, tempId]
       setUserInfo(temp)
     }
 
+    // API call for getting the users info in the case they logged in w Google/FB
     const getInfo = async() => {
       const result = await axios (`http://localhost:3000/api2/getInfo/${JSON.parse(localStorage.getItem("userId"))}`, {
         headers: { 'Content-Type': 'application/json'}
@@ -60,10 +71,9 @@ function Navbar(props) {
       .then(result => {localStorage.setItem("userName", JSON.stringify(result.data[0]))
       localStorage.setItem("userEmail", JSON.stringify(result.data[2]))})
       .catch(err => console.log(err));
-      // console.log("navbar: " + result.data);
-
     };
 
+    // whether login button is shown or welcome logged in user
     const renderAuthButton = () => {
       if (dataDB == false && isAuthenticated == false) {
         console.log("Was not logged in");
@@ -77,6 +87,7 @@ function Navbar(props) {
       }
     }
 
+    // removes information from the localstorage when logging out
     const handleLogout = () => {
       setData(false);
 
@@ -85,9 +96,11 @@ function Navbar(props) {
       localStorage.removeItem("userName")
       localStorage.removeItem("loginVersion")
 
+      // redirects logged out user to the main homepage
       window.location.href ='http://localhost:3005/'
     }
 
+    // differentiates bt what logout is necessary -- third party of oauth
     const whichLogout = () => {
       if (JSON.parse(localStorage.getItem("loginVersion")) == "thirdParty") {
         return <button type="button" className="accountBtns rightButton"
@@ -98,6 +111,7 @@ function Navbar(props) {
       }
     }
 
+    // If a user is logged in show the works page
     const navBarConditon = () => {
       if ((dataDB == false && isAuthenticated == true || (dataDB == true && isAuthenticated == false))) {
         // console.log("should show create tree");
@@ -107,6 +121,7 @@ function Navbar(props) {
       }
     }
 
+    // returns the users specific works page given their user id
     const gettingUserId = () => {
       let saved = JSON.parse(localStorage.getItem("userId"))
       return "http://localhost:3005/creator=" + userInfo[2] + "/works"

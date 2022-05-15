@@ -4,30 +4,32 @@ import TreeList from "../components/TreeView";
 import Tree from "../components/Tree";
 import { Link } from "react-router-dom";
 
+// ################################################################################
+// Description:  Page for an individual tree. Has a table and list view with add,
+//               delete, and edit functionalities. Main page for sharing individuals 
+// 
+// input:        tree_id -- the current tree ID
+// 
+// return:       table and list view for the family tree
+// ################################################################################
 const IndivTree = (treeId) => {
   const [treeName, setTreeName] = useState(["no data"]);
-
   const [showView, setShowView] = useState(false);
   const [showGraph, setShowGraph] = useState(false);
-
   const [wantShare, setWantShare] = useState(false);
   const [executeListShare, setexecuteListShare] = useState(false);
   const [showErrorMsg, setshowErrorMsg] = useState(false);
   const [collaboratorExist, setcollaboratorExist] = useState();
   const [collabID, setcollabID] = useState("");
   const [sharingInfo, setsharingInfo] = useState([]);
-
-
   const [shareStart, setShareStart] = useState("");
   const [isTableShare, setisTableShare] = useState(false);
-
   const [parent, setParent] = useState("");
-
   const treeIdentif = treeId.match.params.treeId;
-
   const [dataDB, setData] = useState([]);
   const [dataFamily, setDataFamily] = useState([]);
 
+  // link to form for adding a new individual 
   let addLink = "/add/" + treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
 
   useEffect(() => {
@@ -36,6 +38,7 @@ const IndivTree = (treeId) => {
     getData();
   }, []);
 
+  // gets the family tree given the tree ID
   const getFamilyName = async(treeID) => {
     console.log("asxdcfvgb")
     const result = await axios (`http://localhost:5000/api1/getTreeName/${treeID}`, {
@@ -48,37 +51,39 @@ const IndivTree = (treeId) => {
     console.log(result);
 };
 
-  const getData = async() => {
-    const result = await axios (`http://localhost:5000/api1/create/${treeIdentif}`, {
-      headers: { 'Content-Type': 'application/json'}
-    })
-    .then(result => setData(result.data))
-    .catch(err => console.log(err));
-    console.log("in get data indivtree.js");
-    console.log(dataDB)
-  };
+// gets list of individuals from the current tree with the algorithm 
+const getData = async() => {
+  const result = await axios (`http://localhost:5000/api1/create/${treeIdentif}`, {
+    headers: { 'Content-Type': 'application/json'}
+  })
+  .then(result => setData(result.data))
+  .catch(err => console.log(err));
+  console.log("in get data indivtree.js");
+  console.log(dataDB)
+};
 
-  const getWholeFamily = async() => {
-    const result = await axios (`http://localhost:5000/api1/create-family/${treeIdentif}`, {
-      headers: { 'Content-Type': 'application/json'}
-    })
-    .then(result => setDataFamily(result.data))
-    .catch(err => console.log(err));
-    console.log("in get whole family: ", dataFamily);
-  };
+// gets list of individuals from current tree 
+const getWholeFamily = async() => {
+  const result = await axios (`http://localhost:5000/api1/create-family/${treeIdentif}`, {
+    headers: { 'Content-Type': 'application/json'}
+  })
+  .then(result => setDataFamily(result.data))
+  .catch(err => console.log(err));
+  console.log("in get whole family: ", dataFamily);
+};
 
+// deletes a specific user from the family tree
+const delData = async(individual_id) => {
+  console.log("In Delete, individual_id is ", individual_id);
+  await axios.delete (`http://localhost:5000/api1/delete/${individual_id}/${treeIdentif}`, {
+    headers: { 'Content-Type': 'application/json'}
+  })
+  .catch(err => console.log(err));
+  window.location.reload(false);
+  getData();
+};
 
-  const delData = async(individual_id) => {
-    console.log("In Delete, individual_id is ", individual_id);
-    await axios.delete (`http://localhost:5000/api1/delete/${individual_id}/${treeIdentif}`, {
-      headers: { 'Content-Type': 'application/json'}
-    })
-    .catch(err => console.log(err));
-    window.location.reload(false);
-    getData();
-  };
-
-  // sharing individuals// sets starting and end points, end points can be changed if keep clicking
+  // sets the id of the root individual to share 
   const sharingStartEnd = (id) => {
       setShareStart(id)
       console.log("startingid: " + id)
@@ -101,7 +106,7 @@ const IndivTree = (treeId) => {
     if (wantShare == false || wantShare == undefined) {
       // dont show anything
     }
-    else {
+    else { // show instructions on how to share an individual 
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
           <p className='text'>To share an individual first enter the email or ID of your chosen collaborator and click 'Verify Collaborator'. This will verify whether
             the collaborator is registered with WikiFamily.
@@ -123,18 +128,7 @@ const IndivTree = (treeId) => {
     }
   }
 
-  const ifSharingTable = () => {
-    // for table sharing
-    console.log("table sharing cond is" + isTableShare)
-    if (isTableShare == true) {
-      console.log("doing table share")
-      collaboratorEditing(collabID);
-    }
-    else {
-      setexecuteListShare(true)
-    }
-  }
-
+  // whether to show 'share tree' and 'restart info' OR check if the collaborator exists 
   const buttonShow = () => {
     if (collaboratorExist == true) {
         return <div>
@@ -147,7 +141,7 @@ const IndivTree = (treeId) => {
     }
   }
 
-  // ch bt true and false
+  // ch bt true and false for wanting to share an individual 
   const changeConditon = () => {
     if (wantShare == false || wantShare == undefined) {
         setWantShare(true)
@@ -157,6 +151,9 @@ const IndivTree = (treeId) => {
     }
   }
 
+  // checks if the collaborator exists.
+  // if it exists then set collaborator info [true, tree ID, tree name, collaborator ID]
+  // otherwise set error message to true (show error)
   const createEmpty = async(e) => {
     e.preventDefault();
       const result = await axios.post (`http://localhost:3000/api2/emailExist`, {
@@ -187,12 +184,14 @@ const IndivTree = (treeId) => {
     }
   }
 
+  // if could not find the collaborator show error message
   const showingErrpr = () => {
     if (showErrorMsg == true) {
         return <p className='errorMsg'>User did not exist. Try a different sharing method (user ID/ email) or verify you have the correct information.</p>
     }
   }
 
+  // API call to actually share a root individual and their descendants 
   const collaboratorEditing = async(id) => {
     console.log("in share function")
     console.log(collabID)
@@ -211,7 +210,7 @@ const IndivTree = (treeId) => {
 
   // option to delete curr tree
   const delTree = () => {
-    if (window.confirm("Deleting this tree will also delete all data related to the current tree. Are you sure you want to delete this tree?")) {
+    if (window.confirm("Deleting this tree will also delete all data related to the current tree. If this person exists in any other family trees, them and their descendants will also be deleted. Are you sure you want to delete this tree?")) {
       console.log("DELETE THE TREE")
     }
     else {

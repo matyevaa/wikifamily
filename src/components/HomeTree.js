@@ -8,6 +8,13 @@ import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import axios from 'axios';
 
+// ################################################################################
+// Description:  Functions for tree list view 
+// 
+// input:        
+// 
+// return:       
+// ################################################################################
 const HomeTree = (props) => {
   const [editSpouse, setEditSpouse] = useState(false);
   const {
@@ -474,7 +481,9 @@ const HomeTree = (props) => {
     }
   }, [edited]);
 
-  // FOR SHARING FUNCT
+  // FOR SHARING FUNCTIONALITY
+  // checks data -- sets value for id of the collaborator and sets wanting to do
+  // a tree list share as true
   const testSharing = (id) => {
     console.log(id)
     setidtoshare(id)
@@ -483,21 +492,24 @@ const HomeTree = (props) => {
     settreeviewShare(true)
   }
 
+  // Only shows the "..." when you want to share an individual 
   const sharingShow = (indiv_id) => {
     if (wantShare == true) {
       return <div className='text' id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id);}}>...</div>
     }
   }
 
+  // Only share individuals when sharing == true, and have all necessary data (tree id, collaborator ID, tree name)
   const sharingFunct = () => {
     console.log("in HomeTree " + collabID[0] + " " + idtoshare + " " + treeviewShare)
-
+    
     if (collabID[0] == true && idtoshare != undefined && treeviewShare == true) {
       const result = axios.post (`http://localhost:5000/api2/share/${idtoshare}/${collabID[1]}/${collabID[2]}/${collabID[3]}`, {
         method:'POST',
       headers: { 'Content-Type': 'application/json'},
     });
 
+    // reset tree view sharing to false 
     console.log("created tree with treelist")
     console.log(result)
     settreeviewShare(false)
