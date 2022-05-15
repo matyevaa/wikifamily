@@ -753,7 +753,7 @@ def newTreeShare(id, treeId):
 
     # PUT THIS ALL IN A FOR LOOP UNTIL THE END OF THE PATH
     # the end of the path: no children for all of parents
-    cursor.execute('''SELECT COUNT(individual_id) FROM individual WHERE family_id=%s''',(fam_id,))
+    cursor.execute('''SELECT COUNT(individual_id) FROM individual WHERE FIND_IN_SET(%s, family_ids)''',(fam_id,))
     count_fetch = cursor.fetchall()
     substract = len(children) + 1
     count = count_fetch[0][0] - substract
@@ -795,8 +795,7 @@ def newTreeShare(id, treeId):
     # {["individual_id": "##", "first_name": "ROOT_NAME", {[]}]}
 
     # removes the first name and individual_id of root, {},  [], , , : , ', " " , from text
-    new0 = str(children_root).replace(root_node[0]['first_name'], "")
-    new = str(new0).replace(", 'first_name'", "")
+    new = str(children_root).replace(", 'first_name'", "")
     new2 = str(new).replace("individual_id", "")
     new3 = str(new2).replace("children", "")
     new4 = str(new3).replace("[", "")
@@ -806,15 +805,12 @@ def newTreeShare(id, treeId):
     new8 = str(new7).replace("'", "")
     new9 = str(new8).replace(":", "")
     new10 = str(new9).replace(" ", "")
+    new0 = str(new10).replace(root_node[0]['first_name'], "")
 
-    # list format of IDs
-    final = new10.split(",")
-    print(final)
-    print(len(final))
-    print(type(final))
+    print(new0)
 
     # ret in string form
-    return new10
+    return new0
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
