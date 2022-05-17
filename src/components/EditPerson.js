@@ -127,7 +127,7 @@ const EditPerson = (props) => {
         </div>
 
           <Link className="link" to={link}>Back to Create Tree</Link>
-          <button className="edit_btn" type="submit">Edit Person</button>
+          {<button class="btns" type="submit">Edit Person</button>}
       </form>
     </div>
   );

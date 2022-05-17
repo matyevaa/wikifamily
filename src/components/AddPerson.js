@@ -121,7 +121,7 @@ const AddPerson = (tree_id) => {
           <input ref={parentRef} type="text" placeholder="Parent ID" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
         </div>
 
-          <button className="add_btn" type="submit" onClick={handleAddPerson}>Add Person</button>
+          <button class="btns" type="submit" onClick={handleAddPerson}>Add Person</button>
       </form>
     </div>
   );
