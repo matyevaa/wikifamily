@@ -4,9 +4,9 @@ import axios from 'axios';
 
 // ################################################################################
 // Description:  Form and API call for adding a new individual to the DB
-// 
+//
 // input:        tree_id -- the current tree ID to add a new individual
-// 
+//
 // return:       add new person form
 // ################################################################################
 const AddPerson = (tree_id) => {
@@ -18,6 +18,7 @@ const AddPerson = (tree_id) => {
   const [death, setDeath] = useState("");
   const [family_id, setFamily_id] = useState("");
   const [parent, setParent] = useState("");
+  const [spouse, setSpouse] = useState("");
   const [treeElements, updateTree] = useState([])
 
   // current tree ID
@@ -43,6 +44,7 @@ const AddPerson = (tree_id) => {
       death: death,
       family_id: tree,
       parent: parent,
+      spouse: spouse
     });
 
     history.push(link);
@@ -55,6 +57,7 @@ const AddPerson = (tree_id) => {
   const birthRef = useRef()
   const deathRef = useRef()
   const parentRef = useRef()
+  const spouseRef = useRef()
 
   function handleAddPerson(e){
     const firstName = firstNameRef.current.value
@@ -64,11 +67,12 @@ const AddPerson = (tree_id) => {
     const birth = birthRef.current.value
     const death = deathRef.current.value
     const parent = parentRef.current.value
+    const spouse = spouseRef.current.value
 
-    if (firstName === '' || lastName === '' || desc === '' || gender === '' || parent === "") return
+    if (firstName === '' || lastName === '' || desc === '' || gender === '' || parent === "" || spouse === '') return
 
     updateTree(prevTreeElements => {
-      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, birth: birth, death: death, parent: parent}]
+      return [...prevTreeElements, {id: 1, firstName: firstName, lastName: lastName, description: desc, gender: gender, birth: birth, death: death, parent: parent, spouse: spouse}]
     })
 
     console.log(firstName)
@@ -79,6 +83,7 @@ const AddPerson = (tree_id) => {
     birthRef.current.value = null
     deathRef.current.value = null
     parentRef.current.value = null
+    spouseRef.current.value = null
   }
 
 
@@ -120,6 +125,12 @@ const AddPerson = (tree_id) => {
           <label>Parent</label>
           <input ref={parentRef} type="text" placeholder="Parent ID" name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
         </div>
+
+        <div>
+          <label>Spouse</label>
+          <input ref={spouseRef} type="text" placeholder="Spouse ID" name="spouse" value={spouse} onChange={(e) => setSpouse(e.target.value)}/>
+        </div>
+
 
           <button class="btns" type="submit" onClick={handleAddPerson}>Add Person</button>
       </form>

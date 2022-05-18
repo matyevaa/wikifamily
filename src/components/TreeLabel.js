@@ -18,7 +18,7 @@ const TreeLabel = ({
   return (
     <div className="flex items-center">
       <span className="indiv_info">
-        {name} {last} <br /> {gender} <br /> {dob} <br />-{dod}
+        {name} {last} <br />({dob ? dob : "?" } - {dod ? dod : "?"})
       </span>
 
       {/*button for popup menu. Plus icon inserts "+" into button*/}
@@ -32,10 +32,9 @@ const TreeLabel = ({
       </button>
       {spouse && (
         <>
-          <span className="w-[5rem] h-[1px] bg-blue-primary"></span>
+          <span className="line"><hr/></span>
           <span className="ml-2 capitalize ">
-            {spouse} {spouseLName} <br /> {spouseGender} <br /> {spouseDOB}{" "}
-            <br />-{spouseDOD}
+            {spouse} {spouseLName} <br /> ({spouseDOB ? spouseDOB : "?"} - {spouseDOD ? spouseDOD : "?"})
           </span>
 
           <button

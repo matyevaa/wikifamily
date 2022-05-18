@@ -9,11 +9,11 @@ import { v4 as uuidv4 } from "uuid";
 import axios from 'axios';
 
 // ################################################################################
-// Description:  Functions for tree list view 
-// 
-// input:        
-// 
-// return:       
+// Description:  Functions for tree list view
+//
+// input:
+//
+// return:
 // ################################################################################
 const HomeTree = (props) => {
   const [editSpouse, setEditSpouse] = useState(false);
@@ -102,35 +102,6 @@ const HomeTree = (props) => {
     return children_array.reverse()[0];
   };
 
-    /*handle Modal first show is to show popup menu. */
-  /*
-  const data = [
-    {
-      id: 0,
-      label: (
-        <TreeLabel
-          onClick={handleModalFirstShow}
-          onClick2={handleEditModalOpen}
-          name="A "
-          id={0}
-          last="Father"
-          dob="2022-04-05"
-          dod="2022-04-05"
-          gender="male"
-        />
-      ),
-      children: [],
-      firstName: "A",
-      lastName: "father",
-      dob: "2022-04-05",
-      dod: "2022-04-05",
-      gender: "male",
-      pId: 1,
-      spouse: null,
-    },
-  ];
-*/
-
   const data = [
     {
     id: x,
@@ -147,6 +118,10 @@ const HomeTree = (props) => {
           dob={items.birth}
           dod={items.death}
           gender={items.gender}
+          spouse={items.spouse.first_name}
+          spouseLName={items.spouse.last_name}
+          spouseDOB={items.spouse.birth}
+          spouseDOD={items.spouse.death}
       />
     ) : "loading",
     indiv_id: items ? (items.individual_id) : null,
@@ -492,7 +467,7 @@ const HomeTree = (props) => {
     settreeviewShare(true)
   }
 
-  // Only shows the "..." when you want to share an individual 
+  // Only shows the "..." when you want to share an individual
   const sharingShow = (indiv_id) => {
     if (wantShare == true) {
       return <div className='text' id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id);}}>...</div>
@@ -502,14 +477,14 @@ const HomeTree = (props) => {
   // Only share individuals when sharing == true, and have all necessary data (tree id, collaborator ID, tree name)
   const sharingFunct = () => {
     console.log("in HomeTree " + collabID[0] + " " + idtoshare + " " + treeviewShare)
-    
+
     if (collabID[0] == true && idtoshare != undefined && treeviewShare == true) {
       const result = axios.post (`http://localhost:5000/api2/share/${idtoshare}/${collabID[1]}/${collabID[2]}/${collabID[3]}`, {
         method:'POST',
       headers: { 'Content-Type': 'application/json'},
     });
 
-    // reset tree view sharing to false 
+    // reset tree view sharing to false
     console.log("created tree with treelist")
     console.log(result)
     settreeviewShare(false)
@@ -704,7 +679,7 @@ const HomeTree = (props) => {
             }}
           >
             {data.label}
-            
+
             {sharingShow(data.indiv_id)}
             {sharingFunct()}
           </div>

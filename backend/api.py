@@ -1,6 +1,6 @@
 ################################################################################
 # WikiFamily Capstone 2021-2022
-# 
+#
 # Family Tree CRUD API
 ################################################################################
 from asyncio.windows_events import NULL
@@ -25,9 +25,9 @@ cors = CORS(app)
 # Description:  Used to help prevent SQL server DB disconnected error. Used to open
 #               connection to DB when using specific definitions and closes the
 #               connection when it is no longer being used.
-# 
+#
 # input:        NONE
-# 
+#
 # return:       tuple -- (connection to DB, cursor)
 ################################################################################
 def connect():
@@ -45,9 +45,9 @@ def connect():
 #               id.If it is a shared tree will use shared_tree from the DB as the
 #               root value. Otherwise will use the indiviudal whose id is NULL in
 #               that specific tree.
-# 
+#
 # input:        id -- current tree id to get descendants from
-# 
+#
 # return:       children_root -- nested json list of root and their descendants
 ################################################################################
 @app.route('/api1/create/<id>', methods=['GET', 'DELETE', 'PUT'])
@@ -60,7 +60,7 @@ def get_family(id):
 
     # tree traversal algorithm
     # first get the children of a root, in children we see each of childs's id and name
-    root_node, children_root, children, new_children, spouses = [], [], [], [], [];
+    root_node, children_root, children, new_children, spouses, new_spouses = [], [], [], [], [], [];
 
     # check if it is a shared tree
     cursor.execute('SELECT shared_root from family where family_id = %s', (id,))
@@ -91,31 +91,21 @@ def get_family(id):
     row_headers = [x[0] for x in cursor.description]
     for result in root_data:
         root_node.append(dict(zip(row_headers, result)))
-    # print("ROOT: ", root_node[0])
     children_root.append(root_node[0])
-    # print("Children Root Initial: ", children_root)
-
-
-    # cursor.execute(sql_root,(id,))
-    # datas = cursor.fetchall()
-    # for result in datas:
-    #     # got the root's children
-    #     children_root.append(dict(zip(row_headers, result)))
-    # print("children root: ", children_root[1])
 
     # get the children of root
     for parent in children_root:
         root_id = parent['individual_id']
         fam_id = id
-        # print("parent's individual id is: ", root_id)
         cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
         datas2 = cursor.fetchall()
         children = []
         for result in datas2:
             children.append(dict(zip(row_headers, result)))
-        # print("children array: ", children)
         # new stuff for spouse field
-        cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse')
+        cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (root_id,))
+        print("root id")
+        print(root_id)
         datas4 = cursor.fetchall()
         if datas4:
             spouses = []
@@ -123,11 +113,12 @@ def get_family(id):
             for result in datas4:
                 spouses.append(dict(zip(row_headers, result)))
                 parent["spouse"] = spouses[0]
-                print("I've just added a spouse: ", parent)
+                print("I've just added a spouse1: ", spouses[0])
         else:
             continue
         # try to add children array into children_root as a nested key
         parent["children"] = children
+        parent["spouse"] = spouses[0]
 
     # PUT THIS ALL IN A FOR LOOP UNTIL THE END OF THE PATH
     # the end of the path: no children for all of parents
@@ -143,7 +134,7 @@ def get_family(id):
         # and if so, append to a new children array & then add it as a nested key
         for parent_who_was_child in children:
             parent_id = parent_who_was_child['individual_id']
-            #print("parent who was child's id: ", parent_id)
+            print("parent who was child's id: ", parent_id)
             cursor.execute('SELECT c.individual_id, c.first_name,  c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
             datas3 = cursor.fetchall()
             if datas3:
@@ -156,6 +147,25 @@ def get_family(id):
             else:
                 count = count - 1
                 continue
+
+            # new stuff for spouse field
+            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (parent_id,))
+            datas5 = cursor.fetchall()
+            print("parent id")
+            print(parent_id)
+            print("datas5")
+            print(datas5)
+            new_spouses = []
+            if datas5:
+                for result in datas5:
+                    new_spouses.append(dict(zip(row_headers, result)))
+                    parent_who_was_child["spouse"] = new_spouses
+                print("a spouse: ", new_spouses)
+            else:
+                new_spouses.append(dict(zip(row_headers, result)))
+                parent_who_was_child["spouse"] = 'null'
+                print("No spouse")
+                #continue
 
             if count==0:
                 break
@@ -170,9 +180,9 @@ def get_family(id):
 
 ################################################################################
 # Description:  gets the whole family for the table given a family ID
-# 
+#
 # input:        id -- family tree ID
-# 
+#
 # return:       json_data -- list of individuals who exist in the tree, ordered
 #                            by parent
 ################################################################################
@@ -197,9 +207,9 @@ def get_whole_family(id):
 
 ################################################################################
 # Description:  gets list of trees a user is the creator of given ID
-# 
+#
 # input:        id -- User id
-# 
+#
 # return:       json_data -- list of trees user ID is creator of
 ################################################################################
 @app.route('/api1/listTrees/<id>', methods=['GET'])
@@ -229,9 +239,9 @@ def getFamilies(id):
 
 ################################################################################
 # Description:  Given a family tree ID, queries for the family trees name
-# 
+#
 # input:        id -- tree id
-# 
+#
 # return:       json_data -- name of the family tree
 ################################################################################
 @app.route('/api1/getTreeName/<id>', methods=['GET'])
@@ -259,13 +269,13 @@ def getFamilyName(id):
 
 ################################################################################
 # Description:  Adds a user given information received from a form from frontend.
-#               If a person's parent ID is not speceified sets it to 0. 
-#               Before adds a person to DB queries for shared_from in family 
+#               If a person's parent ID is not speceified sets it to 0.
+#               Before adds a person to DB queries for shared_from in family
 #               table from DB to identify the family trees the new person should
 #               exist in and sets family_ids to the query result.
-# 
+#
 # input:        treeId -- current treeID to add user to
-# 
+#
 # return:       redirects to get_whole_family function
 ################################################################################
 @app.route('/api1/createadd/<treeId>', methods=['GET','POST'])
@@ -288,6 +298,9 @@ def add_person_w_treeID(treeId):
         d = theform['death']
         fid = theform['family_id']
         p = theform['parent']
+        sp = theform['spouse']
+        print("SPOUSE")
+        print(sp)
 
         # if user not input parent ID make it automatically 0
         if p == "":
@@ -304,7 +317,7 @@ def add_person_w_treeID(treeId):
            listIds = list(cursor.fetchall())
            print(listIds)
 
-            #if the current tree is a shared tree concat the treed it should exist in to the curr tree var fid 
+            #if the current tree is a shared tree concat the treed it should exist in to the curr tree var fid
             # fid will be in form ["ID,ID,ID"]
            if (listIds != ""):
                print("added new person list of ids is: ")
@@ -316,7 +329,7 @@ def add_person_w_treeID(treeId):
                        fid += "," + id[0]
 
         # insert user to DB
-        cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,fid))
+        cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, spouse, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,sp,fid))
         cnx.commit()
         msg = "Successfully added a person!"
     else:
@@ -328,12 +341,12 @@ def add_person_w_treeID(treeId):
     return redirect(url_for('get_whole_family', id=treeId))
 
 ################################################################################
-# Description:  If individual ID is not 0 then delete from DB, if 0 then it is 
+# Description:  If individual ID is not 0 then delete from DB, if 0 then it is
 #               Jane Doe (dummy data) and deletes Jane Doe from that specific tree
-# 
+#
 # input:        individual_id -- ID to delete from DB
 #               treeId        -- current tree ID to delete individual from
-# 
+#
 # return:       redirects to get_whole_family function
 ################################################################################
 @app.route('/api1/delete/<individual_id>/<treeId>', methods=['DELETE'])
@@ -367,11 +380,11 @@ def delete_person_w_treeID(individual_id, treeId):
                 # to the final tree list
                 if temp != str(treeId):
                     ogIds.append(temp)
-                
+
                 # reset temp
                 temp = ""
 
-            # otherwise is a number and add it to temp which will eventually 
+            # otherwise is a number and add it to temp which will eventually
             # be a full tree ID
             else:
                 temp += char
@@ -379,7 +392,7 @@ def delete_person_w_treeID(individual_id, treeId):
         # list of tree ids Jane Doe exists in, in format ["#","#","#"]
         print(ogIds)
 
-        # loop through list of tree IDs Jane should exist in and put it in 
+        # loop through list of tree IDs Jane should exist in and put it in
         # string format "#,#,#"
         for id in ogIds:
             if id == "0":
@@ -411,10 +424,10 @@ def delete_person_w_treeID(individual_id, treeId):
 
 ################################################################################
 # Description:  Edits an individual given the individual ID and family tree
-# 
+#
 # input:        individual_id -- ID of individual to edit
 #               treeId        -- ID of the current tree
-# 
+#
 # return:       redirects to get_whole_family function
 ################################################################################
 @app.route('/api1/edit/<individual_id>/<treeId>', methods=['PUT', 'PATCH'])
@@ -436,11 +449,12 @@ def edit_person_w_treeID(individual_id, treeId):
     b = theform['birth']
     d = theform['death']
     p = theform['parent']
+    sp = theform['spouse']
 
     if p != "":
         # if changing parent id
-        query = 'UPDATE individual SET first_name=%s, last_name=%s, info=%s, gender=%s, birth=%s, death=%s, parent=%s WHERE individual_id = %s'
-        data = (fn, ls, i, g, b, d, p, id,)
+        query = 'UPDATE individual SET first_name=%s, last_name=%s, info=%s, gender=%s, birth=%s, death=%s, parent=%s, spouse=%s WHERE individual_id = %s'
+        data = (fn, ls, i, g, b, d, p, sp, id,)
         cursor.execute(query, data)
     else:
         # not changing parent id
@@ -460,10 +474,10 @@ def edit_person_w_treeID(individual_id, treeId):
 
 ################################################################################
 # Description:  Returns the ID of the last tree created given name and user ID
-# 
+#
 # input:        name         -- name of the tree that was created
 #               collaborator -- id of the user the tree was created for
-# 
+#
 # return:       newTree[totTrees-1] -- the last (newest) tree created for this user
 ################################################################################
 def returnSharedTreeID(name, collaborator):
@@ -493,11 +507,11 @@ def returnSharedTreeID(name, collaborator):
 ################################################################################
 # Description:  Creates a tree via information received as a json response for a
 #               specific user.
-# 
+#
 # input:        d -- via json request this is the user ID the tree will belong to
 #               b -- via json request this is the name of the family tree to be
 #                    created
-# 
+#
 # return:       "200"
 ################################################################################
 @app.route('/api1/createTree', methods=['POST'])
@@ -552,13 +566,13 @@ def create_empty_tree():
 #               Prior to calling this function, the login API ensures the collaborator
 #               already exists in the DB and is therefore valid. All shared trees
 #               will have the name format "Shared Tree: [ORIGINAL TREE NAME]"
-# 
+#
 # input:        startingID   -- individual whose descendants will also be shared
 #               treeid       -- the original tree ID from where individuals will
 #                               be shared from
 #               name         -- name of the family tree to be shared
 #               collaborator -- ID of the person the tree is being shared with
-# 
+#
 # return:       "200"
 ################################################################################
 @app.route('/api2/share/<startingID>/<treeid>/<name>/<collaborator>', methods=['POST', 'GET'])
@@ -567,7 +581,7 @@ def shareWithUser(startingID,treeid, name, collaborator):
     print("info sent: individual to share: %s treeid: %s name: %s collaborator: %s", str(startingID), str(treeid), str(name), str(collaborator))
 
     print("People that would be shared")
-    # uses the root individual to be shared to find its descendants in a 
+    # uses the root individual to be shared to find its descendants in a
     # string format
     individuals = newTreeShare(startingID, treeid)
     # convert the string into a list separated by ","
@@ -590,14 +604,14 @@ def shareWithUser(startingID,treeid, name, collaborator):
 ################################################################################
 # Description:  Creates an empty tree when it is to be a shared tree. This differs from
 #               a regular tree in that it will add values to the shared_from and
-#               shared_root columns of the family tree in the DB. A regular tree 
+#               shared_root columns of the family tree in the DB. A regular tree
 #               will have this as NULL. Will set the collaborator as the creator.
-# 
+#
 # input:        name         -- name of the original tree
 #               collaborator -- ID of the user tree was being shared with
 #               ogTreeId     -- original tree ID
 #               rootID       -- ID of the initial individual being shared
-# 
+#
 # return:       NONE
 ################################################################################
 def createEmptySharedTree(name, collaborator, ogTreeId, rootID):
@@ -622,17 +636,17 @@ def createEmptySharedTree(name, collaborator, ogTreeId, rootID):
 
 ################################################################################
 # Description:  Will take the list of individuals, and for each individual it
-#               will call indivEditTrees() which will update the list of trees 
+#               will call indivEditTrees() which will update the list of trees
 #               it exists in. This is important as it will allow for users to
-#               appear in the original and shared trees. It further helps as 
-#               when adding, deleting, or editing individuals in any tree, it 
+#               appear in the original and shared trees. It further helps as
+#               when adding, deleting, or editing individuals in any tree, it
 #               will be reflected accross all trees it is supposed to exist in.
-# 
+#
 # input:        listIndividuals -- individuals who need their tree_ids updated
 #               addTree         -- tree id that will be added to the family_ids
 #                                  of the individuals
 #               ogTree          -- original tree id
-# 
+#
 # return:       NONE
 ################################################################################
 def addTreeIds(listIndividuals, addTree, ogTree):
@@ -648,11 +662,11 @@ def addTreeIds(listIndividuals, addTree, ogTree):
 ################################################################################
 # Description:  Will update the list of trees the current individual exists in
 #               to add the recently shared tree ID.
-# 
+#
 # input:        id     -- ID of the current individual to update
 #               treeid -- tree ID to be added to the individuals tree list it
 #                         exists in
-# 
+#
 # return:       NONE
 ################################################################################
 def indivEditTrees(id, treeid):
@@ -675,9 +689,9 @@ def indivEditTrees(id, treeid):
 
 ################################################################################
 # Description:  Will return list of an individuals info given its individual id
-# 
+#
 # input:        id -- individual ID of a person
-# 
+#
 # return:       individuals -- list of information in that family tree
 #                               first name, last name, info, gender, birth, death, parent ID
 ################################################################################
@@ -700,12 +714,12 @@ def getUserInfo(id):
 # Description:  Uses the get_family() algorithm to find an individuals descendants
 #               and returns a string of individual IDs of the root and descendants
 #               in the format "ID,ID,ID,ID,ID"
-# 
+#
 # input:        id -- the id of an individual whose descendants are being looked
 #                     for
 #               treeId -- the current id the individual exists in
-# 
-# return:       new10 -- a string of the root ID and their descendants 
+#
+# return:       new10 -- a string of the root ID and their descendants
 ################################################################################
 @app.route('/api1/testShareIndiv/<id>/<treeId>')
 def newTreeShare(id, treeId):
@@ -716,7 +730,7 @@ def newTreeShare(id, treeId):
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    # tree traversal algorithm created by Alima 
+    # tree traversal algorithm created by Alima
     # first get the children of a root, in children we see each of childs's id and name
     root_node, children_root, children, new_children = [], [], [], [];
 
@@ -791,7 +805,7 @@ def newTreeShare(id, treeId):
 
     print("DATAS3 outside of the for loop: ", datas3)
 
-    # original string is similar to 
+    # original string is similar to
     # {["individual_id": "##", "first_name": "ROOT_NAME", {[]}]}
 
     # removes the first name and individual_id of root, {},  [], , , : , ', " " , from text
