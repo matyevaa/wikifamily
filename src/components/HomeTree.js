@@ -51,7 +51,7 @@ const HomeTree = (props) => {
   const [modalFirst, setModalFirst] = useState(false);
 
   const ref = useRef();
-  const toggleTooltip = () => ref.current.toggle();
+  //const toggleTooltip = () => ref.current.toggle();
 
   var result_id = [];
 
@@ -86,7 +86,8 @@ const HomeTree = (props) => {
         id: b = ++b,
         indiv_id: kid.individual_id,
         label: <TreeLabel
-            onClick={toggleTooltip}
+            onClick={handleModalFirstShow}
+            onClick2={handleEditModalOpen}
             name={kid.first_name}
             indiv_id={kid.individual_id}
             id={b=++b}
@@ -302,8 +303,9 @@ const HomeTree = (props) => {
   };
 
   const announcements = () => {
+    console.log("SELECTED", selectedData?.label.props.spouse ? selectedData.label.props.spouse : null);
     if (selectedId === 0) {
-      if (selectedData?.spouse === null) {
+      if (selectedData?.label.props.spouse === null) {
         return [
           {
             id: 1,
@@ -331,7 +333,9 @@ const HomeTree = (props) => {
           },
         ];
       }
-    } else if (selectedData?.spouse === null) {
+    }
+
+    else if (selectedData?.label.props.spouse === null) {
       return [
         {
           id: 1,
