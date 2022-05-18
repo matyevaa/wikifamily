@@ -75,7 +75,7 @@ def get_family(id):
         cursor.execute(root,(id,str(shared[0][0]),))
 
     else:
-        root = '''select individual_id, first_name, last_name, birth, death, gender
+        root = '''select individual_id, first_name, last_name, birth, death, gender, spouse
                 FROM individual
                 WHERE family_id=%s AND parent is null AND individual_id is not null;
                     '''
@@ -88,6 +88,7 @@ def get_family(id):
            '''
     # cursor.execute(root,(id,))
     root_data = cursor.fetchall()
+    print("cursor!", cursor.description)
     row_headers = [x[0] for x in cursor.description]
     for result in root_data:
         root_node.append(dict(zip(row_headers, result)))
@@ -148,13 +149,19 @@ def get_family(id):
                 print("in else parent_who_was_child. The parent_id is: ", parent_id)
                 count = count - 1
                 continue
-            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (parent_id,))
+            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender, c.spouse FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (parent_id,))
             datas5 = cursor.fetchall()
             if datas5:
                 new_spouses = []
                 for result in datas5:
                     new_spouses.append(dict(zip(row_headers, result)))
-                parent_who_was_child["spouse"] = new_spouses
+                if(new_spouses[0]['spouse'] == parent_who_was_child['individual_id']):
+                    print("true!")
+                    parent_who_was_child["spouse"] = new_spouses
+                else:
+                    print("false")
+                    continue
+                #parent_who_was_child["spouse"] = new_spouses
                 print("spouses of parent who was child: ", new_spouses)
             else:
                 continue
@@ -165,7 +172,7 @@ def get_family(id):
 
         for parent_who_was_child in children:
         #new stuff for spouse field
-            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (parent_id,))
+            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender, c.spouse FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (parent_id,))
             datas5 = cursor.fetchall()
             print("parent id: ",parent_id)
             print("datas5:", datas5)
@@ -173,8 +180,15 @@ def get_family(id):
                 new_spouses = []
                 for result in datas5:
                     new_spouses.append(dict(zip(row_headers, result)))
-                parent_who_was_child["spouse"] = new_spouses
-                print("spouses of parent who was child: ", new_spouses)
+                if(new_spouses[0]['spouse'] == parent_who_was_child['individual_id']):
+                    print("true!")
+                    parent_who_was_child["spouse"] = new_spouses
+                else:
+                    print("false")
+                    continue
+
+                #print("spouses of parent who was child: ", new_spouses)
+
             else:
                 print("No spouse")
                 continue

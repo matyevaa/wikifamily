@@ -94,11 +94,13 @@ const HomeTree = (props) => {
             dob={kid.birth}
             dod={kid.death}
             gender={kid.gender}
+            spouse={kid.spouse ? kid.spouse[0].first_name : null}
+            spouseLName={kid.spouse ? kid.spouse[0].last_name : null}
+            spouseDOB={kid.spouse ? kid.spouse[0].birth : null}
           />,
         children: kid.children ? traverse(kid.children, b) : null
       })) )
     }
-    console.log("CHILDREN ARRAY ", children_array);
     return children_array.reverse()[0];
   };
 
@@ -118,10 +120,10 @@ const HomeTree = (props) => {
           dob={items.birth}
           dod={items.death}
           gender={items.gender}
-          spouse={items.spouse.first_name}
-          spouseLName={items.spouse.last_name}
-          spouseDOB={items.spouse.birth}
-          spouseDOD={items.spouse.death}
+          spouse={items.spouse ? items.spouse[0].first_name : null}
+          spouseLName={items.spouse ? items.spouse[0].last_name : null}
+          spouseDOB={items.spouse ? items.spouse[0].birth : null}
+          spouseDOD={items.spouse ? items.spouse[0].death : null}
       />
     ) : "loading",
     indiv_id: items ? (items.individual_id) : null,
@@ -139,6 +141,10 @@ const HomeTree = (props) => {
           dob={child.birth}
           dod={child.death}
           gender={child.gender}
+          spouse={child.spouse ? child.spouse[0].first_name : null}
+          spouseLName={child.spouse ? child.spouse[0].last_name : null}
+          spouseDOB={child.spouse ? child.spouse[0].birth : null}
+          spouseDOD={child.spouse ? child.spouse[0].death : null}
         />,
         children: child.children ? traverse(child.children, x, idx) : null
       })) ) : null
