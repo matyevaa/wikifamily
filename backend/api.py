@@ -68,14 +68,14 @@ def get_family(id):
 
     if (shared[0][0] != None):
         print("shared tree was " + str(shared[0][0]))
-        root = '''select individual_id, first_name
+        root = '''select individual_id, first_name, last_name, birth, death, parent, info, gender,  spouse
                 FROM individual
                 WHERE FIND_IN_SET(%s, family_ids) AND individual_id = %s;
            '''
         cursor.execute(root,(id,str(shared[0][0]),))
 
     else:
-        root = '''select individual_id, first_name, last_name, birth, death, gender, spouse
+        root = '''select individual_id, first_name, last_name, birth, death, parent, info, gender,  spouse
                 FROM individual
                 WHERE family_id=%s AND parent is null AND individual_id is not null;
                     '''
@@ -98,13 +98,13 @@ def get_family(id):
     for parent in children_root:
         root_id = parent['individual_id']
         fam_id = id
-        cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
+        cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.parent, c.info, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,root_id,))
         datas2 = cursor.fetchall()
         children = []
         for result in datas2:
             children.append(dict(zip(row_headers, result)))
         # new stuff for spouse field
-        cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (root_id,))
+        cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.parent, c.info, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (root_id,))
         print("root id")
         print(root_id)
         datas4 = cursor.fetchall()
@@ -136,7 +136,7 @@ def get_family(id):
         for parent_who_was_child in children:
             parent_id = parent_who_was_child['individual_id']
             print("parent who was child's id: ", parent_id)
-            cursor.execute('SELECT c.individual_id, c.first_name,  c.last_name, c.birth, c.death, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
+            cursor.execute('SELECT c.individual_id, c.first_name,  c.last_name, c.birth, c.death, c.parent, c.info, c.gender FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.parent WHERE FIND_IN_SET(%s, p1.family_ids) AND c.individual_id is not null AND p1.individual_id = %s', (fam_id,parent_id,))
             datas3 = cursor.fetchall()
             if datas3:
                 new_children = []
@@ -149,7 +149,7 @@ def get_family(id):
                 print("in else parent_who_was_child. The parent_id is: ", parent_id)
                 count = count - 1
                 continue
-            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender, c.spouse FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (parent_id,))
+            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.parent, c.info, c.gender,  c.spouse FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (parent_id,))
             datas5 = cursor.fetchall()
             if datas5:
                 new_spouses = []
@@ -172,7 +172,7 @@ def get_family(id):
 
         for parent_who_was_child in children:
         #new stuff for spouse field
-            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.gender, c.spouse FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (parent_id,))
+            cursor.execute('SELECT c.individual_id, c.first_name, c.last_name, c.birth, c.death, c.parent, c.info, c.gender, c.spouse FROM individual p1 LEFT JOIN individual c ON p1.individual_id = c.spouse WHERE p1.individual_id=%s', (parent_id,))
             datas5 = cursor.fetchall()
             print("parent id: ",parent_id)
             print("datas5:", datas5)
@@ -477,6 +477,8 @@ def edit_person_w_treeID(individual_id, treeId):
     p = theform['parent']
     sp = theform['spouse']
 
+    # case scenerio for empty spouse/ no info
+
     if p != "":
         # if changing parent id
         query = 'UPDATE individual SET first_name=%s, last_name=%s, info=%s, gender=%s, birth=%s, death=%s, parent=%s, spouse=%s WHERE individual_id = %s'
@@ -728,7 +730,7 @@ def getUserInfo(id):
     cursor = dbInfo[1]
     cnx = dbInfo[0]
 
-    cursor.execute("SELECT first_name, last_name, info, gender, birth, death, parent FROM individual WHERE individual_id = %s", (id,))
+    cursor.execute("SELECT first_name, last_name, info, gender, birth, death, parent, spouse FROM individual WHERE individual_id = %s", (id,))
 
     individuals = list(cursor.fetchall())
 

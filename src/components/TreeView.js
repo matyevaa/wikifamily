@@ -28,9 +28,9 @@ import HomeTree from "./HomeTree";
    useEffect(() => {
   }, []);
 
-   console.log("props for treeview ", props);
-   console.log("items ", items);
-   console.log("family ", family);
+  //  console.log("props for treeview ", props);
+  //  console.log("items ", items);
+  //  console.log("family ", family);
    var x = 0;
 
   // traverse childrens children

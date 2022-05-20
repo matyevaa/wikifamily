@@ -24,10 +24,10 @@ const HomeTree = (props) => {
     formState: { errors },
   } = useForm();
 
-  // console.log("HomeTree: ", props)
-  console.log("HomeTree: Sharing boolean ", props.share)
-  console.log("HomeTree: collab info ", props.collab)
-  // console.log("HomeTree: share boolean ", props.share.match.params.share)
+  console.log("HomeTree: ", props.list)
+  // console.log("HomeTree: Sharing boolean ", props.share)
+  // console.log("HomeTree: collab info ", props.collab)
+  // // console.log("HomeTree: share boolean ", props.share.match.params.share)
 
   // FOR SHARING VARS START
   var wantShare = props.share;
@@ -36,7 +36,7 @@ const HomeTree = (props) => {
   const [idtoshare, setidtoshare] = useState("");
   // SHARING VARS END
 
-  console.log("tree id: ", props.treeId.match.params.treeId);
+  // console.log("tree id: ", props.treeId.match.params.treeId);
   const treeIdentif = props.treeId.match.params.treeId;
 
   const delData = async(individual_id) => {
@@ -47,6 +47,86 @@ const HomeTree = (props) => {
     .catch(err => console.log(err));
     window.location.reload(false);
   };
+
+  // API call to edit an individual -- type: 1 -- regular edit, type: 2 -- spouse edit
+  const editIndiv = async(/* e */userInf, tree_id, type) => {
+    // e.preventDefault();
+    console.log("persong being edited is: ", userInf)
+    if (type == 1) {
+      console.log("reg edit")
+      await axios.put(`http://localhost:5000/api1/edit/${userInf.indiv_id}/${tree_id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json'},
+      first_name: userInf.firstName,
+      last_name: userInf.lastName,
+      info: userInf.label.props.information,
+      gender: userInf.gender,
+      birth: userInf.dateOfBirth,
+      death: userInf.dateOfDeath,
+      parent: userInf.label.props.parentID,
+      spouse: userInf.label.props.spouse
+    });
+    }
+    else if (type == 2) {
+      console.log("spouse id to edit is: ", userInf.label.props.spouseID)
+      await axios.put(`http://localhost:5000/api1/edit/${userInf.label.props.spouseID}/${tree_id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json'},
+      first_name: userInf.firstName,
+      last_name: userInf.lastName,
+      info: userInf.label.props.spouseInformation,
+      gender: userInf.gender,
+      birth: userInf.dateOfBirth,
+      death: userInf.dateOfDeath,
+      parent: userInf.label.props.spouseParent,
+      spouse: userInf.indiv_id
+    });
+    }
+    console.log("editIndiv: will be editing ", userInf.indiv_id)
+    
+  };
+
+  // Will add a new individual to the DB -- type: 1 then spouse, 0 then child
+  const savePerson = async(userInf, type) => {
+    let getLink = "http://localhost:5000/api1/createadd/" + treeIdentif
+
+    if(type == 0) {
+      console.log("will be adding a new child ", type)
+
+      await axios.post(getLink, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        first_name: userInf.firstName,
+        last_name: userInf.lastName,
+        info: "",// info: userInf.label.props.information,
+        gender: userInf.gender,
+        birth: userInf.dateOfBirth,
+        death: userInf.dateOfDeath,
+        family_id: treeIdentif,
+        parent: selectedData.indiv_id,
+        spouse: ""
+      });
+    }
+    // its a spouse
+    else if (type == 1) {
+      console.log("will be adding a new spouse ", type)
+      await axios.post(getLink, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      first_name: userInf.firstName,
+      last_name: userInf.lastName,
+      info: "",// info: userInf.label.props.information,
+      gender: userInf.gender,
+      birth: userInf.dateOfBirth,
+      death: userInf.dateOfDeath,
+      family_id: treeIdentif,
+      parent: "",
+      spouse: selectedData.indiv_id
+    });
+    }
+    
+  }
+
 
   const [modalFirst, setModalFirst] = useState(false);
 
@@ -76,7 +156,7 @@ const HomeTree = (props) => {
 
   const items = props.list[0];
   var children_array = [];
-  console.log("items inside hometree: ", items);
+  // console.log("items inside hometree: ", items);
   var x=0;
 
   const traverse = (kids, b, idx) => {
@@ -92,12 +172,18 @@ const HomeTree = (props) => {
             indiv_id={kid.individual_id}
             id={b=++b}
             last={kid.last_name}
+            parentID={kid.parent}
+            information={kid.info}
             dob={kid.birth}
             dod={kid.death}
             gender={kid.gender}
             spouse={kid.spouse ? kid.spouse[0].first_name : null}
             spouseLName={kid.spouse ? kid.spouse[0].last_name : null}
             spouseDOB={kid.spouse ? kid.spouse[0].birth : null}
+            spouseID = {kid.spouse ? kid.spouse[0].individual_id : null}
+            spouseInformation = {kid.spouse ? kid.spouse[0].info : null}
+            spouseGender = {kid.spouse ? kid.spouse[0].gender : null}
+            spouseParent = {kid.spouse ? kid.spouse[0].parent : null}
           />,
         children: kid.children ? traverse(kid.children, b) : null
       })) )
@@ -118,6 +204,8 @@ const HomeTree = (props) => {
           name={items.first_name}
           id={x}
           last={items.last_name}
+          parentID={items.parent}
+          information={items.info}
           dob={items.birth}
           dod={items.death}
           gender={items.gender}
@@ -125,6 +213,10 @@ const HomeTree = (props) => {
           spouseLName={items.spouse ? items.spouse[0].last_name : null}
           spouseDOB={items.spouse ? items.spouse[0].birth : null}
           spouseDOD={items.spouse ? items.spouse[0].death : null}
+          spouseID = {items.spouse ? items.spouse[0].individual_id : null}
+          spouseInformation = {items.spouse ? items.spouse[0].info : null}
+          spouseGender = {items.spouse ? items.spouse[0].gender : null}
+          spouseParent = {items.spouse ? items.spouse[0].parent : null}
       />
     ) : "loading",
     indiv_id: items ? (items.individual_id) : null,
@@ -139,6 +231,8 @@ const HomeTree = (props) => {
           indiv_id={child.individual_id}
           id={x=++idx}
           last={child.last_name}
+          parentID={child.parent}
+          information={child.info}
           dob={child.birth}
           dod={child.death}
           gender={child.gender}
@@ -146,6 +240,10 @@ const HomeTree = (props) => {
           spouseLName={child.spouse ? child.spouse[0].last_name : null}
           spouseDOB={child.spouse ? child.spouse[0].birth : null}
           spouseDOD={child.spouse ? child.spouse[0].death : null}
+          spouseID = {child.spouse ? child.spouse[0].individual_id : null}
+          spouseInformation = {child.spouse ? child.spouse[0].info : null}
+          spouseGender = {child.spouse ? child.spouse[0].gender : null}
+          spouseParent = {child.spouse ? child.spouse[0].parent : null}
         />,
         children: child.children ? traverse(child.children, x, idx) : null
       })) ) : null
@@ -295,7 +393,7 @@ const HomeTree = (props) => {
     else {
       const removed = remove(nodes, selectedId);
       setNodes(removed);
-      delData(result_id);
+      delData(selectedData.indiv_id);
       setModalFirst(false);
       console.log("in remove. we deleted the result id.");
       console.log("in remove. nodes are: ", nodes);
@@ -383,6 +481,7 @@ const HomeTree = (props) => {
   console.log("selectedData", selectedData);
 
   const onSubmit = (data1) => {
+    console.log("curr data optionf or ", data1)
     let uniqueId = uuidv4();
     let newNode = {
       id: uniqueId,
@@ -407,20 +506,42 @@ const HomeTree = (props) => {
       spouse: null,
     };
     if (typeId === 2) {
+      console.log("type two add spouse")
+
       let spouse = addSpouse(nodes, selectedId, data1);
+      savePerson(data1, 1)
+
       setNodes(spouse);
       setFamilyMember(false);
     } else if (typeId === 1) {
+      console.log("type 1 update/add child")
       const newArray = update(nodes, selectedId, newNode);
+      savePerson(data1, 0)
+
+      
       setNodes(newArray);
       setFamilyMember(false);
     } else if (typeId === 4) {
+      console.log("type 4 editing")
+
+      console.log("nodes of ppl for edit: ")
+      console.log(nodes)
+      console.log(selectedId)
       const edited = editNode(nodes, selectedId, data1);
+      editIndiv(data1, props.treeId.match.params.treeId, 1)
+      
+      console.log("ret from editNode")
+      console.log(edited)
+
       setEdited(edited);
       setNodes(edited);
       setFamilyMember(false);
     } else if (typeId === 5) {
+      console.log("type 5 edit spouse")
       const editedSpouse = editNodeSpouse(nodes, selectedId, data1);
+      editIndiv(data1, treeIdentif, 2)
+
+      
       setNodes(editedSpouse);
       setFamilyMember(false);
     }
@@ -470,10 +591,10 @@ const HomeTree = (props) => {
   // checks data -- sets value for id of the collaborator and sets wanting to do
   // a tree list share as true
   const testSharing = (id) => {
-    console.log(id)
+    // console.log(id)
     setidtoshare(id)
-    console.log("clicked on HOMETREE for share")
-    console.log("HOMETREE " , idtoshare + " "+ id + " and sharing condition is " + wantShare + " with ID ", collabID[3])
+    // console.log("clicked on HOMETREE for share")
+    // console.log("HOMETREE " , idtoshare + " "+ id + " and sharing condition is " + wantShare + " with ID ", collabID[3])
     settreeviewShare(true)
   }
 
@@ -486,7 +607,7 @@ const HomeTree = (props) => {
 
   // Only share individuals when sharing == true, and have all necessary data (tree id, collaborator ID, tree name)
   const sharingFunct = () => {
-    console.log("in HomeTree " + collabID[0] + " " + idtoshare + " " + treeviewShare)
+    // console.log("in HomeTree " + collabID[0] + " " + idtoshare + " " + treeviewShare)
 
     if (collabID[0] == true && idtoshare != undefined && treeviewShare == true) {
       const result = axios.post (`http://localhost:5000/api2/share/${idtoshare}/${collabID[1]}/${collabID[2]}/${collabID[3]}`, {
@@ -495,8 +616,8 @@ const HomeTree = (props) => {
     });
 
     // reset tree view sharing to false
-    console.log("created tree with treelist")
-    console.log(result)
+    // console.log("created tree with treelist")
+    // console.log(result)
     settreeviewShare(false)
     collabID[0] = false
   }
@@ -550,7 +671,7 @@ const HomeTree = (props) => {
               <div className="relative p-1 rounded-sm">
                 <h3 className="text-sm font-bold text-gray-800">
                   <button
-                    onClick={() => removeSpouse(nodes, selectedId)}
+                    onClick={() => {removeSpouse(nodes, selectedId); delData(selectedData.label.props.spouseID); console.log("clicked delete spouse: ", nodes, " here is curr selected ", selectedData)}}
                     //type="button"
                     className=" hover:text-indigo-500 focus:outline-none font-bold"
                   >
@@ -698,45 +819,5 @@ const HomeTree = (props) => {
     </div>
   );
 };
-
-/*
-      <TreeView
-        data={nodes}
-        renderNode={({ label, indiv_id, id }) => (
-            <div onClick={() => {setSelectedId(id+1); setSelectedIndivId(indiv_id); toggleTooltip()}}>{label}
-            <Popup ref={ref}>
-              <div className="pop">
-                <ul className="popup_ul">
-                    <div id="centralize">
-
-                      {console.log("INDIV: ", label.props)}
-                      <div className="list_info">
-                        <h3>Choose your operation:</h3>
-                        {announcements.map((announcement) => (
-                          <li key={announcement.id}>
-                            <div>
-                            <p id="result_id_p">{label ? (label.props.id === selectedId || label.props.id == 0 ? (result_id = label.props.indiv_id) : null) : null}</p>
-                              <h3>
-                                <button onClick={() => handleFamilyMemberShow(announcement.id, result_id)} type="button">
-                                  {announcement.title}
-                                </button>
-                              </h3>
-                            </div>
-                          </li>
-                        ))}
-                      </div>
-                    </div>
-                </ul>
-              </div>
-            </Popup>
-            </div>
-
-        )}
-      />
-    </div>
-  );
-};
-
-*/
 
 export default HomeTree;

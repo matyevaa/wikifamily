@@ -52,7 +52,7 @@ function Navbar(props) {
       }
       else if (loginVersion == "oauth") {
         // otherwise it was email login and get info from localstorage
-            console.log("was oauth login")
+            // console.log("was oauth login")
             tempName = JSON.parse(localStorage.getItem("userName"))
             tempId = JSON.parse(localStorage.getItem("userId"))
             tempEmail = JSON.parse(localStorage.getItem("userEmail"))
@@ -76,11 +76,11 @@ function Navbar(props) {
     // whether login button is shown or welcome logged in user
     const renderAuthButton = () => {
       if (dataDB == false && isAuthenticated == false) {
-        console.log("Was not logged in");
+        // console.log("Was not logged in");
         return  <button id="log" type="button" className="accountBtns leftButton"><a href="/login">Login</a></button>;
       } else {
         return <div>
-          {console.log(userInfo)}
+          {/* {console.log(userInfo)} */}
           <p id="welcome" className='accountBtns'>Welcome {userInfo[0]}!</p>
           {whichLogout()}
         </div>

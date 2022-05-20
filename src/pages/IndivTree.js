@@ -40,15 +40,15 @@ const IndivTree = (treeId) => {
 
   // gets the family tree given the tree ID
   const getFamilyName = async(treeID) => {
-    console.log("asxdcfvgb")
+    // console.log("asxdcfvgb")
     const result = await axios (`http://localhost:5000/api1/getTreeName/${treeID}`, {
       headers: { 'Content-Type': 'application/json'}
     })
     .then(result => setTreeName(result.data[0]))
     .catch(err => console.log(err));
-    console.log("treeName")
-    console.log(treeName);
-    console.log(result);
+    // console.log("treeName")
+    // console.log(treeName);
+    // console.log(result);
 };
 
 // gets list of individuals from the current tree with the algorithm 
@@ -58,8 +58,8 @@ const getData = async() => {
   })
   .then(result => setData(result.data))
   .catch(err => console.log(err));
-  console.log("in get data indivtree.js");
-  console.log(dataDB)
+  // console.log("in get data indivtree.js");
+  // console.log(dataDB)
 };
 
 // gets list of individuals from current tree 
@@ -69,12 +69,12 @@ const getWholeFamily = async() => {
   })
   .then(result => setDataFamily(result.data))
   .catch(err => console.log(err));
-  console.log("in get whole family: ", dataFamily);
+  // console.log("in get whole family: ", dataFamily);
 };
 
 // deletes a specific user from the family tree
 const delData = async(individual_id) => {
-  console.log("In Delete, individual_id is ", individual_id);
+  // console.log("In Delete, individual_id is ", individual_id);
   await axios.delete (`http://localhost:5000/api1/delete/${individual_id}/${treeIdentif}`, {
     headers: { 'Content-Type': 'application/json'}
   })
@@ -86,9 +86,9 @@ const delData = async(individual_id) => {
   // sets the id of the root individual to share 
   const sharingStartEnd = (id) => {
       setShareStart(id)
-      console.log("startingid: " + id)
+      // console.log("startingid: " + id)
       setisTableShare(true)
-      console.log("will do table share...")
+      // console.log("will do table share...")
   }
 
   // whether it has share indiv showing or not
@@ -163,7 +163,7 @@ const delData = async(individual_id) => {
     });
 
     setcollaboratorExist(result.data[0])
-    console.log(result)
+    // console.log(result)
     let id
     if(result.data[0] == true) {
       setshowErrorMsg(false)
@@ -176,10 +176,10 @@ const delData = async(individual_id) => {
       setsharingInfo([executeListShare,treeIdentif,treeName['family_name'],id])
 
       // // for table sharing
-      console.log(isTableShare)
+      // console.log(isTableShare)
     }
     else {
-      console.log("user did not exist")
+      // console.log("user did not exist")
       setshowErrorMsg(true)
     }
   }
@@ -193,15 +193,15 @@ const delData = async(individual_id) => {
 
   // API call to actually share a root individual and their descendants 
   const collaboratorEditing = async(id) => {
-    console.log("in share function")
-    console.log(collabID)
+    // console.log("in share function")
+    // console.log(collabID)
     if (isTableShare == true) {
       const result = await axios.post (`http://localhost:5000/api2/share/${shareStart}/${treeIdentif}/${treeName['family_name']}/${id}`, {
         method:'POST',
         headers: { 'Content-Type': 'application/json'},
       });
-      console.log("created tree with tableshare")
-      console.log(result)
+      // console.log("created tree with tableshare")
+      // console.log(result)
     }
 
     // set back to false after share w table
@@ -211,10 +211,10 @@ const delData = async(individual_id) => {
   // option to delete curr tree
   const delTree = () => {
     if (window.confirm("Deleting this tree will also delete all data related to the current tree. If this person exists in any other family trees, them and their descendants will also be deleted. Are you sure you want to delete this tree?")) {
-      console.log("DELETE THE TREE")
+      // console.log("DELETE THE TREE")
     }
     else {
-      console.log("Do not delete tree")
+      // console.log("Do not delete tree")
     }
   }
 
