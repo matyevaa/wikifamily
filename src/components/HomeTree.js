@@ -264,7 +264,7 @@ const HomeTree = (props) => {
   }
 
   const addSpouse = (array, id, data) => {
-    return array.map((o) =>
+    return !array ? null :array.map((o) =>
       o.id === id
         ? {
             ...o,
@@ -296,7 +296,7 @@ const HomeTree = (props) => {
   };
 
   const editNode = (array, id, data) =>
-    array.map((o) =>
+    !array ? null :array.map((o) =>
       o.id === id
         ? {
             ...o,
@@ -331,7 +331,7 @@ const HomeTree = (props) => {
     );
 
   const editNodeSpouse = (array, id, data) =>
-    array.map((o) =>
+    !array ? null :array.map((o) =>
       o.id === id
         ? {
             ...o,
@@ -472,10 +472,11 @@ const HomeTree = (props) => {
   };
 
   const update = (array, id, object) =>
-    array.map((o) =>
+    !array ? null: array.map((o) =>
+      
       o.id === id
         ? { ...o, children: [...o.children, { ...object, pId: o?.id }] }
-        : { ...o, children: update(o.children, id, object) }
+        : /* o.children == null? null: */ { ...o, children: update(o.children, id, object) }
     );
 
   console.log("selectedData", selectedData);
@@ -515,7 +516,11 @@ const HomeTree = (props) => {
       setFamilyMember(false);
     } else if (typeId === 1) {
       console.log("type 1 update/add child")
+
+      console.log("update array: ", nodes)
+
       const newArray = update(nodes, selectedId, newNode);
+
       savePerson(data1, 0)
 
       
