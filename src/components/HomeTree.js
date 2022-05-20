@@ -34,6 +34,7 @@ const HomeTree = (props) => {
   var collabID = props.collab;
   const [treeviewShare, settreeviewShare] = useState(false);
   const [idtoshare, setidtoshare] = useState("");
+  const [editOrAdd, seteditOrAdd] = useState(0) // 0 is not set, 4 is edit, 1 or 2 is add
   // SHARING VARS END
 
   // console.log("tree id: ", props.treeId.match.params.treeId);
@@ -516,8 +517,7 @@ const HomeTree = (props) => {
       setFamilyMember(false);
     } else if (typeId === 1) {
       console.log("type 1 update/add child")
-
-      console.log("update array: ", nodes)
+      // console.log("update array: ", nodes)
 
       const newArray = update(nodes, selectedId, newNode);
 
@@ -529,14 +529,14 @@ const HomeTree = (props) => {
     } else if (typeId === 4) {
       console.log("type 4 editing")
 
-      console.log("nodes of ppl for edit: ")
-      console.log(nodes)
-      console.log(selectedId)
+      // console.log("nodes of ppl for edit: ")
+      // console.log(nodes)
+      // console.log(selectedId)
       const edited = editNode(nodes, selectedId, data1);
       editIndiv(data1, props.treeId.match.params.treeId, 1)
       
       console.log("ret from editNode")
-      console.log(edited)
+      // console.log(edited)
 
       setEdited(edited);
       setNodes(edited);
@@ -550,6 +550,7 @@ const HomeTree = (props) => {
       setNodes(editedSpouse);
       setFamilyMember(false);
     }
+    seteditOrAdd(0)
     reset();
   };
 
@@ -606,7 +607,7 @@ const HomeTree = (props) => {
   // Only shows the "..." when you want to share an individual
   const sharingShow = (indiv_id) => {
     if (wantShare == true) {
-      return <div className='text' id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id);}}>...</div>
+      // return <div className='text' id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id);}}>...</div>
     }
   }
 
@@ -640,7 +641,7 @@ const HomeTree = (props) => {
                 <div className="relative p-1 rounded-sm">
                   <h3 className="text-sm font-bold text-gray-800">
                     <button className="btn_operation"
-                      onClick={() => handleFamilyMemberShow(announcement.id)}
+                      onClick={() => {handleFamilyMemberShow(announcement.id); seteditOrAdd(announcement.id); console.log("edit or add was ", announcement.id)}}
                       //type="button"
                     >
                       <span className="absolute inset-0" aria-hidden="true" />
@@ -715,6 +716,7 @@ const HomeTree = (props) => {
                   required
                   className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                   placeholder="Jane"
+                  defaultValue={selectedData && editOrAdd == 4? selectedData.label.props.name : ""}
                 />
               </div>
             </li>
@@ -733,6 +735,7 @@ const HomeTree = (props) => {
                   required
                   className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                   placeholder="Doe"
+                  defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.last : ""}
                 />
               </div>
             </li>
@@ -752,6 +755,7 @@ const HomeTree = (props) => {
                   required
                   className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                   placeholder="Male"
+                  defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.gender : ""}
                 />
               </div>
             </li>
@@ -771,6 +775,7 @@ const HomeTree = (props) => {
                   name="dateOfBirth"
                   className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                   placeholder="Doe"
+                  defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.dob : ""}
                 />
               </div>
             </li>
@@ -789,6 +794,7 @@ const HomeTree = (props) => {
                   name="dateOfDeath"
                   className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                   placeholder="Doe"
+                  defaultValue={!selectedData && editOrAdd == 4 ? selectedData.label.props.dod : ""}
                 />
               </div>
             </li>
