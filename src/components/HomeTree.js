@@ -640,9 +640,8 @@ const HomeTree = (props) => {
               <li key={announcement.id} className="py-5">
                 <div className="relative p-1 rounded-sm">
                   <h3 className="text-sm font-bold text-gray-800">
-                    <button className="btn_operation"
+                    <button 
                       onClick={() => {handleFamilyMemberShow(announcement.id); seteditOrAdd(announcement.id); console.log("edit or add was ", announcement.id)}}
-                      //type="button"
                     >
                       <span className="absolute inset-0" aria-hidden="true" />
                       {announcement.title}
@@ -664,7 +663,6 @@ const HomeTree = (props) => {
                 <h3 className="text-sm font-bold text-gray-800">
                   <button
                     onClick={() => handleFamilyMemberShow(5)}
-                    //type="button"
                     className=" hover:text-indigo-500 focus:outline-none font-bold"
                   >
                     <span className="absolute inset-0" aria-hidden="true" />
@@ -754,7 +752,6 @@ const HomeTree = (props) => {
                   {...register("gender")}
                   required
                   className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  placeholder="Male"
                   defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.gender : ""}
                 />
               </div>
