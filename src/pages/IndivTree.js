@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 // ################################################################################
 const IndivTree = (treeId) => {
   const [treeName, setTreeName] = useState(["no data"]);
-  const [showView, setShowView] = useState(false);
+  const [showView, setShowView] = useState(true);
   const [showGraph, setShowGraph] = useState(false);
   const [wantShare, setWantShare] = useState(false);
   const [executeListShare, setexecuteListShare] = useState(false);
@@ -232,7 +232,7 @@ const delData = async(individual_id) => {
         </div>
       </div>
 
-      { showView ? <TreeList list={dataDB} treeId={treeId} family={dataFamily} share={wantShare} collab={sharingInfo}/> : null }
+      { showView ? <TreeList list={dataDB} treeId={treeId} family={dataFamily} share={wantShare} collab={sharingInfo}/> : <p>No current data</p> }
       { showGraph ? <Tree dataDB={dataDB}/> : null }
 
       {dataDB ? console.log("api: ", dataDB) : console.log("no api")}

@@ -36,6 +36,9 @@ const HomeTree = (props) => {
   const [idtoshare, setidtoshare] = useState("");
   const [editOrAdd, seteditOrAdd] = useState(0) // 0 is not set, 4 is edit, 1 or 2 is add
   // SHARING VARS END
+  function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
 
   // console.log("tree id: ", props.treeId.match.params.treeId);
   const treeIdentif = props.treeId.match.params.treeId;
@@ -147,6 +150,8 @@ const HomeTree = (props) => {
   const handleEditModalClose = () => setEditSpouse(false);
   const handleEditModalOpen = () => setEditSpouse(true);
   const handleModalFirstClose = () => setModalFirst(false);
+
+  const [NullChild, setNullChild] = useState(false);
 
   const handleModalFirstShow = () => {
     setModalFirst(true);
@@ -475,22 +480,30 @@ const HomeTree = (props) => {
   const update = (array, id, object) =>
     !array ? null: array.map((o) =>
       
-      o.id === id
-        ? { ...o, children: [...o.children, { ...object, pId: o?.id }] }
-        : selectedData.children == null? { ...o, children: [...o.children, { ...object, pId: selectedData.indiv_id }] } : { ...o, children: update(selectedData.children == null? selectedData.children: o.children, id, object) }
-        // does not work when person has a spouse
-    );
+    o.id === id
+    ? { ...o, children: [...o.children, { ...object, pId: o?.id }] } //o.children == null? null : [...o.children, { ...object, id, object}
+    : selectedData.children == null? { ...o, children: [...o.children, { ...object, pId: selectedData.indiv_id }] } : { ...o, children: update(selectedData.children == null? selectedData.children: o.children, id, object) }
+    // does not work when person has a spouse
+);
+
+// const noChildren = (object, id, children) => {
+//   array.map((o) =>
+//   o.id === id
+//   ? { ...o, children: [...o.children, { ...object, pId: o?.id }] } : null
+//   );
 
   console.log("selectedData", selectedData);
+
+  // TIME DELAY
 
   const onSubmit = (data1) => {
     console.log("curr data optionf or ", data1)
     let uniqueId = uuidv4();
     let newNode = {
-      id: uniqueId,
+      id: x,
       label: (
         <TreeLabel
-          id={uniqueId}
+          id={x = ++x}
           onClick={handleModalFirstShow}
           onClick2={handleEditModalOpen}
           name={data1?.firstName}
@@ -520,12 +533,30 @@ const HomeTree = (props) => {
       console.log("type 1 update/add child")
       // console.log("update array: ", nodes)
 
-      const newArray = update(nodes, selectedId, newNode);
-
-      savePerson(data1, 0)
-
       
-      setNodes(newArray);
+
+        console.log(nodes)
+        const newArray = update(nodes, selectedId, newNode);
+        console.log(newArray)
+        savePerson(data1, 0)
+        setNodes(newArray);
+      if (selectedData.children == null) {
+        console.log("parent has not curr children")
+        setNullChild(true)
+    
+        // parent has no children, add child to DB before list view
+        // savePerson(data1, 0)
+        console.log("should refresh")
+        setNullChild(false)
+        // refresh page
+        setTimeout(() => {
+          console.log("should wait six sec")
+          window.location.reload(false);
+        }, 3000);
+        
+      }
+      
+      
       setFamilyMember(false);
     } else if (typeId === 4) {
       console.log("type 4 editing")
@@ -537,7 +568,6 @@ const HomeTree = (props) => {
       editIndiv(data1, props.treeId.match.params.treeId, 1)
       
       console.log("ret from editNode")
-      // console.log(edited)
 
       setEdited(edited);
       setNodes(edited);
@@ -641,8 +671,9 @@ const HomeTree = (props) => {
               <li key={announcement.id} className="py-5">
                 <div className="relative p-1 rounded-sm">
                   <h3 className="text-sm font-bold text-gray-800">
-                    <button 
+                    <button className="btn_operation"
                       onClick={() => {handleFamilyMemberShow(announcement.id); seteditOrAdd(announcement.id); console.log("edit or add was ", announcement.id)}}
+                      //type="button"
                     >
                       <span className="absolute inset-0" aria-hidden="true" />
                       {announcement.title}
@@ -664,6 +695,7 @@ const HomeTree = (props) => {
                 <h3 className="text-sm font-bold text-gray-800">
                   <button
                     onClick={() => handleFamilyMemberShow(5)}
+                    //type="button"
                     className=" hover:text-indigo-500 focus:outline-none font-bold"
                   >
                     <span className="absolute inset-0" aria-hidden="true" />
@@ -704,7 +736,7 @@ const HomeTree = (props) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="FirstName"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
                 >
                   First Name
                 </label>
@@ -713,7 +745,7 @@ const HomeTree = (props) => {
                   name="firstName"
                   {...register("firstName")}
                   required
-                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                   placeholder="Jane"
                   defaultValue={selectedData && editOrAdd == 4? selectedData.label.props.name : ""}
                 />
@@ -723,7 +755,7 @@ const HomeTree = (props) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="lastName"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
                 >
                   Last Name
                 </label>
@@ -732,7 +764,7 @@ const HomeTree = (props) => {
                   name="lastName"
                   {...register("lastName")}
                   required
-                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                   placeholder="Doe"
                   defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.last : ""}
                 />
@@ -743,7 +775,7 @@ const HomeTree = (props) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="gender"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
                 >
                   Gender
                 </label>
@@ -752,7 +784,8 @@ const HomeTree = (props) => {
                   name="gender"
                   {...register("gender")}
                   required
-                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                  placeholder="Male"
                   defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.gender : ""}
                 />
               </div>
@@ -762,7 +795,7 @@ const HomeTree = (props) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="dateOfBirth"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
                 >
                   Date of Birth
                 </label>
@@ -771,7 +804,7 @@ const HomeTree = (props) => {
                   required
                   type="date"
                   name="dateOfBirth"
-                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                   placeholder="Doe"
                   defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.dob : ""}
                 />
@@ -781,7 +814,7 @@ const HomeTree = (props) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="dateOfDeath"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
                 >
                   Date of Death
                 </label>
@@ -790,7 +823,7 @@ const HomeTree = (props) => {
                   required
                   type="date"
                   name="dateOfDeath"
-                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                   placeholder="Doe"
                   defaultValue={!selectedData && editOrAdd == 4 ? selectedData.label.props.dod : ""}
                 />

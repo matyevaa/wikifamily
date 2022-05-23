@@ -332,27 +332,27 @@ def add_person_w_treeID(treeId):
         if p == "":
             p = "0"
 
-        cursor.execute('SELECT * FROM individual WHERE first_name = %s', (fn,))
-        result = cursor.fetchone()
+        # cursor.execute('SELECT * FROM individual WHERE first_name = %s', (fn,))
+        # result = cursor.fetchone()
 
-        if result:
-            msg = 'Such a person already exists in your family!'
-        elif result is None:
-            # check if the current tree was shared from another tree
-           cursor.execute("select shared_from from family where family_id = %s;", (fid,))
-           listIds = list(cursor.fetchall())
-           print(listIds)
+        # if result:
+        #     msg = 'Such a person already exists in your family!'
+        # elif result is None:
+        # check if the current tree was shared from another tree
+        cursor.execute("select shared_from from family where family_id = %s;", (fid,))
+        listIds = list(cursor.fetchall())
+        print(listIds)
 
-            #if the current tree is a shared tree concat the treed it should exist in to the curr tree var fid
-            # fid will be in form ["ID,ID,ID"]
-           if (listIds != ""):
-               print("added new person list of ids is: ")
-               print(listIds)
-               for id in listIds:
-                   print(fid)
-                   print(id[0])
-                   if(id[0] != None):
-                       fid += "," + id[0]
+        #if the current tree is a shared tree concat the treed it should exist in to the curr tree var fid
+        # fid will be in form ["ID,ID,ID"]
+        if (listIds != ""):
+            print("added new person list of ids is: ")
+            print(listIds)
+            for id in listIds:
+                print(fid)
+                print(id[0])
+                if(id[0] != None):
+                    fid += "," + id[0]
 
         # insert user to DB
         cursor.execute('''INSERT INTO individual (first_name, last_name, info, gender, birth, death, family_id, parent, spouse, family_ids) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (fn, ls, i, g, b, d,fid,p,sp,fid))
