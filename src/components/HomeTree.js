@@ -481,16 +481,10 @@ const HomeTree = (props) => {
     !array ? null: array.map((o) =>
       
     o.id === id
-    ? { ...o, children: [...o.children, { ...object, pId: o?.id }] } //o.children == null? null : [...o.children, { ...object, id, object}
-    : selectedData.children == null? { ...o, children: [...o.children, { ...object, pId: selectedData.indiv_id }] } : { ...o, children: update(selectedData.children == null? selectedData.children: o.children, id, object) }
-    // does not work when person has a spouse
+    ? { ...o, children: [...o.children, { ...object, pId: o?.id }] }
+    : { ...o, children: update(selectedData.children == null? selectedData.children : o.children, id, object) }
+    // does not work when person only has one child
 );
-
-// const noChildren = (object, id, children) => {
-//   array.map((o) =>
-//   o.id === id
-//   ? { ...o, children: [...o.children, { ...object, pId: o?.id }] } : null
-//   );
 
   console.log("selectedData", selectedData);
 
@@ -498,7 +492,6 @@ const HomeTree = (props) => {
 
   const onSubmit = (data1) => {
     console.log("curr data optionf or ", data1)
-    let uniqueId = uuidv4();
     let newNode = {
       id: x,
       label: (
@@ -533,13 +526,14 @@ const HomeTree = (props) => {
       console.log("type 1 update/add child")
       // console.log("update array: ", nodes)
 
-      
-
         console.log(nodes)
         const newArray = update(nodes, selectedId, newNode);
         console.log(newArray)
         savePerson(data1, 0)
         setNodes(newArray);
+
+        // for adding a new child to a parent w out children or when adding a child to a parent w a spouse
+        // || selectedData.props.spouse == null
       if (selectedData.children == null) {
         console.log("parent has not curr children")
         setNullChild(true)
