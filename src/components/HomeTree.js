@@ -669,9 +669,8 @@ const checkSsz = (children) => {
               <li key={announcement.id} className="py-5">
                 <div className="relative p-1 rounded-sm">
                   <h3 className="text-sm font-bold text-gray-800">
-                    <button className="btn_operation"
+                    <button 
                       onClick={() => {handleFamilyMemberShow(announcement.id); seteditOrAdd(announcement.id); console.log("edit or add was ", announcement.id)}}
-                      //type="button"
                     >
                       <span className="absolute inset-0" aria-hidden="true" />
                       {announcement.title}
@@ -693,7 +692,6 @@ const checkSsz = (children) => {
                 <h3 className="text-sm font-bold text-gray-800">
                   <button
                     onClick={() => handleFamilyMemberShow(5)}
-                    //type="button"
                     className=" hover:text-indigo-500 focus:outline-none font-bold"
                   >
                     <span className="absolute inset-0" aria-hidden="true" />
@@ -707,7 +705,6 @@ const checkSsz = (children) => {
                 <h3 className="text-sm font-bold text-gray-800">
                   <button
                     onClick={() => {removeSpouse(nodes, selectedId); delData(selectedData.label.props.spouseID); console.log("clicked delete spouse: ", nodes, " here is curr selected ", selectedData)}}
-                    //type="button"
                     className=" hover:text-indigo-500 focus:outline-none font-bold"
                   >
 
@@ -734,7 +731,7 @@ const checkSsz = (children) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="FirstName"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
                 >
                   First Name
                 </label>
@@ -743,7 +740,7 @@ const checkSsz = (children) => {
                   name="firstName"
                   {...register("firstName")}
                   required
-                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Jane"
                   defaultValue={selectedData && editOrAdd == 4? selectedData.label.props.name : ""}
                 />
@@ -753,7 +750,7 @@ const checkSsz = (children) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="lastName"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
                 >
                   Last Name
                 </label>
@@ -762,7 +759,7 @@ const checkSsz = (children) => {
                   name="lastName"
                   {...register("lastName")}
                   required
-                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Doe"
                   defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.last : ""}
                 />
@@ -773,7 +770,7 @@ const checkSsz = (children) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="gender"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
                 >
                   Gender
                 </label>
@@ -782,8 +779,7 @@ const checkSsz = (children) => {
                   name="gender"
                   {...register("gender")}
                   required
-                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
-                  placeholder="Male"
+                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.gender : ""}
                 />
               </div>
@@ -793,7 +789,7 @@ const checkSsz = (children) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="dateOfBirth"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
                 >
                   Date of Birth
                 </label>
@@ -802,7 +798,7 @@ const checkSsz = (children) => {
                   required
                   type="date"
                   name="dateOfBirth"
-                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Doe"
                   defaultValue={selectedData && editOrAdd == 4 ? selectedData.label.props.dob : ""}
                 />
@@ -812,7 +808,7 @@ const checkSsz = (children) => {
               <div className="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
                 <label
                   htmlFor="dateOfDeath"
-                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
+                  className="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs text-base font-medium text-gray-900"
                 >
                   Date of Death
                 </label>
@@ -821,7 +817,7 @@ const checkSsz = (children) => {
                   required
                   type="date"
                   name="dateOfDeath"
-                  className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                  className="shadow appearance-none border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Doe"
                   defaultValue={!selectedData && editOrAdd == 4 ? selectedData.label.props.dod : ""}
                 />
