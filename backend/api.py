@@ -581,6 +581,30 @@ def create_empty_tree():
     cursor.execute(query, data)
     cnx.commit()
 
+    # Add an individual to the new family tree
+    query='INSERT INTO individual (first_name, last_name, gender, info, birth, death,family_id, children, parent, spouse, family_ids) VALUES ("Jane", "Doe", "","Please do not delete. Edit this person",  "", "", %s, "", "NULL", "", %s);'
+    data = (newlyCreatedTree[0],newlyCreatedTree[0],)
+
+    cursor.execute(query, data)
+    cnx.commit()
+
+    # update the parent to NULL so it is the root of the tree
+    query='SELECT individual_id from individual WHERE FIND_IN_SET(%s, family_ids)' #update individual set parent = NULL where individual_id = #;
+    print("CREATED TREE IS ", newlyCreatedTree[0])
+    data = (newlyCreatedTree[0],)
+    cursor.execute(query, data)
+
+    # put the returned info in list format
+    createdindiv = list(cursor.fetchall())
+    # get tot list len of the returned ids
+    lenindiv = len(createdindiv)
+
+    # update the parent to NULL
+    query='UPDATE individual SET parent = NULL WHERE individual_id = %s' #update individual set parent = NULL where individual_id = 3184;
+    data = (createdindiv[lenindiv-1][0],)
+    cursor.execute(query, data)
+    cnx.commit()
+
     # closes DB connections
     cursor.close()
     cnx.close()
