@@ -481,10 +481,14 @@ const HomeTree = (props) => {
     !array ? null: array.map((o) =>
       
     o.id === id
-    ? { ...o, children: [...o.children, { ...object, pId: o?.id }] }
+    ? o.children == null? { ...o, children: [o.children, { ...object, pId: o?.id }] }:  { ...o, children: [...o.children, { ...object, pId: o?.id }] }
     : { ...o, children: update(selectedData.children == null? selectedData.children : o.children, id, object) }
     // does not work when person only has one child
 );
+
+const checkSsz = (children) => {
+
+}
 
   console.log("selectedData", selectedData);
 
