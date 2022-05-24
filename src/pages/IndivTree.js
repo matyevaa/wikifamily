@@ -6,10 +6,10 @@ import { Link } from "react-router-dom";
 
 // ################################################################################
 // Description:  Page for an individual tree. Has a table and list view with add,
-//               delete, and edit functionalities. Main page for sharing individuals 
-// 
+//               delete, and edit functionalities. Main page for sharing individuals
+//
 // input:        tree_id -- the current tree ID
-// 
+//
 // return:       table and list view for the family tree
 // ################################################################################
 const IndivTree = (treeId) => {
@@ -29,7 +29,7 @@ const IndivTree = (treeId) => {
   const [dataDB, setData] = useState([]);
   const [dataFamily, setDataFamily] = useState([]);
 
-  // link to form for adding a new individual 
+  // link to form for adding a new individual
   let addLink = "/add/" + treeId.location['pathname'].slice(8,(treeId.location['pathname']).length - 7)
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const IndivTree = (treeId) => {
     // console.log(result);
 };
 
-// gets list of individuals from the current tree with the algorithm 
+// gets list of individuals from the current tree with the algorithm
 const getData = async() => {
   const result = await axios (`http://localhost:5000/api1/create/${treeIdentif}`, {
     headers: { 'Content-Type': 'application/json'}
@@ -62,7 +62,7 @@ const getData = async() => {
   // console.log(dataDB)
 };
 
-// gets list of individuals from current tree 
+// gets list of individuals from current tree
 const getWholeFamily = async() => {
   const result = await axios (`http://localhost:5000/api1/create-family/${treeIdentif}`, {
     headers: { 'Content-Type': 'application/json'}
@@ -83,7 +83,7 @@ const delData = async(individual_id) => {
   getData();
 };
 
-  // sets the id of the root individual to share 
+  // sets the id of the root individual to share
   const sharingStartEnd = (id) => {
       setShareStart(id)
       // console.log("startingid: " + id)
@@ -106,7 +106,7 @@ const delData = async(individual_id) => {
     if (wantShare == false || wantShare == undefined) {
       // dont show anything
     }
-    else { // show instructions on how to share an individual 
+    else { // show instructions on how to share an individual
       return <form id="target" action={"http://localhost:3005/creator=" + JSON.parse(localStorage.getItem("userId")) +"/works"} encType="multipart/form-data" onSubmit={createEmpty}>
           <p className='text'>To share an individual first enter the email or ID of your chosen collaborator and click 'Verify Collaborator'. This will verify whether
             the collaborator is registered with WikiFamily.
@@ -128,7 +128,7 @@ const delData = async(individual_id) => {
     }
   }
 
-  // whether to show 'share tree' and 'restart info' OR check if the collaborator exists 
+  // whether to show 'share tree' and 'restart info' OR check if the collaborator exists
   const buttonShow = () => {
     if (collaboratorExist == true) {
         return <div>
@@ -141,7 +141,7 @@ const delData = async(individual_id) => {
     }
   }
 
-  // ch bt true and false for wanting to share an individual 
+  // ch bt true and false for wanting to share an individual
   const changeConditon = () => {
     if (wantShare == false || wantShare == undefined) {
         setWantShare(true)
@@ -191,7 +191,7 @@ const delData = async(individual_id) => {
     }
   }
 
-  // API call to actually share a root individual and their descendants 
+  // API call to actually share a root individual and their descendants
   const collaboratorEditing = async(id) => {
     // console.log("in share function")
     // console.log(collabID)
@@ -232,7 +232,7 @@ const delData = async(individual_id) => {
         </div>
       </div>
 
-      { showView ? <TreeList list={dataDB} treeId={treeId} family={dataFamily} share={wantShare} collab={sharingInfo}/> : <p>No current data</p> }
+      { showView ? <TreeList list={dataDB} treeId={treeId} family={dataFamily} share={wantShare} collab={sharingInfo}/> : null }
       { showGraph ? <Tree dataDB={dataDB}/> : null }
 
       {dataDB ? console.log("api: ", dataDB) : console.log("no api")}
