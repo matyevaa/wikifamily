@@ -13,7 +13,8 @@
     * `npm run build` Builds the app for production to the `build` folder.\
         * It correctly bundles React in production mode and optimizes the build for the best performance.
 
-## Access the project code [HERE] (https://github.com/matyevaa/wikifamily)
+## Access the project code 
+[HERE](https://github.com/matyevaa/wikifamily)
 
 ## Git clone the project
 
