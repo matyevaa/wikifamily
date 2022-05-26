@@ -10,10 +10,7 @@ import axios from 'axios';
 
 // ################################################################################
 // Description:  Functions for tree list view
-//
-// input:
-//
-// return:
+// return: tree structure with individuals' data and pop up modals
 // ################################################################################
 const HomeTree = (props) => {
   const [editSpouse, setEditSpouse] = useState(false);
