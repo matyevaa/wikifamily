@@ -1,5 +1,8 @@
 # WikiFamily Project
 
+## About
+WikiFamily project is a user-friendly website that serves as a mean of understanding an individual’s genealogy and providing a great way to encode family history for posterity. The website is a tool for users to create, modify, and view their or an individual’s family tree.
+
 ## Frameworks
 * Python Flask
 * ReactJS
