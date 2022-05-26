@@ -27,6 +27,16 @@ input {
   text-decoration: underline;
 }
 
+#chooseActionName {
+  color: teal;
+  font-weight: bold;
+}
+
+#chooseAction {
+  font-size: 18px;
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
 
 .line {
   width: 3rem;

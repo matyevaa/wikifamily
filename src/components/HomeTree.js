@@ -87,7 +87,7 @@ const HomeTree = (props) => {
     });
     }
     console.log("editIndiv: will be editing ", userInf.indiv_id)
-    
+
   };
 
   // Will add a new individual to the DB -- type: 1 then spouse, 0 then child
@@ -128,7 +128,7 @@ const HomeTree = (props) => {
       spouse: selectedData.indiv_id
     });
     }
-    
+
   }
 
 
@@ -479,7 +479,7 @@ const HomeTree = (props) => {
 
   const update = (array, id, object) =>
     !array ? null: array.map((o) =>
-      
+
     o.id === id
     ? o.children == null? { ...o, children: [o.children, { ...object, pId: o?.id }] }:  { ...o, children: [...o.children, { ...object, pId: o?.id }] }
     : { ...o, children: update(selectedData.children == null? selectedData.children : o.children, id, object) }
@@ -541,7 +541,7 @@ const checkSsz = (children) => {
       if (selectedData.children == null) {
         console.log("parent has not curr children")
         setNullChild(true)
-    
+
         // parent has no children, add child to DB before list view
         // savePerson(data1, 0)
         console.log("should refresh")
@@ -551,10 +551,10 @@ const checkSsz = (children) => {
           console.log("should wait six sec")
           window.location.reload(false);
         }, 3000);
-        
+
       }
-      
-      
+
+
       setFamilyMember(false);
     } else if (typeId === 4) {
       console.log("type 4 editing")
@@ -564,7 +564,7 @@ const checkSsz = (children) => {
       // console.log(selectedId)
       const edited = editNode(nodes, selectedId, data1);
       editIndiv(data1, props.treeId.match.params.treeId, 1)
-      
+
       console.log("ret from editNode")
 
       setEdited(edited);
@@ -575,7 +575,7 @@ const checkSsz = (children) => {
       const editedSpouse = editNodeSpouse(nodes, selectedId, data1);
       editIndiv(data1, treeIdentif, 2)
 
-      
+
       setNodes(editedSpouse);
       setFamilyMember(false);
     }
@@ -664,21 +664,24 @@ const checkSsz = (children) => {
     <div>
       <ModalComponent show={modalFirst} onClose={handleModalFirstClose}>
         <div>
-          <ul className="-my-5 divide-y divide-gray-200">
-            {announcements().map((announcement) => (
-              <li key={announcement.id} className="py-5">
-                <div className="relative p-1 rounded-sm">
-                  <h3 className="text-sm font-bold text-gray-800">
-                    <button 
-                      onClick={() => {handleFamilyMemberShow(announcement.id); seteditOrAdd(announcement.id); console.log("edit or add was ", announcement.id)}}
-                    >
-                      <span className="absolute inset-0" aria-hidden="true" />
-                      {announcement.title}
-                    </button>
-                  </h3>
-                </div>
-              </li>
-            ))}
+          <ul className="actionsList">
+            <center>
+              <p id="chooseAction">Choose an action for the individual <span id="chooseActionName">{selectedData?.label.props.name ? selectedData.label.props.name : null}</span>:</p>
+              {announcements().map((announcement) => (
+                <li key={announcement.id} className="py-5">
+                  <div className="relative p-1 rounded-sm">
+                    <h3 className="text-sm font-bold text-gray-800">
+                      <button
+                        onClick={() => {handleFamilyMemberShow(announcement.id); seteditOrAdd(announcement.id); console.log("edit or add was ", announcement.id)}}
+                      >
+                        <span className="absolute inset-0" aria-hidden="true" />
+                        {announcement.title}
+                      </button>
+                    </h3>
+                  </div>
+                </li>
+              ))}
+            </center>
           </ul>
         </div>
       </ModalComponent>
@@ -687,39 +690,38 @@ const checkSsz = (children) => {
       <ModalComponent show={editSpouse} onClose={handleEditModalClose}>
         <div>
           <ul className="-my-5 divide-y divide-gray-200">
-            <li className="py-5">
-              <div className="relative p-1 rounded-sm">
-                <h3 className="text-sm font-bold text-gray-800">
-                  <button
-                    onClick={() => handleFamilyMemberShow(5)}
-                    className=" hover:text-indigo-500 focus:outline-none font-bold"
-                  >
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    Edit Spouse
-                  </button>
-                </h3>
-              </div>
-            </li>
-            <li className="py-5">
-              <div className="relative p-1 rounded-sm">
-                <h3 className="text-sm font-bold text-gray-800">
-                  <button
-                    onClick={() => {removeSpouse(nodes, selectedId); delData(selectedData.label.props.spouseID); console.log("clicked delete spouse: ", nodes, " here is curr selected ", selectedData)}}
-                    className=" hover:text-indigo-500 focus:outline-none font-bold"
-                  >
-
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    Remove Spouse
-                  </button>
-                </h3>
-              </div>
-            </li>
+            <center>
+              <p id="chooseAction">Choose an action for the individual <span id="chooseActionName">{selectedData?.label.props.spouse ? selectedData.label.props.spouse : null}</span>:</p>
+              <li className="py-5">
+                <div className="relative p-1 rounded-sm">
+                  <h3 className="text-sm font-bold text-gray-800">
+                    <button
+                      onClick={() => handleFamilyMemberShow(5)}
+                      className=" hover:text-indigo-500 focus:outline-none font-bold"
+                    >
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      Edit Spouse
+                    </button>
+                  </h3>
+                </div>
+              </li>
+              <li className="py-5">
+                <div className="relative p-1 rounded-sm">
+                  <h3 className="text-sm font-bold text-gray-800">
+                    <button
+                      onClick={() => {removeSpouse(nodes, selectedId); delData(selectedData.label.props.spouseID); console.log("clicked delete spouse: ", nodes, " here is curr selected ", selectedData)}}
+                      className=" hover:text-indigo-500 focus:outline-none font-bold"
+                    >
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      Remove Spouse
+                    </button>
+                  </h3>
+                </div>
+              </li>
+            </center>
           </ul>
         </div>
       </ModalComponent>
-
-      {/*input fields when user selects options */}
-      {/*className="add_form"*/}
 
       <ModalComponent show={familyMember} onClose={handleFamilyMemberClose}>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
