@@ -5,7 +5,7 @@ body {
   bottom: 0;
 }
 
-span, p {
+span, p, li {
   color: black;
 }
 
@@ -27,6 +27,39 @@ input {
   text-decoration: underline;
 }
 
+.info_btn {
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.info_icon {
+  color: black;
+  margin: 0;
+  min-width: 30px;
+}
+
+.info_btn:hover {
+  padding: 0;
+  background-color: transparent;
+}
+
+.infoModal {
+  background-color: green;
+  position: absolute;
+  width: auto;
+}
+
+#chooseActionName {
+  color: teal;
+  font-weight: bold;
+}
+
+#chooseAction {
+  font-size: 18px;
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
 
 .line {
   width: 3rem;
@@ -130,9 +163,9 @@ input {
 }
 
 .list_info {
-  width: 50%;
+  width: 70%;
   float: right;
-  margin-left: 2rem;
+  margin: 2rem;
 }
 
 #centralize {
@@ -169,6 +202,10 @@ input {
   cursor: pointer;
 }
 
+#add_btn {
+  padding: 0.9rem;
+}
+
 #btn, .add_btn, .edit_btn {
   background-color: teal;
   border: none;
@@ -196,6 +233,10 @@ input {
   justify-content: center;
 }
 
+#td_info {
+  width: 25rem;
+}
+
 .intextRef {
   text-decoration: none;
   color: #3366CC;
@@ -217,8 +258,10 @@ input {
 }
 
 .logo {
-  width: 200px;
-  height: 200px;
+  min-width: 200px;
+  min-height: 200px;
+  max-width: 200px;
+  max-height: 200px;
 }
 
 .containerStyles {
@@ -301,6 +344,8 @@ input {
 
 #family_size {
   text-decoration: underline;
+  margin-bottom: 1rem;
+  margin-left: 1rem;
 }
 
 .result_table {
@@ -398,10 +443,11 @@ li a:hover {
 #log_gmail {
   float: right;
   cursor: pointer !important;
-  margin-top: -35px;
+  margin-top: -15px;
   margin-right: 4.5rem;
   width: auto;
   height: auto;
+  background-color: transparent;
 }
 
 #log_gmail:hover {
@@ -414,7 +460,6 @@ li a:hover {
   cursor: default;
   float: left;
   right: 5rem;
-  margin-bottom: 2rem;
   width: auto;
   height: auto;
 }
@@ -490,7 +535,6 @@ li a:hover {
   text-align: center;
 }
 
-
 .btns {
   background-color: teal;
   border: none;
@@ -519,7 +563,7 @@ li a:hover {
 }
 
 .class_btn {
-  margin: 2rem;
+  margin: 1rem;
 }
 
 #table_btns {
