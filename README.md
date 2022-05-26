@@ -17,7 +17,7 @@ WikiFamily project is a user-friendly website that serves as a mean of understan
         * It correctly bundles React in production mode and optimizes the build for the best performance.
 
 ## Access the project code 
-[HERE](https://github.com/matyevaa/wikifamily)
+[Click here to see the project repository](https://github.com/matyevaa/wikifamily)
 
 ## Git clone the project
 
