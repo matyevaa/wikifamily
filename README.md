@@ -155,7 +155,9 @@ WikiFamily project is a user-friendly website that serves as a mean of understan
     * "web-vitals": "^1.1.2"
 
 ## Unrealized features
-* LIST HERE
+* Uploading pictures of individuals through the database and displaying them on individual's detailed information window on Tree View page
+* Displaying the tree list view while editing the individuals to let the user see which person they are editing
+* Enabling CRUD operations for tree graph option
 
 
 Our project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
