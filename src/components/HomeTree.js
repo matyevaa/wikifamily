@@ -554,7 +554,6 @@ const checkSsz = (children) => {
         
       }
       
-      
       setFamilyMember(false);
     } else if (typeId === 4) {
       console.log("type 4 editing")
@@ -636,13 +635,13 @@ const checkSsz = (children) => {
   // Only shows the "..." when you want to share an individual
   const sharingShow = (indiv_id) => {
     if (wantShare == true) {
-      // return <div className='text' id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id);}}>...</div>
+      return <div className='text' id="sharing_id" defaultValue={indiv_id} onClick={ () => {testSharing(indiv_id);}}>...</div>
     }
   }
 
   // Only share individuals when sharing == true, and have all necessary data (tree id, collaborator ID, tree name)
   const sharingFunct = () => {
-    // console.log("in HomeTree " + collabID[0] + " " + idtoshare + " " + treeviewShare)
+    console.log("in HomeTree " + collabID[0] + " " + idtoshare + " " + treeviewShare)
 
     if (collabID[0] == true && idtoshare != undefined && treeviewShare == true) {
       const result = axios.post (`http://localhost:5000/api2/share/${idtoshare}/${collabID[1]}/${collabID[2]}/${collabID[3]}`, {
@@ -651,7 +650,7 @@ const checkSsz = (children) => {
     });
 
     // reset tree view sharing to false
-    // console.log("created tree with treelist")
+    console.log("created tree with treelist")
     // console.log(result)
     settreeviewShare(false)
     collabID[0] = false

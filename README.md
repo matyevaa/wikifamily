@@ -16,6 +16,11 @@
 ## Access the project code 
 [HERE](https://github.com/matyevaa/wikifamily)
 
+## Access the deployed version
+[WikiFamilyfront](https://wikifamilyfront.herokuapp.com/)
+[Wikifamily](https://wikifamily.herokuapp.com/)
+[wikifamily-login](https://wikifamily-login.herokuapp.com/)
+
 ## Git clone the project
 
 ## How to Run the project...
