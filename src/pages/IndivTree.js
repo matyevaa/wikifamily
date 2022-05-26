@@ -137,7 +137,7 @@ const delData = async(individual_id) => {
           </div>
     }
     else {
-      return <button className="btn add_btn " type="submit">Verify Collaborator</button>
+      return <button className="btns" type="submit">Verify Collaborator</button>
     }
   }
 

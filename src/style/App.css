@@ -436,9 +436,6 @@ li a:hover {
   text-decoration: underline;
 }
 
-#log_gmail:hover {
-  background-color: #f3f3f3 !important;
-}
 
 #log_gmail {
   float: right;
@@ -449,6 +446,7 @@ li a:hover {
   height: auto;
   background-color: transparent;
 }
+
 
 #log_gmail:hover {
   text-decoration: underline;

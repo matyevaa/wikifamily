@@ -60,7 +60,7 @@ const [treeElements, updateTree] = useState([])
           <label>Family Tree Name</label>
           <input ref={parentRef} type="text" placeholder="Enter a family tree name..." name="parent" value={parent} onChange={(e) => setParent(e.target.value)}/>
         </div>
-          <button className="add_btn" type="submit"  onClick={handleAddPerson}>Create Tree</button>
+          <button className="btns" type="submit"  onClick={handleAddPerson}>Create Tree</button>
       </form>
     </div>
   );
