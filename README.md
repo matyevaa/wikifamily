@@ -20,9 +20,9 @@ WikiFamily project is a user-friendly website that serves as a mean of understan
 [Click here to see the project repository](https://github.com/matyevaa/wikifamily)
 
 ## Access the deployed version
-[WikiFamilyfront](https://wikifamilyfront.herokuapp.com/)
-[Wikifamily](https://wikifamily.herokuapp.com/)
-[wikifamily-login](https://wikifamily-login.herokuapp.com/)
+* WikiFamily frontned --> [WikiFamilyfront](https://wikifamilyfront.herokuapp.com/)
+* WikiFamily tree backend API --> [Wikifamily](https://wikifamily.herokuapp.com/)
+* WikiFamily login API --> [wikifamily-login](https://wikifamily-login.herokuapp.com/)
 
 ## Git clone the project
 
