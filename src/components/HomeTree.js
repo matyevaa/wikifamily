@@ -10,10 +10,7 @@ import axios from 'axios';
 
 // ################################################################################
 // Description:  Functions for tree list view
-//
-// input:
-//
-// return:
+// return: tree structure with individuals' data and pop up modals
 // ################################################################################
 const HomeTree = (props) => {
   const [editSpouse, setEditSpouse] = useState(false);
@@ -87,7 +84,7 @@ const HomeTree = (props) => {
     });
     }
     console.log("editIndiv: will be editing ", userInf.indiv_id)
-    
+
   };
 
   // Will add a new individual to the DB -- type: 1 then spouse, 0 then child
@@ -128,7 +125,7 @@ const HomeTree = (props) => {
       spouse: selectedData.indiv_id
     });
     }
-    
+
   }
 
 
@@ -140,7 +137,7 @@ const HomeTree = (props) => {
   var result_id = [];
 
   const [selectedIndivId, setSelectedIndivId] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState(null); 
   const [selectedData, setSelectedData] = useState(null);
 
   const [familyMember, setFamilyMember] = useState(false);
@@ -197,6 +194,7 @@ const HomeTree = (props) => {
     return children_array.reverse()[0];
   };
 
+  /*Declaring and setting the tree with appropriate info */
   const data = [
     {
     id: x,
@@ -269,16 +267,18 @@ const HomeTree = (props) => {
       });
   }
 
+
+  //Add spouse by assigning values to spouse variables of treelabel object and then rerender the treelabel element
   const addSpouse = (array, id, data) => {
     return !array ? null :array.map((o) =>
       o.id === id
         ? {
             ...o,
-            spouse: data?.firstName,  //items
-            spouseLName: data?.lastName, //items
-            spouseDOB: data?.dateOfBirth, //items
-            spouseDOD: data?.dateOfDeath, //items
-            spouseGender: data?.gender, //items
+            spouse: data?.firstName,  
+            spouseLName: data?.lastName, 
+            spouseDOB: data?.dateOfBirth, 
+            spouseDOD: data?.dateOfDeath, 
+            spouseGender: data?.gender, 
             spouseId: o.id,
             label: (
               <TreeLabel
@@ -301,6 +301,7 @@ const HomeTree = (props) => {
     );
   };
 
+  //Edit family member by changing values of the family member's variables and then rerender the treelabel element
   const editNode = (array, id, data) =>
     !array ? null :array.map((o) =>
       o.id === id
@@ -336,6 +337,7 @@ const HomeTree = (props) => {
         : { ...o, children: editNode(o.children, id, data) }
     );
 
+  //Edit family member spouse by changing values of the family member's spouse variables and then rerender the treelabel element  
   const editNodeSpouse = (array, id, data) =>
     !array ? null :array.map((o) =>
       o.id === id
@@ -366,6 +368,7 @@ const HomeTree = (props) => {
         : { ...o, children: editNodeSpouse(o.children, id, data) }
     );
 
+  
   const handleFamilyMemberShow = (id, result_id) => {
     console.log("in handle modal, result_id is: ", result_id);
     reset({});
@@ -406,10 +409,14 @@ const HomeTree = (props) => {
     }
   };
 
+  /* Based on the if the the family member is the root or not, display the following options to the user when the user presses the + button 
+  by the family member. 
+  
+  Root node doesn't have option to be removed, and add spouse will not show up as an option if family member already has spouse*/
   const announcements = () => {
     console.log("SELECTED", selectedData?.label.props.spouse ? selectedData.label.props.spouse : null);
-    if (selectedId === 0) {
-      if (selectedData?.label.props.spouse === null) {
+    if (selectedId === 0) { {/*if selected family member is the root node*/}
+      if (selectedData?.label.props.spouse === null) {  {/*if selected family member doesn't have a a spouse... */}
         return [
           {
             id: 1,
@@ -439,7 +446,7 @@ const HomeTree = (props) => {
       }
     }
 
-    else if (selectedData?.label.props.spouse === null) {
+    else if (selectedData?.label.props.spouse === null) { {/*if selected family member doesn't have a a spouse... */}
       return [
         {
           id: 1,
@@ -479,7 +486,7 @@ const HomeTree = (props) => {
 
   const update = (array, id, object) =>
     !array ? null: array.map((o) =>
-      
+
     o.id === id
     ? o.children == null? { ...o, children: [o.children, { ...object, pId: o?.id }] }:  { ...o, children: [...o.children, { ...object, pId: o?.id }] }
     : { ...o, children: update(selectedData.children == null? selectedData.children : o.children, id, object) }
@@ -494,6 +501,7 @@ const checkSsz = (children) => {
 
   // TIME DELAY
 
+  /*Based on entering data for new family member and pressing save, create new node */
   const onSubmit = (data1) => {
     console.log("curr data optionf or ", data1)
     let newNode = {
@@ -541,7 +549,7 @@ const checkSsz = (children) => {
       if (selectedData.children == null) {
         console.log("parent has not curr children")
         setNullChild(true)
-    
+
         // parent has no children, add child to DB before list view
         // savePerson(data1, 0)
         console.log("should refresh")
@@ -551,9 +559,14 @@ const checkSsz = (children) => {
           console.log("should wait six sec")
           window.location.reload(false);
         }, 3000);
-        
+
       }
+<<<<<<< HEAD
       
+=======
+
+
+>>>>>>> 95cc277cb0c3381f98c17dea9c04646a9ab976c5
       setFamilyMember(false);
     } else if (typeId === 4) {
       console.log("type 4 editing")
@@ -563,7 +576,7 @@ const checkSsz = (children) => {
       // console.log(selectedId)
       const edited = editNode(nodes, selectedId, data1);
       editIndiv(data1, props.treeId.match.params.treeId, 1)
-      
+
       console.log("ret from editNode")
 
       setEdited(edited);
@@ -574,7 +587,7 @@ const checkSsz = (children) => {
       const editedSpouse = editNodeSpouse(nodes, selectedId, data1);
       editIndiv(data1, treeIdentif, 2)
 
-      
+
       setNodes(editedSpouse);
       setFamilyMember(false);
     }
@@ -582,8 +595,9 @@ const checkSsz = (children) => {
     reset();
   };
 
+  /*Remove spouse by setting spouse variables to values of null */
   const removeSpouse = (array, id) => {
-    let editiedSpouse = array.map((o) =>
+    let editedSpouse = array.map((o) =>
       o.id === id
         ? {
             ...o,
@@ -608,7 +622,7 @@ const checkSsz = (children) => {
         : { ...o, children: editNodeSpouse(o.children, id, data) }
     );
 
-    setNodes(editiedSpouse);
+    setNodes(editedSpouse);
     handleEditModalClose();
   };
 
@@ -657,27 +671,30 @@ const checkSsz = (children) => {
   }
   }
 
-  /* render all options in popup menu*/
+  /* Based on announcement id, display correct popup menu options for each family member */
   //className="popup_form"
   return (
     <div>
       <ModalComponent show={modalFirst} onClose={handleModalFirstClose}>
         <div>
-          <ul className="-my-5 divide-y divide-gray-200">
-            {announcements().map((announcement) => (
-              <li key={announcement.id} className="py-5">
-                <div className="relative p-1 rounded-sm">
-                  <h3 className="text-sm font-bold text-gray-800">
-                    <button 
-                      onClick={() => {handleFamilyMemberShow(announcement.id); seteditOrAdd(announcement.id); console.log("edit or add was ", announcement.id)}}
-                    >
-                      <span className="absolute inset-0" aria-hidden="true" />
-                      {announcement.title}
-                    </button>
-                  </h3>
-                </div>
-              </li>
-            ))}
+          <ul className="actionsList">
+            <center>
+              <p id="chooseAction">Choose an action for the individual <span id="chooseActionName">{selectedData?.label.props.name ? selectedData.label.props.name : null}</span>:</p>
+              {announcements().map((announcement) => (
+                <li key={announcement.id} className="py-5">
+                  <div className="relative p-1 rounded-sm">
+                    <h3 className="text-sm font-bold text-gray-800">
+                      <button
+                        onClick={() => {handleFamilyMemberShow(announcement.id); seteditOrAdd(announcement.id); console.log("edit or add was ", announcement.id)}}
+                      >
+                        <span className="absolute inset-0" aria-hidden="true" />
+                        {announcement.title}
+                      </button>
+                    </h3>
+                  </div>
+                </li>
+              ))}
+            </center>
           </ul>
         </div>
       </ModalComponent>
@@ -686,40 +703,41 @@ const checkSsz = (children) => {
       <ModalComponent show={editSpouse} onClose={handleEditModalClose}>
         <div>
           <ul className="-my-5 divide-y divide-gray-200">
-            <li className="py-5">
-              <div className="relative p-1 rounded-sm">
-                <h3 className="text-sm font-bold text-gray-800">
-                  <button
-                    onClick={() => handleFamilyMemberShow(5)}
-                    className=" hover:text-indigo-500 focus:outline-none font-bold"
-                  >
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    Edit Spouse
-                  </button>
-                </h3>
-              </div>
-            </li>
-            <li className="py-5">
-              <div className="relative p-1 rounded-sm">
-                <h3 className="text-sm font-bold text-gray-800">
-                  <button
-                    onClick={() => {removeSpouse(nodes, selectedId); delData(selectedData.label.props.spouseID); console.log("clicked delete spouse: ", nodes, " here is curr selected ", selectedData)}}
-                    className=" hover:text-indigo-500 focus:outline-none font-bold"
-                  >
-
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    Remove Spouse
-                  </button>
-                </h3>
-              </div>
-            </li>
+            <center>
+              <p id="chooseAction">Choose an action for the individual <span id="chooseActionName">{selectedData?.label.props.spouse ? selectedData.label.props.spouse : null}</span>:</p>
+              <li className="py-5">
+                <div className="relative p-1 rounded-sm">
+                  <h3 className="text-sm font-bold text-gray-800">
+                    <button
+                      onClick={() => handleFamilyMemberShow(5)}
+                      className=" hover:text-indigo-500 focus:outline-none font-bold"
+                    >
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      Edit Spouse
+                    </button>
+                  </h3>
+                </div>
+              </li>
+              <li className="py-5">
+                <div className="relative p-1 rounded-sm">
+                  <h3 className="text-sm font-bold text-gray-800">
+                    <button
+                      onClick={() => {removeSpouse(nodes, selectedId); delData(selectedData.label.props.spouseID); console.log("clicked delete spouse: ", nodes, " here is curr selected ", selectedData)}}
+                      className=" hover:text-indigo-500 focus:outline-none font-bold"
+                    >
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      Remove Spouse
+                    </button>
+                  </h3>
+                </div>
+              </li>
+            </center>
           </ul>
         </div>
       </ModalComponent>
 
-      {/*input fields when user selects options */}
-      {/*className="add_form"*/}
 
+      {/*Popup menu for adding/editing family member. Input fields includes first name, last name, gender, dob, and dod*/}
       <ModalComponent show={familyMember} onClose={handleFamilyMemberClose}>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <h3 className="mb-5 text-lg leading-6 font-medium text-gray-900">
@@ -834,6 +852,7 @@ const checkSsz = (children) => {
           </div>
         </form>
       </ModalComponent>
+
       <TreeView
         data={nodes}
         renderNode={(data) => (

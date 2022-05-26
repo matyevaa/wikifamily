@@ -137,7 +137,7 @@ const delData = async(individual_id) => {
           </div>
     }
     else {
-      return <button className="btn add_btn " type="submit">Verify Collaborator</button>
+      return <button className="btns" type="submit">Verify Collaborator</button>
     }
   }
 
@@ -238,14 +238,16 @@ const delData = async(individual_id) => {
       {dataDB ? console.log("api: ", dataDB) : console.log("no api")}
 
       <div className="class_btn">
-        <h3 id="dashboard" className='text'>Family Individuals Dashboard</h3>
+        <h3 id="dashboard" className="text">Family Individuals Dashboard</h3>
         <div className="dash_tools">
-          <Link to={addLink} id="btn add_btn" className="btns">Add Person</Link>
+          <Link to={addLink} id="add_btn" className="btns">Add Person</Link>
           <button id="shareBtn" onClick={() => {changeConditon();}}>Share Individuals</button>
           {sharingConditionShow()}
         </div>
-
       </div>
+
+      <h3 className='text' id="family_size">Family size is: {dataFamily.length}</h3>
+      <center>
       <table className="result_table">
         <thead>
           <tr>
@@ -268,7 +270,7 @@ const delData = async(individual_id) => {
             {shareContShow(item)}
             <td>{item.first_name}</td>
             <td>{item.last_name}</td>
-            <td>{item.info}</td>
+            <td id="td_info">{item.info}</td>
             <td>{item.gender}</td>
             <td>{item.birth}</td>
             <td>{item.death}</td>
@@ -282,7 +284,7 @@ const delData = async(individual_id) => {
         ))}
         </tbody>
        </table>
-       <h3 className='text' id="family_size">Family size is: {dataFamily.length}</h3>
+       </center>
        <br></br><bt></bt>
        {/* <button className="add_tree_btn" onClick={() => {delTree();}}>Delete tree</button> */}
     </div>

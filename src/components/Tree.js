@@ -2,6 +2,10 @@ import React from "react";
 import Tree from "react-d3-tree";
 import clone from "clone";
 
+// ################################################################################
+// Description:  Component for tree graph display
+// return: Tree graph functionality and updating tree with db data
+// ################################################################################
 
 export default class CenteredTree extends React.PureComponent {
   constructor(props) {
@@ -17,29 +21,6 @@ export default class CenteredTree extends React.PureComponent {
 
   injectedNodesCount = 0;
 
-  addChildNode = () => {
-    const nextData = clone(this.state.data);
-    const target = nextData.children;
-    this.injectedNodesCount++;
-    target.push({
-      name: `Inserted Node ${this.injectedNodesCount}`,
-      id: `inserted-node-${this.injectedNodesCount}`
-    });
-    this.setState({
-      data: nextData
-    });
-  };
-
-  removeChildNode = () => {
-    const nextData = clone(this.state.data);
-    const target = nextData.children;
-    target.pop();
-    this.injectedNodesCount--;
-    this.setState({
-      data: nextData
-    });
-  };
-
   traverse = (kids, x, idx) => {
    var children_array = [];
    if(kids) {
@@ -52,6 +33,7 @@ export default class CenteredTree extends React.PureComponent {
    return children_array.reverse()[0];
  }
 
+ /*Display tree */
   showTree = () => {
     const { visibility } = this.state;
     const items = this.state.db_data[0];
@@ -100,8 +82,6 @@ export default class CenteredTree extends React.PureComponent {
             <button className="graphBtn" id="showTree" onClick={this.showTree}> {this.state.visibility ? "Close Tree" : "Show Tree"}</button>
           </div>
           <div className="graphBtnContainer">
-            {/*<button className="graphBtn" id="addGraphNode" onClick={this.addChildNode}>Add Node</button>
-            <button className="graphBtn" onClick={this.removeChildNode}>Remove Node</button>*/}
           </div>
           {visibility ?
             <Tree

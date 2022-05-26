@@ -1,8 +1,11 @@
 # WikiFamily Project
 
-## Hardware
-* Python
-* React
+## About
+WikiFamily project is a user-friendly website that serves as a mean of understanding an individual’s genealogy and providing a great way to encode family history for posterity. The website is a tool for users to create, modify, and view their or an individual’s family tree.
+
+## Frameworks
+* Python Flask
+* ReactJS
 
 ## Additional information // Other Things Required in Order to Run
 * For React
@@ -14,7 +17,7 @@
         * It correctly bundles React in production mode and optimizes the build for the best performance.
 
 ## Access the project code 
-[HERE](https://github.com/matyevaa/wikifamily)
+[Click here to see the project repository](https://github.com/matyevaa/wikifamily)
 
 ## Access the deployed version
 [WikiFamilyfront](https://wikifamilyfront.herokuapp.com/)
@@ -131,7 +134,7 @@
 
 * Native React Packages -- located in package.json
     * "@auth0/auth0-react": "^1.9.0",
-    * "@headlessui/react": "^1.6.1",
+    * "@headlessui/react": "^1.6.3",
     * "@testing-library/jest-dom": "^5.14.1",
     * "@testing-library/react": "^11.2.7",
     * "@testing-library/user-event": "^12.8.3",
@@ -157,7 +160,9 @@
     * "web-vitals": "^1.1.2"
 
 ## Unrealized features
-* LIST HERE
+* Uploading pictures of individuals through the database and displaying them on individual's detailed information window on Tree View page
+* Displaying the tree list view while editing the individuals to let the user see which person they are editing
+* Enabling CRUD operations for tree graph option
 
 
 Our project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
