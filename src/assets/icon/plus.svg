@@ -1,5 +1,5 @@
  <svg
-                      xmlns='http://www.w3.org/2000/svg'
+                      xmlns='http://www.w3.org/2000/svg' 
                       className='h-3 w-3'
                       fill='none'
                       viewBox='0 0 24 24'
@@ -12,3 +12,6 @@
                         d='M12 4v16m8-8H4'
                       />
                     </svg>
+
+
+<!-- This is the styling for the "+" symbol in the button by each family member-->

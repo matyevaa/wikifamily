@@ -18,7 +18,7 @@ const LoginButton = () => {
   }
 
   return (
-    !isAuthenticated && (
+    !isAuthenticated && ( //if user isn't logged in yet...display login button
       <button id="login_btn" onClick={() => {loginWithRedirect(); setLoginVersion()}}>
         Log in with Email
       </button>

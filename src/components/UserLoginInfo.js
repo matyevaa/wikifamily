@@ -30,9 +30,8 @@ const UserLoginInfo = () => {
     setchekcDB(true)
   };
   
-  if (isAuthenticated == true){
-    var uniqueLoginID = user.sub
-    console.log(uniqueLoginID)
+  if (isAuthenticated == true){ //if user is logged in...
+    var uniqueLoginID = user.sub  //obtain unique login ID
 
     // remove the "oauth|" from the unique ID for the DB
     let parsedId = uniqueLoginID.slice(6,(uniqueLoginID.length))

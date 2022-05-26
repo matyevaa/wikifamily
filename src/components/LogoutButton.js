@@ -20,8 +20,8 @@ const LogoutButton = () => {
   }
 
   return (
-    isAuthenticated && (
-      <button id="log_gmail" className="accountBtns" onClick={() => { remLocal();logout();}}>
+    isAuthenticated && ( //if user is logged in...display log out button
+      <button id="log_gmail" className="accountBtns" onClick={() => { remLocal();logout();}}> 
         Log Out
       </button>
     )

@@ -6,8 +6,8 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './style/ThemeContext';
 
-const domain = process.env.REACT_APP_AUTH0_DOMAIN;
-const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+const domain = process.env.REACT_APP_AUTH0_DOMAIN; //auth0 domain
+const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID; //auth0 client id
 
 ReactDOM.render(
   <React.StrictMode>
