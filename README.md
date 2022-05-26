@@ -1,8 +1,8 @@
 # WikiFamily Project
 
-## Hardware
-* Python
-* React
+## Frameworks
+* Python Flask
+* ReactJS
 
 ## Additional information // Other Things Required in Order to Run
 * For React
