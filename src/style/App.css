@@ -3,6 +3,7 @@ body {
   margin-top: 100px;
   padding: 40px;
   bottom: 0;
+  zoom: 90%;
 }
 
 span, p, li {
@@ -433,7 +434,6 @@ li a:hover {
 
 #login_btn:hover {
   background-color: #006666;
-  text-decoration: underline;
 }
 
 

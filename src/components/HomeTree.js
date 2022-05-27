@@ -561,12 +561,7 @@ const checkSsz = (children) => {
         }, 3000);
 
       }
-<<<<<<< HEAD
       
-=======
-
-
->>>>>>> 95cc277cb0c3381f98c17dea9c04646a9ab976c5
       setFamilyMember(false);
     } else if (typeId === 4) {
       console.log("type 4 editing")
@@ -710,7 +705,7 @@ const checkSsz = (children) => {
                   <h3 className="text-sm font-bold text-gray-800">
                     <button
                       onClick={() => handleFamilyMemberShow(5)}
-                      className=" hover:text-indigo-500 focus:outline-none font-bold"
+                      className=" hover:text-indigo-500 focus:outline-none"
                     >
                       <span className="absolute inset-0" aria-hidden="true" />
                       Edit Spouse
@@ -723,7 +718,7 @@ const checkSsz = (children) => {
                   <h3 className="text-sm font-bold text-gray-800">
                     <button
                       onClick={() => {removeSpouse(nodes, selectedId); delData(selectedData.label.props.spouseID); console.log("clicked delete spouse: ", nodes, " here is curr selected ", selectedData)}}
-                      className=" hover:text-indigo-500 focus:outline-none font-bold"
+                      className=" hover:text-indigo-500 focus:outline-none"
                     >
                       <span className="absolute inset-0" aria-hidden="true" />
                       Remove Spouse
