@@ -29,14 +29,14 @@ WikiFamily project is a user-friendly website that serves as a mean of understan
     * Create a developer account with Google
     * [Go to the credentials page](https://console.developers.google.com/apis/credentials)
     * Click on "Create Credentials"
-    ![Create Credentials button](src/style/google_creds.png)
+    ![Create Credentials button](./src/style/google_creds.png)
     * Click on “OAuth client ID”
-    ![OAuth client ID option](src/style/google_oauth.png)
+    ![OAuth client ID option](./src/style/google_oauth.png)
     * Click on “Web Application”
-    ![Web Application](src/style/google_webapp.png)
+    ![Web Application](./src/style/google_webapp.png)
     * Name the application and click “Create”
     * Once your OAuth client is created, you will receive your client ID and secret. At this point you can save the JSON file. If not, you can always access your client credentials at a different point.
-    ![Credentials created](src/style/google_credCreated.png)
+    ![Credentials created](./src/style/google_credCreated.png)
     * Add the following URIs by clicking on “+ Add URI”. These URIs take into account if the website is being run on localhost, 127.0.0.1, or on the WikiFamily Heroku page
         * http://127.0.0.1:3000/auth/google/wikifam
         * http://127.0.0.1:3000/auth/google/wikifam/
@@ -46,7 +46,7 @@ WikiFamily project is a user-friendly website that serves as a mean of understan
         * http://localhost:3000/auth/
         * https://wikifamily-login.herokuapp.com/auth/google/authorized
         * https://wikifamilyfront.herokuapp.com/
-    ![Adding URIs](src/style/google_uris.png)
+    ![Adding URIs](./src/style/google_uris.png)
     * After entering the URIs click save.
     * In the WikiFamily Project in the folder loginApi find app.py and replace the current client ID and secret on line 59 with your new client credentials.
     * The Google login works both on the Heroku version and localhost.
@@ -55,24 +55,24 @@ WikiFamily project is a user-friendly website that serves as a mean of understan
     * [Create an account with Facebook’s developer page](https://developers.facebook.com/)
     * [Go to "My Apps"](https://developers.facebook.com/apps)
     * Click on "Create App"
-    ![Creating app](src/style/FB_createApp.png)
+    ![Creating app](./src/style/FB_createApp.png)
     * Select the app type
-    ![App type](src/style/FB_appType.png)
+    ![App type](./src/style/FB_appType.png)
     * Enter a project name and an email address to be contacted at 
     * Click “Set up” on the Facebook Login option
-    * ![Facebook login option](src/style/FB_setUp.png)
+    * ![Facebook login option](./src/style/FB_setUp.png)
     * Click on the "Web" option
-    ![WWW](src/style/FB_www.png)
+    ![WWW](./src/style/FB_www.png)
     * Enter the Heroku login API link (https://wikifamily-login.herokuapp.com/) and click “Save” then “Continue”
-    ![site url](src/style/FB_websiteLink.png)
+    ![site url](./src/style/FB_websiteLink.png)
     * On the left panel, click on “Settings” then “Basic”
-    ![Settings](src/style/FB_settings.png)
+    ![Settings](./src/style/FB_settings.png)
     * At the top of the page you will see your App ID and secret
-    ![credentials](src/style/FB_creds.png)
+    ![credentials](./src/style/FB_creds.png)
     * In the project folder, in the folder loginApi find the file app.py and replace the client secret and app ID in line 55 with your created credentials
     * Going back to the Basic settings page, in the section “Privacy Policy URL” insert the link “https://wikifamilyfront.herokuapp.com/privacy”
     * In the “User data deletion” change the default option “Data deletion instructions URL” to “Data deletion callback URL” and insert the following link “https://wikifamily-login.herokuapp.com/deleteFB”
-    ![privacy policy and data deletion link](src/style/FB_privDatadel.png)
+    ![privacy policy and data deletion link](./src/style/FB_privDatadel.png)
     * Click “Save changes” at the bottom right corner /
     * On the left panel find the “Facebook Login” category and click on “Settings”
     * In the “Valid OAuth Redirect URIs” section add the following links
@@ -81,7 +81,7 @@ WikiFamily project is a user-friendly website that serves as a mean of understan
         * https://wikifamily-login.herokuapp.com/auth/facebook/wikifam
         * https://wikifamily-login.herokuapp.com/auth/facebook/wikifam/facebook/authorized
     * In the “Deauthorize” section include the following link “https://wikifamily-login.herokuapp.com/deleteFB” and click save changes in the bottom right corner
-    ![uris](src/style/FB_uris.png)
+    ![uris](./src/style/FB_uris.png)
     * Facebook login will only work on the deployed version
 
 
